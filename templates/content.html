@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}Content Understanding &bull; Microsoft Foundry AI Lab{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-header-top">
+    <div class="page-title-row">
+      <div class="page-icon-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+      </div>
+      <div>
+        <h1 class="page-title">Azure Content Understanding</h1>
+        <p class="page-desc">Extract deep structure, tables, semantic layout, and insights from documents, media, and records using specialized analyzers.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="split-grid-40-60">
+  <!-- Upload & Analyzer Selector -->
+  <div class="glass-panel" style="display: flex; flex-direction: column; gap: 1.25rem;">
+    <div>
+      <label class="form-label">Document or Media File</label>
+      <div class="file-dropzone" id="content-dropzone">
+        <input type="file" id="content-file">
+        <div class="dropzone-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+        </div>
+        <div class="dropzone-text">Drop PDF, image, audio, or document or <span>browse</span></div>
+        <div class="dropzone-sub">Supported formats: PDF, DOCX, TIFF, JPEG, PNG up to 25MB</div>
+      </div>
+
+      <div class="dropzone-preview-box" id="content-file-preview">
+        <div class="preview-file-info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          <div>
+            <div class="preview-name" id="content-file-name">document.pdf</div>
+            <div class="preview-size" id="content-file-size">0 KB</div>
+          </div>
+        </div>
+        <button onclick="clearContentFile()" style="background: none; border: none; color: var(--rose-400); cursor: pointer; font-size: 0.8rem;">Remove</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="analyzer-input">Analyzer Identifier</label>
+      <input type="text" id="analyzer-input" class="form-input" value="prebuilt-documentSearch" placeholder="e.g. prebuilt-documentSearch, prebuilt-read, prebuilt-layout">
+      
+      <div class="chip-container">
+        <span class="chip-label">Analyzers:</span>
+        <button class="prompt-chip" onclick="setAnalyzer('prebuilt-documentSearch')">prebuilt-documentSearch</button>
+        <button class="prompt-chip" onclick="setAnalyzer('prebuilt-read')">prebuilt-read</button>
+        <button class="prompt-chip" onclick="setAnalyzer('prebuilt-layout')">prebuilt-layout</button>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="btn-analyze-content" onclick="analyzeContent()">
+      <span class="spinner" id="content-spinner"></span>
+      <span class="btn-text">Execute Content Analysis</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+    </button>
+  </div>
+
+  <!-- Content Results -->
+  <div class="output-card">
+    <div class="output-header">
+      <div class="output-title-group">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--azure-400);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+        <span>Analyzer Output Inspection</span>
+      </div>
+      <button class="btn btn-secondary btn-sm" id="btn-copy-content" onclick="copyContentJson()" style="display: none;">
+        Copy JSON
+      </button>
+    </div>
+
+    <div class="output-body" id="content-output">
+      <div class="output-empty" id="content-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline>
+        </svg>
+        <p>Upload a document and select an analyzer to inspect Microsoft Foundry's cognitive telemetry.</p>
+      </div>
+
+      <div id="content-results" style="display: none;">
+        <div id="content-summary" style="padding: 1rem; border-radius: var(--radius-md); background: rgba(0, 120, 212, 0.08); border: 1px solid var(--border-azure); margin-bottom: 1.25rem;">
+          <div style="font-weight: 700; color: #ffffff; margin-bottom: 0.25rem;">Analysis Complete</div>
+          <div style="font-size: 0.85rem; color: var(--text-dim);" id="content-meta-info">Document parsed successfully.</div>
+        </div>
+
+        <pre id="content-json" style="padding: 1.25rem; background: #090e17; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); font-family: var(--font-mono); font-size: 0.82rem; overflow-x: auto; color: var(--cyan-300); max-height: 400px;"></pre>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const contentFileInput = document.getElementById('content-file');
+const contentDropzone = document.getElementById('content-dropzone');
+const contentFilePreview = document.getElementById('content-file-preview');
+const contentFileName = document.getElementById('content-file-name');
+const contentFileSize = document.getElementById('content-file-size');
+const analyzerInput = document.getElementById('analyzer-input');
+const btnAnalyzeContent = document.getElementById('btn-analyze-content');
+const contentEmpty = document.getElementById('content-empty');
+const contentResults = document.getElementById('content-results');
+const contentJson = document.getElementById('content-json');
+const contentMetaInfo = document.getElementById('content-meta-info');
+const btnCopyContent = document.getElementById('btn-copy-content');
+
+let rawContentJsonStr = '';
+
+contentFileInput.addEventListener('change', () => {
+  if (contentFileInput.files && contentFileInput.files[0]) {
+    const file = contentFileInput.files[0];
+    contentFileName.textContent = file.name;
+    contentFileSize.textContent = (file.size / 1024).toFixed(1) + ' KB';
+    contentDropzone.style.display = 'none';
+    contentFilePreview.classList.add('active');
+  }
+});
+
+function clearContentFile() {
+  contentFileInput.value = '';
+  contentFilePreview.classList.remove('active');
+  contentDropzone.style.display = 'flex';
+}
+
+function setAnalyzer(name) {
+  analyzerInput.value = name;
+  analyzerInput.focus();
+}
+
+function copyContentJson() {
+  if (rawContentJsonStr) {
+    copyToClipboard(rawContentJsonStr, btnCopyContent);
+  }
+}
+
+async function analyzeContent() {
+  if (!contentFileInput.files || !contentFileInput.files[0]) {
+    showToast('Please select a file to analyze', 'error');
+    return;
+  }
+
+  const analyzer = analyzerInput.value.trim() || 'prebuilt-documentSearch';
+
+  const form = new FormData();
+  form.append('file', contentFileInput.files[0]);
+  form.append('analyzer', analyzer);
+
+  btnAnalyzeContent.classList.add('loading');
+  btnAnalyzeContent.disabled = true;
+  contentEmpty.style.display = 'none';
+  contentResults.style.display = 'block';
+  contentMetaInfo.textContent = `Dispatching file to analyzer "${analyzer}"...`;
+  contentJson.textContent = 'Analyzing content structure...';
+
+  try {
+    const res = await fetch('/api/content-understanding', {
+      method: 'POST',
+      body: form
+    });
+    const data = await res.json();
+
+    if (data.result) {
+      rawContentJsonStr = JSON.stringify(data.result, null, 2);
+      contentJson.textContent = rawContentJsonStr;
+      contentMetaInfo.textContent = `Analyzer: ${analyzer} &bull; Status: Processed`;
+      btnCopyContent.style.display = 'inline-flex';
+      showToast('Document analysis complete', 'success');
+    } else {
+      contentMetaInfo.textContent = 'Analyzer encountered an issue.';
+      contentJson.textContent = data.error || 'Unknown analysis error';
+      showToast(data.error || 'Analysis failed', 'error');
+    }
+  } catch (err) {
+    contentJson.textContent = 'Network communication failure.';
+    showToast('Network request error', 'error');
+  } finally {
+    btnAnalyzeContent.classList.remove('loading');
+    btnAnalyzeContent.disabled = false;
+  }
+}
+</script>
+{% endblock %}

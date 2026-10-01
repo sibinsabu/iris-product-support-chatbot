@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}Voice Support &bull; Apex Support AI{% endblock %}
+
+{% block content %}
+<div style="max-width: 1240px; margin: 2rem auto; padding: 0 1.5rem;">
+  <div class="page-header">
+    <div class="page-header-top">
+      <div class="page-title-row">
+        <div class="page-icon-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+        </div>
+        <div>
+          <h1 class="page-title">Hands-Free Voice Support Dispatcher</h1>
+          <p class="page-desc">Speak your issue or upload customer audio notes for real-time acoustic transcription via Azure Cognitive Speech v3.2.</p>
+        </div>
+      </div>
+      <a href="/" class="btn btn-secondary btn-sm">
+        &larr; Back to Chat &amp; Checkout
+      </a>
+    </div>
+  </div>
+
+  <div class="split-grid-40-60">
+    <div class="device-card" style="display:flex; flex-direction:column; gap:1.25rem;">
+      <div>
+        <label class="form-label">Audio Voice Recording</label>
+        <div class="file-dropzone" id="speech-dropzone">
+          <input type="file" id="speech-file" accept="audio/*">
+          <div class="dropzone-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+          </div>
+          <div class="dropzone-text">Drop voice recording or <span>browse</span></div>
+          <div class="dropzone-sub">Supports WAV, MP3, M4A, OGG up to 25MB</div>
+        </div>
+
+        <div id="audio-preview-wrapper" style="display:none; margin-top:1rem; padding:1rem; background:rgba(10,15,26,0.8); border-radius:var(--radius-md); border:1px solid var(--border-azure);">
+          <div style="font-size:0.82rem; color:var(--text-dim); margin-bottom:0.5rem; display:flex; justify-content:space-between;">
+            <span id="audio-file-name" style="font-weight:600;">voice_note.wav</span>
+            <button onclick="clearAudioFile()" style="background:none; border:none; color:var(--rose-400); cursor:pointer; font-size:0.75rem;">Remove</button>
+          </div>
+          <audio id="audio-player" controls style="width:100%; outline:none;"></audio>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="speech-lang">Spoken Language / Locale</label>
+        <select id="speech-lang" class="form-select">
+          <option value="en-US" selected>English (United States) &bull; en-US</option>
+          <option value="en-GB">English (United Kingdom) &bull; en-GB</option>
+          <option value="es-ES">Spanish (Spain) &bull; es-ES</option>
+          <option value="fr-FR">French (France) &bull; fr-FR</option>
+          <option value="de-DE">German (Germany) &bull; de-DE</option>
+          <option value="ja-JP">Japanese (Japan) &bull; ja-JP</option>
+          <option value="zh-CN">Chinese (Mandarin) &bull; zh-CN</option>
+        </select>
+      </div>
+
+      <button class="btn btn-primary" id="btn-transcribe" onclick="transcribeAudio()">
+        <span class="spinner" id="speech-spinner"></span>
+        <span class="btn-text">Transcribe Voice Inquiry</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      </button>
+    </div>
+
+    <!-- Output -->
+    <div class="output-card">
+      <div class="output-header">
+        <div class="output-title-group">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--emerald-400);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          <span>Voice Transcription Output</span>
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+          <button class="btn btn-secondary btn-sm" id="btn-copy-transcript" onclick="copyTranscript()" style="display:none;">
+            Copy Text
+          </button>
+          <a href="/" class="btn btn-primary btn-sm" id="btn-send-to-chat" style="display:none; background:var(--azure-500);">
+            Send to Chat &rarr;
+          </a>
+        </div>
+      </div>
+
+      <div class="output-body" id="speech-output">
+        <div class="output-empty" id="speech-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+          </svg>
+          <p>Upload a voice memo or audio recording to convert spoken customer support queries into text.</p>
+        </div>
+
+        <div id="speech-results" style="display:none;">
+          <div id="transcript-main" style="font-size:1.05rem; line-height:1.7; color:#fff; padding:1.25rem; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.25); border-radius:var(--radius-md); margin-bottom:1.25rem;"></div>
+
+          <details style="border:1px solid var(--border-subtle); border-radius:var(--radius-md); overflow:hidden; background:rgba(11,17,32,0.6);">
+            <summary style="padding:0.75rem 1rem; cursor:pointer; font-size:0.8rem; font-weight:600; color:var(--text-muted);">
+              View Azure Speech v3.2 Telemetry
+            </summary>
+            <pre id="speech-json" style="padding:1rem; font-family:var(--font-mono); font-size:0.8rem; overflow-x:auto; color:var(--cyan-300);"></pre>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const speechFileInput = document.getElementById('speech-file');
+const speechDropzone = document.getElementById('speech-dropzone');
+const audioPreviewWrapper = document.getElementById('audio-preview-wrapper');
+const audioPlayer = document.getElementById('audio-player');
+const audioFileName = document.getElementById('audio-file-name');
+const speechLang = document.getElementById('speech-lang');
+const btnTranscribe = document.getElementById('btn-transcribe');
+const speechEmpty = document.getElementById('speech-empty');
+const speechResults = document.getElementById('speech-results');
+const transcriptMain = document.getElementById('transcript-main');
+const speechJson = document.getElementById('speech-json');
+const btnCopyTranscript = document.getElementById('btn-copy-transcript');
+const btnSendToChat = document.getElementById('btn-send-to-chat');
+
+let extractedTranscript = '';
+
+speechFileInput.addEventListener('change', () => {
+  if (speechFileInput.files && speechFileInput.files[0]) {
+    const file = speechFileInput.files[0];
+    audioFileName.textContent = file.name;
+    audioPlayer.src = URL.createObjectURL(file);
+    speechDropzone.style.display = 'none';
+    audioPreviewWrapper.style.display = 'block';
+  }
+});
+
+function clearAudioFile() {
+  speechFileInput.value = '';
+  audioPlayer.src = '';
+  audioPreviewWrapper.style.display = 'none';
+  speechDropzone.style.display = 'flex';
+}
+
+function copyTranscript() {
+  if (extractedTranscript) copyToClipboard(extractedTranscript, btnCopyTranscript);
+}
+
+async function transcribeAudio() {
+  if (!speechFileInput.files || !speechFileInput.files[0]) {
+    showToast('Please select an audio file first', 'error');
+    return;
+  }
+
+  const form = new FormData();
+  form.append('audio', speechFileInput.files[0]);
+  form.append('language', speechLang.value);
+
+  btnTranscribe.classList.add('loading');
+  btnTranscribe.disabled = true;
+  speechEmpty.style.display = 'none';
+  speechResults.style.display = 'block';
+  transcriptMain.innerHTML = `
+    <div style="display:flex; align-items:center; justify-content:center; height:160px; gap:0.75rem; color:var(--text-muted);">
+      <div class="spinner" style="display:inline-block; border-color: rgba(16,185,129,0.2); border-top-color: var(--emerald-400); width: 24px; height: 24px;"></div>
+      <span>Transcribing voice inquiry via Azure Cognitive Speech...</span>
+    </div>
+  `;
+
+  try {
+    const res = await fetch('/api/speech', { method: 'POST', body: form });
+    const data = await res.json();
+
+    if (data.result) {
+      speechJson.textContent = JSON.stringify(data.result, null, 2);
+      let text = '';
+      if (data.result.combinedPhrases && data.result.combinedPhrases.length > 0) {
+        text = data.result.combinedPhrases.map(p => p.text).join(' ');
+      } else if (data.result.phrases && data.result.phrases.length > 0) {
+        text = data.result.phrases.map(p => p.text).join(' ');
+      } else if (data.result.text) {
+        text = data.result.text;
+      } else {
+        text = JSON.stringify(data.result);
+      }
+
+      extractedTranscript = text;
+      transcriptMain.textContent = text || 'No audible speech identified.';
+      btnCopyTranscript.style.display = 'inline-flex';
+      btnSendToChat.style.display = 'inline-flex';
+      showToast('Transcription completed', 'success');
+    } else {
+      transcriptMain.innerHTML = `<div style="color:var(--rose-400);"><strong>Transcription Error:</strong> ${escapeHtml(data.error || 'Speech service failed')}</div>`;
+      showToast(data.error || 'Speech service failed', 'error');
+    }
+  } catch (err) {
+    transcriptMain.innerHTML = `<span style="color:var(--rose-400);">Network request failed.</span>`;
+    showToast('Network error calling speech service', 'error');
+  } finally {
+    btnTranscribe.classList.remove('loading');
+    btnTranscribe.disabled = false;
+  }
+}
+</script>
+{% endblock %}

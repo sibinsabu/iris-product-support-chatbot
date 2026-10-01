@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Foundry Agent &bull; Microsoft Foundry AI Lab{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-header-top">
+    <div class="page-title-row">
+      <div class="page-icon-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path></svg>
+      </div>
+      <div>
+        <h1 class="page-title">Foundry Teaching Agent</h1>
+        <p class="page-desc">Instruction-conditioned autonomous educator breaking down complex engineering concepts into definitions, architectures, examples, and production use cases.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="split-grid-40-60">
+  <!-- Query & Agent Persona Panel -->
+  <div class="glass-panel" style="display: flex; flex-direction: column; gap: 1.25rem;">
+    <!-- Persona Tag -->
+    <div style="padding: 1rem; border-radius: var(--radius-md); background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25);">
+      <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--accent-indigo); font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        PEDAGOGICAL AGENT ARCHITECTURE
+      </div>
+      <p style="font-size: 0.82rem; color: var(--text-dim); line-height: 1.5;">
+        Conditioned system persona providing pedagogical rigor:
+        <strong>1. Formal Definition</strong> &bull; 
+        <strong>2. Step-by-Step Mechanics</strong> &bull; 
+        <strong>3. Code / Concrete Example</strong> &bull; 
+        <strong>4. Production Foundry Use Case</strong>
+      </p>
+    </div>
+
+    <div>
+      <label class="form-label" for="agent-prompt">Concept or Technical Topic</label>
+      <textarea id="agent-prompt" class="form-textarea" rows="4">Explain the Self-Attention mechanism in Transformers.</textarea>
+      
+      <div class="chip-container">
+        <span class="chip-label">Syllabus Presets:</span>
+        <button class="prompt-chip" onclick="setAgentPrompt('Explain the Self-Attention mechanism in Transformers.')">Self-Attention</button>
+        <button class="prompt-chip" onclick="setAgentPrompt('Explain Retrieval Augmented Generation (RAG) and vector indexing.')">RAG Architecture</button>
+        <button class="prompt-chip" onclick="setAgentPrompt('Explain supervised learning vs reinforcement learning with human feedback (RLHF).')">Supervised vs RLHF</button>
+        <button class="prompt-chip" onclick="setAgentPrompt('How does FLUX diffusion generate images from latent noise?')">Diffusion Models</button>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="btn-ask-agent" onclick="askAgent()">
+      <span class="spinner" id="agent-spinner"></span>
+      <span class="btn-text">Consult Teaching Agent</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+    </button>
+  </div>
+
+  <!-- Agent Lesson Output -->
+  <div class="output-card">
+    <div class="output-header">
+      <div class="output-title-group">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--accent-purple);"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+        <span>Curated Educational Breakdown</span>
+      </div>
+      <button class="btn btn-secondary btn-sm" id="btn-copy-lesson" onclick="copyLessonOutput()" style="display: none;">
+        Copy Lesson
+      </button>
+    </div>
+
+    <div class="output-body" id="agent-output">
+      <div class="output-empty" id="agent-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 8V4H8"></path>
+          <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+          <path d="M2 14h2"></path>
+          <path d="M20 14h2"></path>
+        </svg>
+        <p>Select or enter a technical topic to receive a structured pedagogical deep-dive.</p>
+      </div>
+
+      <div id="agent-results" class="markdown-content" style="display: none;"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const agentPrompt = document.getElementById('agent-prompt');
+const btnAskAgent = document.getElementById('btn-ask-agent');
+const agentEmpty = document.getElementById('agent-empty');
+const agentResults = document.getElementById('agent-results');
+const btnCopyLesson = document.getElementById('btn-copy-lesson');
+
+let currentLessonText = '';
+
+function setAgentPrompt(text) {
+  agentPrompt.value = text;
+  agentPrompt.focus();
+}
+
+function copyLessonOutput() {
+  if (currentLessonText) {
+    copyToClipboard(currentLessonText, btnCopyLesson);
+  }
+}
+
+async function askAgent() {
+  const query = agentPrompt.value.trim();
+  if (!query) {
+    showToast('Please specify a topic or question for the agent', 'error');
+    return;
+  }
+
+  btnAskAgent.classList.add('loading');
+  btnAskAgent.disabled = true;
+  agentEmpty.style.display = 'none';
+  agentResults.style.display = 'block';
+  agentResults.innerHTML = `
+    <div style="display:flex; align-items:center; justify-content:center; height:240px; gap:0.75rem; color:var(--text-muted);">
+      <div class="spinner" style="display:inline-block; border-color: rgba(139,92,246,0.2); border-top-color: var(--accent-purple); width:24px; height:24px;"></div>
+      <span>Formulating pedagogical breakdown via Microsoft Foundry agent...</span>
+    </div>
+  `;
+
+  try {
+    const res = await fetch('/api/agent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: query })
+    });
+    const data = await res.json();
+
+    if (data.reply) {
+      currentLessonText = data.reply;
+      agentResults.innerHTML = renderMarkdown(data.reply);
+      btnCopyLesson.style.display = 'inline-flex';
+      showToast('Agent lesson compiled', 'success');
+    } else {
+      agentResults.innerHTML = `
+        <div style="padding:1rem; border-radius:var(--radius-md); background:rgba(244,63,94,0.1); border:1px solid rgba(244,63,94,0.3); color:var(--rose-400);">
+          <strong>Agent Error:</strong> ${escapeHtml(data.error || 'Failed to generate response')}
+        </div>
+      `;
+      showToast(data.error || 'Agent error', 'error');
+    }
+  } catch (err) {
+    agentResults.innerHTML = `<p style="color:var(--rose-400);">Network request failed.</p>`;
+    showToast('Network error calling agent endpoint', 'error');
+  } finally {
+    btnAskAgent.classList.remove('loading');
+    btnAskAgent.disabled = false;
+  }
+}
+</script>
+{% endblock %}

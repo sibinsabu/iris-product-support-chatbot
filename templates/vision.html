@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}Visual Hardware Diagnostic &bull; Apex Support AI{% endblock %}
+
+{% block content %}
+<div style="max-width: 1240px; margin: 2rem auto; padding: 0 1.5rem;">
+  <div class="page-header">
+    <div class="page-header-top">
+      <div class="page-title-row">
+        <div class="page-icon-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M2 12s3.636-7 10-7 10 7 10 7-3.636 7-10 7-10-7-10-7Z"></path></svg>
+        </div>
+        <div>
+          <h1 class="page-title">Visual Hardware Defect Inspection</h1>
+          <p class="page-desc">Upload photos of physical wear, loose ports, damaged cables, or diagnostic LEDs to receive AI inspection and direct replacement matching.</p>
+        </div>
+      </div>
+      <a href="/" class="btn btn-secondary btn-sm">
+        &larr; Back to Chat &amp; Checkout
+      </a>
+    </div>
+  </div>
+
+  <div class="split-grid-40-60">
+    <!-- Upload Column -->
+    <div class="device-card" style="display:flex; flex-direction:column; gap:1.25rem;">
+      <div>
+        <label class="form-label">Upload Defect or Hardware Photo</label>
+        <div class="file-dropzone" id="vision-dropzone">
+          <input type="file" id="vision-file" accept="image/*">
+          <div class="dropzone-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+          </div>
+          <div class="dropzone-text">Drop photo of hardware defect or <span>browse</span></div>
+          <div class="dropzone-sub">Supports JPEG, PNG, WEBP up to 25MB</div>
+        </div>
+
+        <div id="image-preview-wrapper" style="display:none; margin-top:1rem; position:relative;">
+          <img id="image-preview" src="" alt="Selected Device Preview" style="width:100%; max-height:240px; object-fit:cover; border-radius:var(--radius-md); border:1px solid var(--border-azure);">
+          <button class="btn btn-secondary btn-sm" onclick="clearSelectedImage()" style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.7); padding:0.3rem 0.6rem;">
+            Change Photo
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <label class="form-label" for="vision-prompt">Diagnostic Directive</label>
+        <textarea id="vision-prompt" class="form-textarea" rows="3">Inspect this photo for physical damage, wear, or loose connections. Diagnose the defect and suggest the official replacement part or repair steps.</textarea>
+        
+        <div class="chip-container">
+          <span class="chip-label">Diagnostic Presets:</span>
+          <button class="prompt-chip" onclick="setVisionPrompt('Inspect ear cushion leather for peeling, tears, or sweat degradation.')">Ear Cushion Wear</button>
+          <button class="prompt-chip" onclick="setVisionPrompt('Check USB-C port for bent pins, debris, or damaged connector housing.')">USB-C Port Damage</button>
+          <button class="prompt-chip" onclick="setVisionPrompt('Identify the flashing LED indicator light sequence and explain the error code.')">LED Error Code</button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-vision" onclick="analyzeVision()">
+        <span class="spinner" id="vision-spinner"></span>
+        <span class="btn-text">Run Visual Defect Diagnostic</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      </button>
+    </div>
+
+    <!-- Diagnostic Findings Column -->
+    <div class="output-card">
+      <div class="output-header">
+        <div class="output-title-group">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--cyan-400);"><circle cx="12" cy="12" r="3"></circle><path d="M2 12s3.636-7 10-7 10 7 10 7-3.636 7-10 7-10-7-10-7Z"></path></svg>
+          <span>Inspection &amp; Replacement Diagnosis</span>
+        </div>
+        <button class="btn btn-secondary btn-sm" id="btn-copy-vision" onclick="copyVisionOutput()" style="display:none;">
+          Copy Report
+        </button>
+      </div>
+
+      <div class="output-body" id="vision-output">
+        <div class="output-empty" id="vision-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M2 12s3.636-7 10-7 10 7 10 7-3.636 7-10 7-10-7-10-7Z"></path>
+          </svg>
+          <p>Upload a hardware photo and click "Run Visual Defect Diagnostic" to inspect physical condition via Azure OpenAI Vision.</p>
+        </div>
+
+        <div id="vision-results" class="markdown-content" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const fileInput = document.getElementById('vision-file');
+const dropzone = document.getElementById('vision-dropzone');
+const previewWrapper = document.getElementById('image-preview-wrapper');
+const imagePreview = document.getElementById('image-preview');
+const visionPrompt = document.getElementById('vision-prompt');
+const btnVision = document.getElementById('btn-vision');
+const visionEmpty = document.getElementById('vision-empty');
+const visionResults = document.getElementById('vision-results');
+const btnCopyVision = document.getElementById('btn-copy-vision');
+
+let visionRawResult = '';
+
+fileInput.addEventListener('change', () => {
+  if (fileInput.files && fileInput.files[0]) {
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imagePreview.src = e.target.result;
+      dropzone.style.display = 'none';
+      previewWrapper.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+function clearSelectedImage() {
+  fileInput.value = '';
+  imagePreview.src = '';
+  previewWrapper.style.display = 'none';
+  dropzone.style.display = 'flex';
+}
+
+function setVisionPrompt(text) {
+  visionPrompt.value = text;
+  visionPrompt.focus();
+}
+
+function copyVisionOutput() {
+  if (visionRawResult) copyToClipboard(visionRawResult, btnCopyVision);
+}
+
+async function analyzeVision() {
+  if (!fileInput.files || !fileInput.files[0]) {
+    showToast('Please select a hardware defect photo first', 'error');
+    return;
+  }
+
+  const prompt = visionPrompt.value.trim() || 'Inspect this hardware device for wear or defects.';
+
+  const form = new FormData();
+  form.append('image', fileInput.files[0]);
+  form.append('prompt', prompt);
+
+  btnVision.classList.add('loading');
+  btnVision.disabled = true;
+  visionEmpty.style.display = 'none';
+  visionResults.style.display = 'block';
+  visionResults.innerHTML = `
+    <div style="display:flex; align-items:center; justify-content:center; height:240px; gap:0.75rem; color:var(--text-muted);">
+      <div class="spinner" style="display:inline-block; border-color: rgba(34,211,238,0.2); border-top-color: var(--cyan-400); width: 24px; height: 24px;"></div>
+      <span>Performing visual defect diagnostic via Azure Vision AI...</span>
+    </div>
+  `;
+
+  try {
+    const res = await fetch('/api/vision', { method: 'POST', body: form });
+    const data = await res.json();
+
+    if (data.result) {
+      visionRawResult = data.result;
+      visionResults.innerHTML = renderMarkdown(data.result);
+      btnCopyVision.style.display = 'inline-flex';
+      showToast('Hardware inspection complete', 'success');
+    } else {
+      visionResults.innerHTML = `
+        <div style="padding:1rem; border-radius:var(--radius-md); background:rgba(244,63,94,0.1); border:1px solid rgba(244,63,94,0.3); color:var(--rose-400);">
+          <strong>Diagnostic Error:</strong> ${escapeHtml(data.error || 'Failed to inspect photo')}
+        </div>
+      `;
+      showToast(data.error || 'Diagnostic failed', 'error');
+    }
+  } catch (err) {
+    visionResults.innerHTML = `<p style="color:var(--rose-400);">Network request failed.</p>`;
+    showToast('Network error calling vision diagnostic', 'error');
+  } finally {
+    btnVision.classList.remove('loading');
+    btnVision.disabled = false;
+  }
+}
+</script>
+{% endblock %}

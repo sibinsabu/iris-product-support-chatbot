@@ -1,0 +1,708 @@
+{% extends "base.html" %}
+
+{% block title %}Iris &bull; AI Diagnostic &amp; Gadget Repair Copilot{% endblock %}
+
+{% block content %}
+<div class="app-viewport">
+  
+  <!-- ==============================================
+       LEFT SIDEBAR (Gadget Repair Store Context)
+       ============================================== -->
+  <aside class="sidebar" id="app-sidebar">
+    <!-- Brand Title -->
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <img src="{{ url_for('static', filename='img/iris-logo.svg') }}" alt="Iris AI">
+        </div>
+        <div>
+          <span class="brand-title">Iris</span>
+          <div style="font-size:0.68rem; color:var(--text-faint); font-weight:700; letter-spacing:0.04em;">DIAGNOSTIC COPILOT</div>
+        </div>
+      </div>
+      <button class="btn-sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+      </button>
+    </div>
+
+    <!-- + New Repair Chat Button -->
+    <button class="btn-new-chat" onclick="startNewChat()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      New Repair Chat
+    </button>
+
+    <!-- Repair Datasets & Crawler Link -->
+    <a href="/crawl" class="btn-new-chat" style="background:#f0fdf4; border-color:#bbf7d0; color:#15803d; text-decoration:none; margin-top:0.4rem; justify-content:center;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:16px;height:16px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+      Repair Datasets &amp; Crawl
+    </a>
+
+    <!-- Search Input -->
+    <div class="sidebar-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" placeholder="Search by device, repair, model..." id="history-search" oninput="filterHistory(this.value)">
+    </div>
+
+    <!-- Pinned & Recent Repairs Scroll -->
+    <div class="sidebar-content-scroll" id="sidebar-scroll">
+      <!-- Recent / Saved Inquiries Section with Delete Options -->
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem; padding-right:0.25rem;">
+          <div class="sidebar-section-title" style="margin-bottom:0;">Chat History</div>
+          <button onclick="clearAllChatHistory()" style="background:none; border:none; font-size:0.7rem; color:var(--rose-500); cursor:pointer; font-weight:700; padding:0.1rem 0.35rem; border-radius:4px;" title="Delete all saved chats">
+            Clear All
+          </button>
+        </div>
+        <div class="sidebar-items-group" id="recent-inquiries-list">
+          <!-- Dynamically populated from localStorage -->
+        </div>
+      </div>
+
+      <!-- Quick Diagnostic Topics -->
+      <div style="margin-top:1rem;">
+        <div class="sidebar-section-title">Common Inquiries</div>
+        <div class="sidebar-items-group" id="preset-topics-list">
+          <!-- Preset quick topics -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Customer Profile / Store Status Footer -->
+    <div class="sidebar-user">
+      <div class="user-profile-info">
+        <div class="user-avatar" style="background:#e0e7ff; color:var(--primary-600);">TF</div>
+        <div>
+          <div class="user-name">TechFix Lab</div>
+          <div class="user-role">Certified Service Store</div>
+        </div>
+      </div>
+      <div style="font-size: 0.72rem; color: var(--emerald-600); font-weight: 600; display: flex; align-items: center; gap: 0.3rem;">
+        <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--emerald-500); display: inline-block;"></span>
+        Open Now
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==============================================
+       MAIN STAGE (Center Clean Area)
+       ============================================== -->
+  <main class="main-stage">
+    <!-- Topbar with Cart Button -->
+    <header class="stage-topbar">
+      <div style="margin-right:auto; font-size:0.8rem; color:var(--text-muted); display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+        <span style="background:#ecfdf5; color:var(--emerald-600); font-weight:700; padding:0.15rem 0.5rem; border-radius:999px; font-size:0.7rem;">90-Day Warranty</span>
+        <span>Mobiles &bull; Laptops &bull; Earphones &bull; Smart Gadgets</span>
+        <a href="/crawl" style="text-decoration:none; display:inline-flex; align-items:center; gap:0.35rem; font-size:0.75rem; font-weight:700; color:var(--primary-600); background:#eef2ff; padding:0.2rem 0.65rem; border-radius:var(--radius-full); border:1px solid rgba(79,70,229,0.25);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+          <span>Repair Datasets &amp; Crawl</span>
+        </a>
+      </div>
+
+      <!-- Clear Current Chat Button -->
+      <button class="btn-clear-chat-topbar" id="btn-clear-active-chat" onclick="clearCurrentChat()" title="Delete / clear current conversation" style="display:none; margin-right:0.6rem;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        <span>Clear Chat</span>
+      </button>
+
+      <button class="btn-open-cart" onclick="toggleCartDrawer()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        <span>Repair Ticket</span>
+        <span class="cart-pill-count" id="topbar-cart-count">1</span>
+      </button>
+    </header>
+
+    <!-- Scrollable Center Canvas -->
+    <div class="stage-scroll-area" id="stage-scroll-area">
+      <!-- 1. Hero State (Matching Reference) -->
+      <div class="hero-state" id="hero-welcome">
+        <div class="hero-bot-icon">
+          <img src="{{ url_for('static', filename='img/iris-logo.svg') }}" alt="Iris AI">
+        </div>
+
+        <h1 class="hero-title">Meet Iris — Your Gadget Diagnostic &amp; Repair Copilot</h1>
+        <p class="hero-subtitle">
+          Ask Iris for instant repair estimates in ₹ INR, diagnose hardware faults, search iFixit guides, or upload a photo of your damaged gadget.
+        </p>
+
+        <!-- 4 Prompt Cards Grid (Mobile, Laptop, Earphones, Defect Photo) -->
+        <div class="prompt-cards-grid">
+          <div class="prompt-card" onclick="selectPromptCard('How much does it cost to replace a shattered back glass or cracked OLED screen on my iPhone?')">
+            <div class="prompt-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+            </div>
+            <div class="prompt-card-title">Mobile Repair</div>
+            <div class="prompt-card-desc">Cracked screens, shattered back glass, and battery replacements.</div>
+          </div>
+
+          <div class="prompt-card" onclick="selectPromptCard('My laptop is overheating, fan running loudly, and battery barely lasts 1 hour. Can you repair it?')">
+            <div class="prompt-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="12" x="3" y="4" rx="2" ry="2"></rect><line x1="2" y1="20" x2="22" y2="20"></line></svg>
+            </div>
+            <div class="prompt-card-title">Laptop Service</div>
+            <div class="prompt-card-desc">MacBook &amp; PC displays, keyboards, fans, and SSD upgrades.</div>
+          </div>
+
+          <div class="prompt-card" onclick="selectPromptCard('One side of my wireless earbuds is very quiet and the battery dies quickly. How can this be repaired?')">
+            <div class="prompt-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+            </div>
+            <div class="prompt-card-title">Earphones &amp; Audio</div>
+            <div class="prompt-card-desc">AirPods battery restoration, ear cushions, and speaker fixes.</div>
+          </div>
+
+          <div class="prompt-card" onclick="triggerPhotoUpload()">
+            <div class="prompt-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M2 12s3.636-7 10-7 10 7 10 7-3.636 7-10 7-10-7-10-7Z"></path></svg>
+            </div>
+            <div class="prompt-card-title">Upload Photo for Quote</div>
+            <div class="prompt-card-desc">Snap your broken gadget for instant AI damage assessment.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Active Chat Stream -->
+      <div class="chat-stream" id="chat-stream" style="display: none;">
+        <!-- Dynamically populated with chat bubbles -->
+      </div>
+    </div>
+
+    <!-- Floating Bottom Input Bar -->
+    <div class="bottom-input-container">
+      <div class="input-capsule">
+        <div class="input-actions-left">
+          <!-- Attachment Photo Button -->
+          <input type="file" id="inline-file-picker" accept="image/*" style="display: none;" onchange="handleImageAttachment(this)">
+          <button class="input-icon-btn" onclick="document.getElementById('inline-file-picker').click()" title="Attach photo of damaged mobile, laptop or earphones">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+          </button>
+          
+          <!-- Voice Dictation Button -->
+          <a href="/speech" class="input-icon-btn" title="Voice audio transcription">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+          </a>
+        </div>
+
+        <textarea id="copilot-input" placeholder="Ask Iris about iPhone back glass, laptop overheating, AirPods repair, error codes..." rows="1"></textarea>
+
+        <button class="btn-circle-send" id="btn-send-msg" onclick="handleSendMessage()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+        </button>
+      </div>
+
+      <div class="input-hint-row">
+        <span>Press <kbd style="background:#f1f5f9; padding:0.1rem 0.3rem; border-radius:4px; border:1px solid #e2e8f0; font-size:0.7rem;">Enter</kbd> to send</span>
+        <span>Iris AI provides instant repair estimates. All repairs backed by 90-day warranty.</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==============================================
+       SLIDE-OVER CHECKOUT DRAWER (Repair Ticket & Booking)
+       ============================================== -->
+  <aside class="checkout-drawer" id="checkout-drawer">
+    <div class="drawer-header">
+      <div class="drawer-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:var(--primary-500);"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+        <span>Repair Ticket &amp; Booking</span>
+      </div>
+      <button class="drawer-close-btn" onclick="toggleCartDrawer()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <div class="cart-items-container" id="cart-items-list">
+      <!-- Rendered dynamically by main.js renderCart() -->
+    </div>
+
+    <div class="drawer-footer">
+      <div class="drawer-price-row">
+        <span>Repair Service Subtotal</span>
+        <span id="cart-subtotal">₹2,499</span>
+      </div>
+      <div class="drawer-price-row">
+        <span>Turnaround Estimate</span>
+        <span style="color: var(--emerald-600); font-weight:600;">Same-Day (45 Mins)</span>
+      </div>
+      <div class="drawer-price-row">
+        <span>Store Warranty</span>
+        <span style="color: var(--primary-600); font-weight:600;">90-Day Guarantee</span>
+      </div>
+      <div class="drawer-price-row">
+        <span>Estimated GST (18%)</span>
+        <span id="cart-tax">₹450</span>
+      </div>
+      <div class="drawer-price-row total">
+        <span>Total Due</span>
+        <span id="cart-total">₹2,949</span>
+      </div>
+
+      <button class="btn-drawer-checkout" id="btn-checkout" onclick="executeCheckout()">
+        Confirm Repair Booking &rarr;
+      </button>
+
+      <div style="font-size:0.72rem; color:var(--text-faint); text-align:center;">
+        Pay in store upon inspection or instant checkout &bull; No fix, no fee guarantee
+      </div>
+    </div>
+  </aside>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const input = document.getElementById('copilot-input');
+const hero = document.getElementById('hero-welcome');
+const chatStream = document.getElementById('chat-stream');
+const scrollArea = document.getElementById('stage-scroll-area');
+const btnSend = document.getElementById('btn-send-msg');
+const topbarCartCount = document.getElementById('topbar-cart-count');
+const btnClearActiveChat = document.getElementById('btn-clear-active-chat');
+
+const IRIS_LOGO_URL = "{{ url_for('static', filename='img/iris-logo.svg') }}";
+
+// Active Chat State
+let currentSessionId = null;
+let currentMessages = [];
+
+// Default Quick Topics
+const DEFAULT_TOPICS = [
+  { id: 'iphone-back-glass', title: 'iPhone Back Glass Laser Repair', sub: 'Mobiles • Laser Glass Removal (₹2,499)', prompt: 'How do you fix a shattered iPhone back glass, how long does laser removal take, and what is the cost?' },
+  { id: 'macbook-thermal', title: 'MacBook Battery & Fans', sub: 'Laptops • Deep clean & battery (₹4,999)', prompt: 'My MacBook Pro fan is running constantly and battery drains fast. Can you provide a service quote?' },
+  { id: 'airpods-fix', title: 'AirPods Audio & Battery Fix', sub: 'Earphones • One side dead / buds (₹1,299)', prompt: 'My left AirPod has no sound and the right bud battery dies in 30 minutes. What repair is needed?' },
+  { id: 'samsung-screen', title: 'Samsung Galaxy OLED Crack', sub: 'Mobiles • Display Digitizer (₹4,999)', prompt: 'I dropped my Samsung Galaxy phone and the AMOLED screen is flickering with black spots. Can the screen be replaced today?' },
+  { id: 'laptop-keyboard', title: 'Dell XPS Keyboard Repair', sub: 'Laptops • Sticky keys & trackpad', prompt: 'Liquid was spilled on my laptop keyboard and several keys no longer register. Can you clean or replace the keyboard?' },
+  { id: 'apple-watch', title: 'Apple Watch Glass Scratch', sub: 'Wearables • OLED Polish / Glass', prompt: 'My Apple Watch screen has a deep crack from a gym workout. What is the repair process and quote?' }
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+  initChatHistory();
+  renderPresetTopics();
+});
+
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    handleSendMessage();
+  }
+});
+
+function selectPromptCard(text) {
+  input.value = text;
+  handleSendMessage();
+}
+
+function triggerPhotoUpload() {
+  document.getElementById('inline-file-picker').click();
+}
+
+function startNewChat() {
+  currentSessionId = 'chat-' + Date.now();
+  currentMessages = [];
+  chatStream.innerHTML = '';
+  chatStream.style.display = 'none';
+  hero.style.display = 'flex';
+  if (btnClearActiveChat) btnClearActiveChat.style.display = 'none';
+  input.value = '';
+  input.focus();
+  document.querySelectorAll('.history-item').forEach(el => el.classList.remove('active'));
+  showToast('Started new chat session with Iris', 'info');
+}
+
+// Clear Current Active Conversation
+function clearCurrentChat() {
+  if (currentMessages.length === 0 && chatStream.innerHTML === '') return;
+  
+  chatStream.innerHTML = '';
+  chatStream.style.display = 'none';
+  hero.style.display = 'flex';
+  if (btnClearActiveChat) btnClearActiveChat.style.display = 'none';
+  input.value = '';
+
+  if (currentSessionId) {
+    deleteChatSessionById(currentSessionId, false);
+  }
+  currentSessionId = null;
+  currentMessages = [];
+  showToast('Current conversation cleared', 'info');
+}
+
+// Delete Individual Message Bubble
+function deleteMessageBubble(buttonEl) {
+  const row = buttonEl.closest('.chat-bubble-row');
+  if (!row) return;
+
+  row.style.opacity = '0';
+  row.style.transform = 'translateY(-6px)';
+  row.style.transition = 'all 0.2s ease';
+
+  setTimeout(() => {
+    row.remove();
+    // If no more bubbles left in chat stream, restore hero welcome
+    if (chatStream.querySelectorAll('.chat-bubble-row').length === 0) {
+      chatStream.style.display = 'none';
+      hero.style.display = 'flex';
+      if (btnClearActiveChat) btnClearActiveChat.style.display = 'none';
+    }
+    showToast('Message deleted', 'info');
+  }, 200);
+}
+
+// Copy Bubble Text
+function copyBubbleText(buttonEl) {
+  const row = buttonEl.closest('.chat-bubble-row');
+  if (!row) return;
+  const bodyEl = row.querySelector('.bubble-body');
+  if (bodyEl) {
+    copyToClipboard(bodyEl.innerText, buttonEl);
+  }
+}
+
+// Chat History Management (localStorage)
+function getSavedSessions() {
+  try {
+    return JSON.parse(localStorage.getItem('iris_chat_sessions_v2')) || [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveSessions(sessions) {
+  try {
+    localStorage.setItem('iris_chat_sessions_v2', JSON.stringify(sessions));
+  } catch (e) {}
+}
+
+function initChatHistory() {
+  renderRecentInquiries();
+}
+
+function renderPresetTopics() {
+  const container = document.getElementById('preset-topics-list');
+  if (!container) return;
+
+  container.innerHTML = DEFAULT_TOPICS.map(t => `
+    <div class="history-item" onclick="loadSavedTopic('${t.id}')">
+      <div class="history-item-left">
+        <span class="history-item-title">${escapeHtml(t.title)}</span>
+        <span class="history-item-sub">${escapeHtml(t.sub)}</span>
+      </div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="17" x2="12" y2="22"></line><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.89A2 2 0 0 1 15 10.77V7a3 3 0 0 0-6 0v3.77a2 2 0 0 1-1.11 1.79l-1.78.89A2 2 0 0 0 5 15.24Z"></path></svg>
+    </div>
+  `).join('');
+}
+
+function renderRecentInquiries() {
+  const container = document.getElementById('recent-inquiries-list');
+  if (!container) return;
+
+  const sessions = getSavedSessions();
+  if (sessions.length === 0) {
+    container.innerHTML = `
+      <div style="font-size:0.75rem; color:var(--text-faint); padding:0.4rem 0.6rem; font-style:italic;">
+        No saved chats yet.
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = sessions.map(s => `
+    <div class="history-item ${s.id === currentSessionId ? 'active' : ''}" onclick="loadSession('${s.id}')">
+      <div class="history-item-left">
+        <span class="history-item-title">${escapeHtml(s.title || 'Diagnostic Chat')}</span>
+        <span class="history-item-sub">${escapeHtml(s.timeAgo || 'Recent')} &bull; ${s.messagesCount || 1} msg</span>
+      </div>
+      <div class="history-item-actions">
+        <button class="btn-delete-history" onclick="deleteHistorySession(event, '${s.id}')" title="Delete chat session">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Delete Chat Session from History
+function deleteHistorySession(event, id) {
+  event.stopPropagation();
+  deleteChatSessionById(id, true);
+}
+
+function deleteChatSessionById(id, notify = true) {
+  let sessions = getSavedSessions();
+  sessions = sessions.filter(s => s.id !== id);
+  saveSessions(sessions);
+
+  if (currentSessionId === id) {
+    currentSessionId = null;
+    currentMessages = [];
+    chatStream.innerHTML = '';
+    chatStream.style.display = 'none';
+    hero.style.display = 'flex';
+    if (btnClearActiveChat) btnClearActiveChat.style.display = 'none';
+  }
+
+  renderRecentInquiries();
+  if (notify) showToast('Deleted chat session', 'info');
+}
+
+// Clear All Chat History
+function clearAllChatHistory() {
+  const sessions = getSavedSessions();
+  if (sessions.length === 0) {
+    showToast('No chat history to clear', 'info');
+    return;
+  }
+
+  saveSessions([]);
+  currentSessionId = null;
+  currentMessages = [];
+  chatStream.innerHTML = '';
+  chatStream.style.display = 'none';
+  hero.style.display = 'flex';
+  if (btnClearActiveChat) btnClearActiveChat.style.display = 'none';
+
+  renderRecentInquiries();
+  showToast('All chat history deleted', 'success');
+}
+
+function persistActiveChatSession(firstPrompt) {
+  if (!currentSessionId) {
+    currentSessionId = 'chat-' + Date.now();
+  }
+
+  let sessions = getSavedSessions();
+  let existing = sessions.find(s => s.id === currentSessionId);
+
+  const title = (firstPrompt || 'Diagnostic Repair').slice(0, 36) + (firstPrompt && firstPrompt.length > 36 ? '...' : '');
+
+  if (existing) {
+    existing.messagesCount = currentMessages.length;
+    existing.lastUpdated = Date.now();
+    existing.timeAgo = 'Just now';
+  } else {
+    sessions.unshift({
+      id: currentSessionId,
+      title: title,
+      messagesCount: currentMessages.length,
+      createdAt: Date.now(),
+      timeAgo: 'Just now',
+      messages: currentMessages
+    });
+  }
+
+  saveSessions(sessions.slice(0, 20)); // keep last 20
+  renderRecentInquiries();
+}
+
+function loadSession(id) {
+  const sessions = getSavedSessions();
+  const session = sessions.find(s => s.id === id);
+  if (!session) return;
+
+  currentSessionId = session.id;
+  currentMessages = session.messages || [];
+
+  chatStream.innerHTML = '';
+  hero.style.display = 'none';
+  chatStream.style.display = 'flex';
+  if (btnClearActiveChat) btnClearActiveChat.style.display = 'inline-flex';
+
+  // Render stored messages
+  currentMessages.forEach(msg => {
+    if (msg.role === 'user') {
+      appendUserBubble(msg.text, false);
+    } else {
+      appendAssistantBubble(msg.text, false);
+    }
+  });
+
+  renderRecentInquiries();
+  scrollArea.scrollTop = scrollArea.scrollHeight;
+}
+
+function loadSavedTopic(topic) {
+  const found = DEFAULT_TOPICS.find(t => t.id === topic);
+  if (found) {
+    selectPromptCard(found.prompt);
+  }
+}
+
+function toggleCartDrawer() {
+  const drawer = document.getElementById('checkout-drawer');
+  drawer.classList.toggle('open');
+}
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('app-sidebar');
+  sidebar.classList.toggle('open');
+}
+
+function filterHistory(query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll('.history-item').forEach(el => {
+    const text = el.innerText.toLowerCase();
+    el.style.display = text.includes(q) ? 'flex' : 'none';
+  });
+}
+
+function appendUserBubble(text, save = true) {
+  const userRow = document.createElement('div');
+  userRow.className = 'chat-bubble-row user';
+  userRow.innerHTML = `
+    <div class="bubble-avatar user">You</div>
+    <div>
+      <div class="bubble-body">
+        ${escapeHtml(text).replace(/\n/g, '<br>')}
+      </div>
+      <div class="bubble-actions-row" style="justify-content:flex-end;">
+        <button class="btn-bubble-action" onclick="copyBubbleText(this)">Copy</button>
+        <button class="btn-bubble-action delete" onclick="deleteMessageBubble(this)" title="Delete message">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Delete
+        </button>
+      </div>
+    </div>
+  `;
+  chatStream.appendChild(userRow);
+  if (save) currentMessages.push({ role: 'user', text: text });
+}
+
+function appendAssistantBubble(text, save = true) {
+  const aiRow = document.createElement('div');
+  aiRow.className = 'chat-bubble-row assistant';
+  aiRow.innerHTML = `
+    <div class="bubble-avatar bot">
+      <img src="${IRIS_LOGO_URL}" alt="Iris AI">
+    </div>
+    <div>
+      <div class="bubble-body">
+        ${renderMarkdown(text)}
+      </div>
+      <div class="bubble-actions-row">
+        <button class="btn-bubble-action" onclick="copyBubbleText(this)">Copy</button>
+        <button class="btn-bubble-action delete" onclick="deleteMessageBubble(this)" title="Delete message">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Delete
+        </button>
+      </div>
+    </div>
+  `;
+  chatStream.appendChild(aiRow);
+  if (save) currentMessages.push({ role: 'assistant', text: text });
+}
+
+async function handleSendMessage() {
+  const query = input.value.trim();
+  if (!query) return;
+
+  hero.style.display = 'none';
+  chatStream.style.display = 'flex';
+  if (btnClearActiveChat) btnClearActiveChat.style.display = 'inline-flex';
+
+  appendUserBubble(query, true);
+  input.value = '';
+  scrollArea.scrollTop = scrollArea.scrollHeight;
+
+  const loadingRow = document.createElement('div');
+  loadingRow.className = 'chat-bubble-row assistant';
+  loadingRow.id = 'chat-loading-row';
+  loadingRow.innerHTML = `
+    <div class="bubble-avatar bot">
+      <img src="${IRIS_LOGO_URL}" alt="Iris AI">
+    </div>
+    <div class="bubble-body" style="display:flex; align-items:center; gap:0.5rem; color:var(--text-muted);">
+      <span class="spinner" style="display:inline-block; width:16px; height:16px; border:2px solid #e2e8f0; border-top-color:var(--primary-500); border-radius:50%; animation:spin 0.75s linear infinite;"></span>
+      <span>Iris is diagnosing fault and checking repair catalog...</span>
+    </div>
+  `;
+  chatStream.appendChild(loadingRow);
+  scrollArea.scrollTop = scrollArea.scrollHeight;
+
+  btnSend.disabled = true;
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: query })
+    });
+    const data = await res.json();
+    loadingRow.remove();
+
+    if (data.reply) {
+      appendAssistantBubble(data.reply, true);
+    } else {
+      appendAssistantBubble('Error: ' + (data.error || 'Failed to fetch response'), true);
+    }
+
+    persistActiveChatSession(query);
+  } catch (err) {
+    loadingRow.remove();
+    showToast('Failed to reach Iris AI', 'error');
+  } finally {
+    btnSend.disabled = false;
+    scrollArea.scrollTop = scrollArea.scrollHeight;
+    input.focus();
+  }
+}
+
+// Handle Photo Attachment for Broken Mobiles, Laptops, Earphones
+async function handleImageAttachment(inputEl) {
+  if (!inputEl.files || !inputEl.files[0]) return;
+  const file = inputEl.files[0];
+
+  hero.style.display = 'none';
+  chatStream.style.display = 'flex';
+  if (btnClearActiveChat) btnClearActiveChat.style.display = 'inline-flex';
+
+  const userRow = document.createElement('div');
+  userRow.className = 'chat-bubble-row user';
+  userRow.innerHTML = `
+    <div class="bubble-avatar user">You</div>
+    <div>
+      <div class="bubble-body">
+        <div style="font-weight:700; color:var(--text-title); margin-bottom:0.35rem;">Uploaded Broken Gadget Photo:</div>
+        <img src="${URL.createObjectURL(file)}" style="max-width:260px; max-height:200px; border-radius:10px; border:1px solid #cbd5e1; display:block;">
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.35rem;">${file.name} (${(file.size / 1024).toFixed(1)} KB)</div>
+      </div>
+      <div class="bubble-actions-row" style="justify-content:flex-end;">
+        <button class="btn-bubble-action delete" onclick="deleteMessageBubble(this)" title="Delete message">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Delete
+        </button>
+      </div>
+    </div>
+  `;
+  chatStream.appendChild(userRow);
+  scrollArea.scrollTop = scrollArea.scrollHeight;
+
+  const loadingRow = document.createElement('div');
+  loadingRow.className = 'chat-bubble-row assistant';
+  loadingRow.id = 'vision-loading-row';
+  loadingRow.innerHTML = `
+    <div class="bubble-avatar bot"><img src="${IRIS_LOGO_URL}" alt="Iris AI"></div>
+    <div class="bubble-body" style="display:flex; align-items:center; gap:0.5rem; color:var(--text-muted);">
+      <span class="spinner" style="display:inline-block; width:16px; height:16px; border:2px solid #e2e8f0; border-top-color:var(--primary-500); border-radius:50%; animation:spin 0.75s linear infinite;"></span>
+      <span>Iris is visually inspecting damaged gadget...</span>
+    </div>
+  `;
+  chatStream.appendChild(loadingRow);
+  scrollArea.scrollTop = scrollArea.scrollHeight;
+
+  const form = new FormData();
+  form.append('image', file);
+  form.append('prompt', 'Inspect this broken or damaged gadget photo (mobile, laptop, earphones, smartwatch). Identify the model, diagnose the exact physical damage (cracked screen, shattered back glass, broken hinge, worn cushions), recommend the repair service, and provide estimated cost and turnaround time.');
+
+  try {
+    const res = await fetch('/api/vision', { method: 'POST', body: form });
+    const data = await res.json();
+    loadingRow.remove();
+
+    appendAssistantBubble(data.result || data.error || 'Visual inspection complete', true);
+    persistActiveChatSession('Photo Inspection: ' + file.name);
+  } catch (e) {
+    loadingRow.remove();
+    showToast('Failed to analyze image defect', 'error');
+  } finally {
+    scrollArea.scrollTop = scrollArea.scrollHeight;
+  }
+}
+</script>
+{% endblock %}

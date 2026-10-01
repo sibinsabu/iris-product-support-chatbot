@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Ticket Sentiment &bull; Apex Support AI{% endblock %}
+
+{% block content %}
+<div style="max-width: 1240px; margin: 2rem auto; padding: 0 1.5rem;">
+  <div class="page-header">
+    <div class="page-header-top">
+      <div class="page-title-row">
+        <div class="page-icon-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="6" x2="3" y2="6"></line><line x1="15" y1="12" x2="3" y2="12"></line><line x1="17" y1="18" x2="3" y2="18"></line></svg>
+        </div>
+        <div>
+          <h1 class="page-title">Support Ticket &amp; Sentiment Analyzer</h1>
+          <p class="page-desc">Analyze customer ticket sentiment, urgency, extracted hardware entities, and problem summaries using Azure OpenAI linguistics.</p>
+        </div>
+      </div>
+      <a href="/" class="btn btn-secondary btn-sm">
+        &larr; Back to Chat &amp; Checkout
+      </a>
+    </div>
+  </div>
+
+  <div class="split-grid">
+    <div class="device-card" style="display:flex; flex-direction:column;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+        <label class="form-label" style="margin-bottom:0;">Customer Inquiry / Ticket Body</label>
+        <span id="char-count" style="font-size:0.75rem; color:var(--text-faint); font-family:var(--font-mono);">0 characters</span>
+      </div>
+
+      <textarea id="text-input" class="form-textarea" rows="11" style="flex:1;" placeholder="Paste customer support tickets, warranty complaints, or product feedback..."></textarea>
+
+      <div class="chip-container" style="margin: 0.85rem 0 1.25rem;">
+        <span class="chip-label">Presets:</span>
+        <button class="prompt-chip" onclick="loadSample('cushion')">Cushion Wear Issue</button>
+        <button class="prompt-chip" onclick="loadSample('warranty')">Warranty Claim Request</button>
+        <button class="prompt-chip" onclick="loadSample('feedback')">Product Review</button>
+      </div>
+
+      <button class="btn btn-primary" id="btn-analyze" onclick="analyzeText()">
+        <span class="spinner" id="analyze-spinner"></span>
+        <span class="btn-text">Analyze Ticket Sentiment</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      </button>
+    </div>
+
+    <!-- Output -->
+    <div class="output-card">
+      <div class="output-header">
+        <div class="output-title-group">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--cyan-400);"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          <span>Cognitive Ticket Intelligence</span>
+        </div>
+        <button class="btn btn-secondary btn-sm" id="btn-copy" onclick="copyResult()" style="display:none;">
+          Copy Output
+        </button>
+      </div>
+
+      <div class="output-body" id="analysis-output">
+        <div class="output-empty" id="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="21" y1="6" x2="3" y2="6"></line>
+            <line x1="15" y1="12" x2="3" y2="12"></line>
+            <line x1="17" y1="18" x2="3" y2="18"></line>
+          </svg>
+          <p>Paste customer message and click "Analyze Ticket Sentiment" to extract sentiment polarity and key problem entities.</p>
+        </div>
+
+        <div id="structured-results" style="display:none;" class="markdown-content"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const textInput = document.getElementById('text-input');
+const charCount = document.getElementById('char-count');
+const btnAnalyze = document.getElementById('btn-analyze');
+const emptyState = document.getElementById('empty-state');
+const structuredResults = document.getElementById('structured-results');
+const btnCopy = document.getElementById('btn-copy');
+
+let rawOutput = '';
+
+textInput.addEventListener('input', () => {
+  charCount.textContent = `${textInput.value.length} characters`;
+});
+
+const samples = {
+  cushion: `I purchased the Apex Pro Wireless headset on November 2nd. The sound quality has been extraordinary, but after 8 months of daily use in my Seattle home office, the protein leather on the left ear cushion has started peeling severely. It leaves black residue on my ears during work calls. I love the headset and need replacement ear cushions immediately. Are they covered under warranty?`,
+  warranty: `Ticket #TK-49021: Customer Mark Stevens is requesting an urgent replacement for his Apex Pro charging cable and wireless audio dongle. The USB-C connector became loose after a trip to Denver on August 14th, and will no longer seat securely in the charging cradle. The customer holds an active Foundry Care+ plan and requests express 2-day replacement dispatch.`,
+  feedback: `Exceptional engineering on the Apex Pro Wireless ANC! As a sound engineer working in Austin, the active noise cancellation completely silences ambient air conditioning noise. The companion app firmware update 4.2.1 installed smoothly within 3 minutes. Highly satisfied with both the product durability and customer support responsiveness.`
+};
+
+function loadSample(key) {
+  if (samples[key]) {
+    textInput.value = samples[key];
+    charCount.textContent = `${textInput.value.length} characters`;
+    textInput.focus();
+  }
+}
+
+function copyResult() {
+  if (rawOutput) copyToClipboard(rawOutput, btnCopy);
+}
+
+async function analyzeText() {
+  const text = textInput.value.trim();
+  if (!text) {
+    showToast('Please enter customer ticket text', 'error');
+    return;
+  }
+
+  btnAnalyze.classList.add('loading');
+  btnAnalyze.disabled = true;
+  emptyState.style.display = 'none';
+  structuredResults.style.display = 'block';
+  structuredResults.innerHTML = `
+    <div style="display:flex; align-items:center; justify-content:center; height:200px; gap:0.75rem; color:var(--text-muted);">
+      <div class="spinner" style="display:inline-block; border-color: rgba(34,211,238,0.2); border-top-color: var(--cyan-400); width: 24px; height: 24px;"></div>
+      <span>Extracting customer sentiment and ticket entities via Azure OpenAI...</span>
+    </div>
+  `;
+
+  try {
+    const res = await fetch('/api/text-analysis', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    const data = await res.json();
+
+    if (data.result) {
+      rawOutput = data.result;
+      structuredResults.innerHTML = renderMarkdown(data.result);
+      btnCopy.style.display = 'inline-flex';
+      showToast('Ticket sentiment analysis complete', 'success');
+    } else {
+      structuredResults.innerHTML = `<div style="color:var(--rose-400);">Error: ${escapeHtml(data.error || 'Analysis failed')}</div>`;
+      showToast(data.error || 'Analysis failed', 'error');
+    }
+  } catch (err) {
+    structuredResults.innerHTML = `<p style="color:var(--rose-400);">Network request failed.</p>`;
+    showToast('Network error occurred', 'error');
+  } finally {
+    btnAnalyze.classList.remove('loading');
+    btnAnalyze.disabled = false;
+  }
+}
+</script>
+{% endblock %}
