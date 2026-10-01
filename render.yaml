@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: iris-techfix-copilot
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: AZURE_OPENAI_ENDPOINT
+        sync: false
+      - key: AZURE_OPENAI_API_KEY
+        sync: false
+      - key: TEXT_MODEL_DEPLOYMENT
+        sync: false
+      - key: VISION_MODEL_DEPLOYMENT
+        sync: false
+      - key: IMAGE_MODEL_DEPLOYMENT
+        sync: false
+      - key: SPEECH_ENDPOINT
+        sync: false
+      - key: SPEECH_API_KEY
+        sync: false
+      - key: SPEECH_REGION
+        sync: false
+      - key: CONTENT_ENDPOINT
+        sync: false
+      - key: CONTENT_API_KEY
+        sync: false
+      - key: CONTENT_API_VERSION
+        sync: false

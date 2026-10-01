@@ -6,6 +6,7 @@ from openai import OpenAI
 load_dotenv()
 app = Flask(__name__, template_folder="templates", static_folder="static")
 app.config["MAX_CONTENT_LENGTH"] = 25 * 1024 * 1024
+os.makedirs("uploads", exist_ok=True)
 
 AOAI_ENDPOINT=os.getenv("AZURE_OPENAI_ENDPOINT","").rstrip("/")
 AOAI_KEY=os.getenv("AZURE_OPENAI_API_KEY","")
@@ -313,5 +314,7 @@ def health():
                    content_understanding=bool(CONTENT_KEY),
                    crawler=True)
 
-if __name__=="__main__":
-    app.run(debug=True, host="127.0.0.1", port=5000)
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 5000))
+    debug = os.getenv("FLASK_DEBUG", "false").lower() in ("true", "1", "yes")
+    app.run(debug=debug, host="0.0.0.0", port=port)
