@@ -637,7 +637,7 @@
     margin-bottom: 0.6rem;
   }
 
-  /* TechFix Parts & Pricing Card */
+  /* Iris Parts & Pricing Card */
   .part-card {
     background: #ffffff;
     border: 1px solid var(--border-light);
@@ -846,7 +846,7 @@
       </div>
       <h1 class="crawl-title">Gadget Repair Datasets &amp; Federated Crawler</h1>
       <p class="crawl-subtitle">
-        Direct live connection to official repair datasets across smartphones, laptops, audio gear, and wearables: iFixit REST API, OEM Hardware Diagnostic Codes (Apple/Dell/HP/Lenovo/Samsung), Safety Recalls, TechFix Parts Index (₹ INR), and Live Web URL Scraper.
+        Direct live connection to official repair datasets across smartphones, laptops, audio gear, and wearables: iFixit REST API, OEM Hardware Diagnostic Codes (Apple/Dell/HP/Lenovo/Samsung), Safety Recalls, Iris Parts Index (₹ INR), and Live Web URL Scraper.
       </p>
     </div>
     <a href="/" class="crawl-back-btn">
@@ -892,7 +892,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
       </div>
       <div class="dataset-info">
-        <div class="dataset-name">TechFix Parts &amp; Pricing Index</div>
+        <div class="dataset-name">Iris Parts &amp; Pricing Index</div>
         <div class="dataset-meta"><span class="status-dot"></span> Quotes in ₹ INR &bull; 90-Day Warranty</div>
       </div>
     </div>
@@ -925,7 +925,7 @@
       </button>
       <button class="mode-pill" data-mode="catalog" onclick="setMode('catalog', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><tag></tag><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
-        TechFix Parts Catalog (₹ INR)
+        Iris Parts Catalog (₹ INR)
       </button>
     </div>
 
@@ -978,7 +978,7 @@
         <span class="breakdown-tag" id="tag-ifixit">iFixit: 0</span>
         <span class="breakdown-tag" id="tag-diag">Diagnostic Codes: 0</span>
         <span class="breakdown-tag" id="tag-recalls">Recalls: 0</span>
-        <span class="breakdown-tag" id="tag-catalog">TechFix Parts: 0</span>
+        <span class="breakdown-tag" id="tag-catalog">Iris Parts: 0</span>
         <button class="json-drawer-btn" onclick="toggleJsonViewer()">Inspect Raw JSON</button>
       </div>
     </div>
@@ -1052,12 +1052,12 @@
       </div>
     </div>
 
-    <!-- 4. TechFix Parts & Pricing Catalog (₹ INR) -->
+    <!-- 4. Iris Parts & Pricing Catalog (₹ INR) -->
     <div id="section-catalog">
       <div class="dataset-section-title">
         <div class="dataset-title-text">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:#9333ea;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
-          <span>TechFix Replacement Parts &amp; Repair Pricing (₹ INR)</span>
+          <span>Iris Replacement Parts &amp; Repair Pricing (₹ INR)</span>
           <span class="dataset-count-badge" id="count-badge-catalog">0</span>
         </div>
       </div>
@@ -1185,7 +1185,7 @@
     document.getElementById('tag-ifixit').textContent = `iFixit: ${stats.ifixit_count || 0}`;
     document.getElementById('tag-diag').textContent = `Diagnostic Codes: ${stats.diagnostic_count || 0}`;
     document.getElementById('tag-recalls').textContent = `Recalls: ${stats.recall_count || 0}`;
-    document.getElementById('tag-catalog').textContent = `TechFix Parts: ${stats.catalog_count || 0}`;
+    document.getElementById('tag-catalog').textContent = `Iris Parts: ${stats.catalog_count || 0}`;
 
     // Raw JSON
     const jsonCode = document.querySelector('#json-viewer-box code');
@@ -1324,7 +1324,7 @@
       `).join('');
     }
 
-    // 4. TechFix Parts Catalog
+    // 4. Iris Parts Catalog
     const catalogContainer = document.getElementById('catalog-cards-container');
     const catalogSection = document.getElementById('section-catalog');
     document.getElementById('count-badge-catalog').textContent = (data.parts_catalog || []).length;

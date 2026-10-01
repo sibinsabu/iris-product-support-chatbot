@@ -1,5 +1,5 @@
 /**
- * TechFix AI - Gadget Repair & Support Copilot
+ * Iris AI - Gadget Repair & Diagnostic Copilot
  * Fixing Mobiles, Laptops, Earphones, and Smart Gadgets
  */
 

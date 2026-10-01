@@ -70,10 +70,12 @@
     <!-- Customer Profile / Store Status Footer -->
     <div class="sidebar-user">
       <div class="user-profile-info">
-        <div class="user-avatar" style="background:#e0e7ff; color:var(--primary-600);">TF</div>
+        <div class="user-avatar" style="background:linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%); display:flex; align-items:center; justify-content:center; padding:4px;">
+          <img src="{{ url_for('static', filename='img/iris-logo.svg') }}" alt="Iris" style="width:22px; height:22px; display:block;">
+        </div>
         <div>
-          <div class="user-name">TechFix Lab</div>
-          <div class="user-role">Certified Service Store</div>
+          <div class="user-name">Iris Lab</div>
+          <div class="user-role">Certified Diagnostic Lab</div>
         </div>
       </div>
       <div style="font-size: 0.72rem; color: var(--emerald-600); font-weight: 600; display: flex; align-items: center; gap: 0.3rem;">

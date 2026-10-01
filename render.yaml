@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: iris-techfix-copilot
+    name: iris-product-support-chatbot
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt

@@ -385,7 +385,27 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.75rem;
+.btn-clear-chat-topbar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.8rem;
+  background: #ffffff;
+  border: 1px solid #fee2e2;
+  border-radius: var(--radius-full);
+  color: #dc2626;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.btn-clear-chat-topbar:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #b91c1c;
+  transform: translateY(-1px);
 }
 
 .btn-open-cart {

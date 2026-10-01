@@ -4,7 +4,7 @@ Integrates:
 1. iFixit Live REST API (Official Repair Guides, Teardowns, Tools, Difficulty)
 2. OEM Hardware Diagnostic & Fault Code Datasets (Apple, Dell ePSA, HP, Lenovo, Samsung)
 3. Consumer Electronics Safety Recalls & Service Advisory Database
-4. TechFix Parts & Service Catalog (Pricing in Indian Rupees ₹ INR)
+4. Iris Parts & Service Catalog (Pricing in Indian Rupees ₹ INR)
 5. Live Web / URL Crawler Engine with BeautifulSoup & AI Diagnostic Extraction
 """
 
@@ -120,7 +120,7 @@ DIAGNOSTIC_CODES_DATASET = [
         "severity": "Moderate",
         "symptom": "Flashing orange battery LED indicator, BIOS prompt: 'The battery is operating normally, but it has reached end of usable life'.",
         "root_cause": "Lithium pouch capacity dropped below 60% of design capacity; internal impedance too high.",
-        "action": "Install OEM Dell 56Wh / 86Wh high-capacity replacement battery pack with 90-day TechFix warranty.",
+        "action": "Install OEM Dell 56Wh / 86Wh high-capacity replacement battery pack with 90-day Iris warranty.",
         "estimated_price_inr": 3899,
         "service_id": "macbook-battery-repair"
     },
@@ -278,7 +278,7 @@ RECALLS_DATASET = [
         "risk_level": "Severe (Fire & Thermal Runaway)",
         "defect_summary": "Affected units contain a defective lithium-ion battery cell that may overheat and pose a severe fire safety risk.",
         "affected_period": "Sold primarily between September 2015 and February 2017.",
-        "remedy": "Stop using device immediately. Free battery replacement program or TechFix certified cell swap.",
+        "remedy": "Stop using device immediately. Free battery replacement program or Iris certified cell swap.",
         "verification_method": "Check serial number in Apple Menu > About This Mac > Serial Number."
     },
     {
@@ -292,7 +292,7 @@ RECALLS_DATASET = [
         "defect_summary": "A small percentage of iPhone 11 displays may stop responding to touch due to an issue with the display driver IC module.",
         "affected_period": "Manufactured between November 2019 and May 2020.",
         "remedy": "Display digitizer module replacement with OEM high-refresh panel.",
-        "verification_method": "Enter IMEI/Serial number on Apple Service or inspect via TechFix diagnostic bench."
+        "verification_method": "Enter IMEI/Serial number on Apple Service or inspect via Iris diagnostic bench."
     },
     {
         "id": "RECALL-APL-APP1",
@@ -305,7 +305,7 @@ RECALLS_DATASET = [
         "defect_summary": "Affected units experience crackling or static sounds that increase in loud environments or while exercising; Active Noise Cancellation loses bass or increases background sounds.",
         "affected_period": "Manufactured before October 2020.",
         "remedy": "Acoustic mesh clearing or replacement of affected left/right earbud units.",
-        "verification_method": "Audio frequency sweep test at TechFix Lab."
+        "verification_method": "Audio frequency sweep test at Iris Lab."
     },
     {
         "id": "RECALL-SAM-NOTE7",
@@ -349,9 +349,9 @@ RECALLS_DATASET = [
 ]
 
 # ==============================================================================
-# 3. TECHFIX REPAIR CATALOG & PARTS PRICING DATASET (INR ₹)
+# 3. IRIS REPAIR CATALOG & PARTS PRICING DATASET (INR ₹)
 # ==============================================================================
-TECHFIX_PARTS_CATALOG = [
+IRIS_PARTS_CATALOG = [
     {
         "id": "iphone-back-glass-repair",
         "name": "iPhone Back Glass Laser Removal & Replacement",
@@ -360,7 +360,7 @@ TECHFIX_PARTS_CATALOG = [
         "models": "iPhone 12, 13, 14, 15, 16 Series (Standard, Pro, Pro Max)",
         "price_inr": 2499,
         "turnaround": "45 Mins Walk-in or Express Mail-In",
-        "warranty": "90-Day TechFix Guarantee",
+        "warranty": "90-Day Iris Guarantee",
         "in_stock": True,
         "difficulty": "Moderate",
         "tools_required": ["Specialized Fiber Laser Machine", "Suction Clamp", "ESD Tweezers", "UV Optical Adhesive", "Clamping Mold"],
@@ -374,7 +374,7 @@ TECHFIX_PARTS_CATALOG = [
         "models": "iPhone X, 11, 12, 13, 14, 15 Series",
         "price_inr": 4999,
         "turnaround": "30 Mins Walk-in",
-        "warranty": "90-Day TechFix Guarantee",
+        "warranty": "90-Day Iris Guarantee",
         "in_stock": True,
         "difficulty": "Easy to Moderate",
         "tools_required": ["Pentalobe P2 Screwdriver", "iOpener Heat Pad", "Precision Suction Handle", "Spudger", "Tri-point Y000"],
@@ -494,6 +494,9 @@ TECHFIX_PARTS_CATALOG = [
     }
 ]
 
+# Backward compatibility alias
+TECHFIX_PARTS_CATALOG = IRIS_PARTS_CATALOG
+
 # ==============================================================================
 # 4. IFIXIT LIVE API INTEGRATION
 # ==============================================================================
@@ -507,7 +510,7 @@ def search_ifixit_guides(query: str, limit: int = 6) -> List[Dict[str, Any]]:
 
     url = f"https://www.ifixit.com/api/2.0/search/{requests.utils.quote(clean_query)}?filter=guide&limit={limit}"
     headers = {
-        "User-Agent": "TechFixRepairCrawler/1.0 (Electronics Repair Diagnostic Platform; +support@techfix.local)"
+        "User-Agent": "IrisRepairCrawler/1.0 (Electronics Repair Diagnostic Platform; +support@iris.local)"
     }
     try:
         resp = requests.get(url, headers=headers, timeout=6)
@@ -624,7 +627,7 @@ def crawl_web_url(url: str, ai_client=None, text_model: str = "") -> Dict[str, A
         "User-Agent": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
             "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/124.0.0.0 Safari/537.36 TechFixCrawler/1.0"
+            "Chrome/124.0.0.0 Safari/537.36 IrisCrawler/1.0"
         ),
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
     }
@@ -675,7 +678,7 @@ def crawl_web_url(url: str, ai_client=None, text_model: str = "") -> Dict[str, A
         # If Azure OpenAI client is available, synthesize actionable repair knowledge
         if ai_client and text_model and len(body_text) > 40:
             try:
-                extraction_prompt = f"""You are "Iris", AI Master Diagnostic Technician for TechFix. We have crawled the following electronics repair documentation / forum thread / guide:
+                extraction_prompt = f"""You are "Iris", AI Master Diagnostic Technician. We have crawled the following electronics repair documentation / forum thread / guide:
 URL: {clean_url}
 TITLE: {page_title}
 CONTENT:
@@ -686,11 +689,11 @@ Extract and synthesize these exact 5 structured items:
 2. Verified Hardware Diagnosis: (Root cause, faulty IC, ribbon, or component)
 3. Step-by-Step Repair Action Plan: (Numbered concise instructions)
 4. Recommended Tools & Safety Warnings: (Crucial ESD, heat, or battery warnings)
-5. TechFix Lab Repair Recommendation & Pricing: (Quote estimated repair cost in Indian Rupees ₹ INR)."""
+5. Iris Lab Repair Recommendation & Pricing: (Quote estimated repair cost in Indian Rupees ₹ INR)."""
 
                 ai_resp = ai_client.responses.create(
                     model=text_model,
-                    instructions="You are Iris, AI Diagnostic Engineer for TechFix. Quote all repair prices in Indian Rupees (₹ / INR). Provide clean, professional Markdown.",
+                    instructions="You are Iris, AI Diagnostic Engineer. Quote all repair prices in Indian Rupees (₹ / INR). Provide clean, professional Markdown.",
                     input=extraction_prompt
                 )
                 result["ai_synthesis"] = ai_resp.output_text
@@ -780,16 +783,16 @@ def search_recalls(query: str) -> List[Dict[str, Any]]:
 
 def search_parts_catalog(query: str) -> List[Dict[str, Any]]:
     """
-    Search TechFix replacement parts & service catalog with pricing in INR (₹).
+    Search Iris replacement parts & service catalog with pricing in INR (₹).
     """
     q = query.lower().strip()
     if not q:
-        return TECHFIX_PARTS_CATALOG[:6]
+        return IRIS_PARTS_CATALOG[:6]
 
     tokens = [t for t in re.findall(r"\w+", q) if len(t) > 1]
     results = []
 
-    for item in TECHFIX_PARTS_CATALOG:
+    for item in IRIS_PARTS_CATALOG:
         searchable = " ".join([
             item["name"],
             item["category"],
@@ -820,7 +823,7 @@ def federated_crawl(
     - iFixit Live API
     - OEM Hardware Diagnostic Codes
     - Gadget Safety Recalls & Bulletins
-    - TechFix Parts & Pricing Catalog (INR ₹)
+    - Iris Parts & Pricing Catalog (INR ₹)
     - Optional Live Web Scraper
     - Synthesizes findings with AI.
     """
@@ -832,7 +835,7 @@ def federated_crawl(
             {"id": "ifixit", "name": "iFixit Open Repair API (v2.0)", "status": "online", "type": "Live REST API"},
             {"id": "diagnostic_codes", "name": "OEM Hardware Diagnostic Codes (Apple, Dell, HP, Lenovo, Samsung)", "status": "loaded", "type": "Structured Diagnostic Matrix"},
             {"id": "recalls", "name": "Safety Recalls & Bulletins (CPSC, EU Safety, Apple, Dell)", "status": "loaded", "type": "Consumer Safety Database"},
-            {"id": "catalog", "name": "TechFix Parts & Pricing Index (₹ INR)", "status": "active", "type": "Commercial Catalog"}
+            {"id": "catalog", "name": "Iris Parts & Pricing Index (₹ INR)", "status": "active", "type": "Commercial Catalog"}
         ],
         "ifixit_guides": [],
         "diagnostic_codes": [],
@@ -894,7 +897,7 @@ def federated_crawl(
         output["recalls"] = recall_matches[:6]
         output["stats"]["recall_count"] = len(output["recalls"])
 
-    # 5. TechFix Parts Catalog
+    # 5. Iris Parts Catalog
     if mode in ("all", "catalog"):
         catalog_matches = search_parts_catalog(active_q)
         if category_filter != "all":
@@ -944,7 +947,7 @@ def federated_crawl(
             if output["parts_catalog"]:
                 top_part = output["parts_catalog"][0]
                 context_snippets.append(
-                    f"TECHFIX REPAIR PART: {top_part['name']} - ₹{top_part['price_inr']} (Turnaround: {top_part['turnaround']})."
+                    f"IRIS REPAIR PART: {top_part['name']} - ₹{top_part['price_inr']} (Turnaround: {top_part['turnaround']})."
                 )
 
             synthesis_prompt = f"""The technician searched for: "{active_q}".
@@ -954,11 +957,11 @@ Here are the cross-referenced findings from our electronics repair datasets:
 Provide a concise, expert 3-paragraph diagnostic summary:
 1. Root Cause & Fault Classification: (Clearly explain why this failure occurs).
 2. Recommended Repair Protocol & Feasibility: (Step-by-step resolution, required precision tools, difficulty rating).
-3. Estimated Repair Costs & Warranty: (Quote parts & service pricing in Indian Rupees ₹ INR and reference TechFix 90-day warranty)."""
+3. Estimated Repair Costs & Warranty: (Quote parts & service pricing in Indian Rupees ₹ INR and reference Iris 90-day warranty)."""
 
             synth_res = ai_client.responses.create(
                 model=text_model,
-                instructions="You are Iris, Master Diagnostic Advisor for TechFix. Quote all prices in Indian Rupees (₹ / INR). Format in clean Markdown.",
+                instructions="You are Iris, Master Diagnostic Advisor. Quote all prices in Indian Rupees (₹ / INR). Format in clean Markdown.",
                 input=synthesis_prompt
             )
             output["ai_synthesis"] = synth_res.output_text

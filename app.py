@@ -36,7 +36,11 @@ def image_client():
         default_query={"api-version": "preview"},
     )
 
-SUPPORT_SYSTEM_PROMPT = """You are "Iris", the expert diagnostic and repair advisor for "TechFix Mobile & Gadget Store".
+SUPPORT_SYSTEM_PROMPT = """You are "Iris", the premier AI diagnostic and repair advisor for our certified electronics and gadget lab.
+CRITICAL IDENTITY & GREETING RULE:
+- Never say "Welcome to TechFix" or mention "TechFix". Your name and our service name is IRIS.
+- When greeted (e.g. "hi", "hello", "hey", or when starting a conversation), always greet as Iris using:
+  "Hello! Iris here, how may I assist you today?"
 We are a premier repair store and certified service lab fixing:
 1. Mobiles (iPhone, Samsung Galaxy, Google Pixel, OnePlus - cracked OLED/LCD screens, shattered back glass, degraded battery replacement, charging port repair, water damage recovery, camera module repair).
 2. Laptops (MacBook Pro/Air, Dell, HP, Lenovo, ThinkPad, Asus - cracked displays, keyboard and trackpad repair, battery replacement, deep fan cleaning & thermal repasting, SSD/RAM upgrades, motherboard repairs).
@@ -78,7 +82,7 @@ Common repair catalog items in our store (all prices in Indian Rupees ₹):
 - "USB-C / Lightning Port Cleaning & Pin Repair" (₹699, id: "port-repair-service", category: "Hardware Repair")
 - "Full Diagnostic Bench Inspection & Water Damage Clean" (₹299, id: "diagnostic-bench-fee", category: "Diagnostic Service")
 
-Format replies in clean, friendly Markdown with clear step-by-step guidance. Maintain a welcoming, professional repair technician tone and emphasize our 90-day warranty on all repairs."""
+Format replies in clean, friendly Markdown with clear step-by-step guidance. Maintain a welcoming, professional repair technician tone and emphasize our 90-day Iris warranty on all repairs."""
 
 def text_response(prompt, system=None):
     instructions = system or SUPPORT_SYSTEM_PROMPT
@@ -96,6 +100,9 @@ def api_chat():
     try:
         p=(request.json or {}).get("message","").strip()
         if not p: return jsonify(error="Enter a message."),400
+        clean_p = p.lower().strip("!.,? ")
+        if clean_p in ("hi", "hello", "hey", "hi iris", "hello iris", "hey iris", "greetings", "hi there", "hello there"):
+            return jsonify(reply="Hello! Iris here, how may I assist you today? Whether you need hardware diagnostics, repair pricing in ₹ INR, or troubleshooting for your mobile, laptop, earphones, or gadget, I'm here to help!")
         return jsonify(reply=text_response(p))
     except Exception as e: return jsonify(error=str(e)),500
 
@@ -125,7 +132,7 @@ def api_warranty():
             serial=serial or "IMEI-358920-04-192840",
             product="Smartphone / Gadget Repair Plan",
             status="Active Coverage",
-            plan="TechFix Pro Protection (90-Day Warranty)",
+            plan="Iris Pro Protection (90-Day Warranty)",
             expires="December 2027",
             accidental_damage=True,
             battery_health="Diagnostic Passed"
@@ -163,7 +170,7 @@ def api_vision():
         if not f: return jsonify(error="Upload an image."),400
         data=base64.b64encode(f.read()).decode()
         mime=f.mimetype or "image/jpeg"
-        vision_instructions = """You are Iris, Master Gadget Diagnostic Technician for TechFix Mobile & Gadget Store. Inspect customer photos of broken or damaged electronics (smartphones with cracked front glass or shattered back glass, broken laptop screens or hinges, damaged earphone cushions or dead earbuds, bent charging ports).
+        vision_instructions = """You are Iris, Master Gadget Diagnostic Technician. Inspect customer photos of broken or damaged electronics (smartphones with cracked front glass or shattered back glass, broken laptop screens or hinges, damaged earphone cushions or dead earbuds, bent charging ports).
 1. Identify the device make and model (e.g. iPhone with matte glass and triple-camera layout, MacBook Pro, Galaxy, AirPods, etc.).
 2. Detail the exact physical damage (e.g., severe impact fracture on rear glass near camera module, spiderweb glass cracks, frame scuffs).
 3. State whether the screen digitizer, camera lens, or housing is intact or compromised.
@@ -300,7 +307,7 @@ def api_crawl():
 def api_crawl_guide(guide_id):
     try:
         url = f"https://www.ifixit.com/api/2.0/guides/{guide_id}"
-        resp = requests.get(url, headers={"User-Agent": "TechFixRepairCrawler/1.0"}, timeout=6)
+        resp = requests.get(url, headers={"User-Agent": "IrisRepairCrawler/1.0"}, timeout=6)
         if resp.status_code == 200:
             return jsonify(resp.json())
         return jsonify(error="Guide not found on iFixit"), resp.status_code
