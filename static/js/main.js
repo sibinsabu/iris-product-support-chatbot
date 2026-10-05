@@ -330,7 +330,7 @@ const FirebaseAuthManager = {
           return { success: false, redirecting: true };
         }
 
-        throw new Error(`Domain "${window.location.hostname}" is not authorized for Google Sign-In in Firebase. Switch to <a href="${localhostUrl}" style="text-decoration:underline; font-weight:600; color:#3b82f6;">http://localhost${port}</a> or add "${window.location.hostname}" in Firebase Console &gt; Authentication &gt; Settings &gt; Authorized domains.`);
+        throw new Error(`Domain <strong>${window.location.hostname}</strong> is not authorized for Google Sign-In in Firebase.<br><br>Please add <code>${window.location.hostname}</code> in <a href="https://console.firebase.google.com/" target="_blank" rel="noopener" style="text-decoration:underline; font-weight:600; color:#3b82f6;">Firebase Console</a> &gt; Authentication &gt; Settings &gt; Authorized domains.`);
       }
       if (fbErr.code === 'auth/operation-not-allowed') {
         throw new Error('Google sign-in is not enabled in Firebase Console. Please enable Google under Authentication > Sign-in method.');
@@ -483,33 +483,117 @@ function setModalAuthMode(mode) {
   const switchBox = document.getElementById('modal-auth-mode-switch');
   const forgotLink = document.getElementById('modal-forgot-link');
   const errBox = document.getElementById('modal-auth-error');
+  const pwdBox = document.getElementById('modal-pwd-validation-box');
+  const confirmGroup = document.getElementById('modal-confirm-group');
+  const confirmInput = document.getElementById('modal-confirm-password');
+  const pwdInput = document.getElementById('modal-password');
+  const matchIndicator = document.getElementById('modal-pwd-match-indicator');
 
   if (errBox) errBox.style.display = 'none';
 
   if (mode === 'signup') {
     if (title) title.textContent = 'Create your account';
     if (sub) sub.textContent = 'Enter your details to diagnose devices, save repair estimates, and track tickets.';
-    if (nameGroup) {
-      nameGroup.style.display = 'flex';
-      nameGroup.style.flexDirection = 'column';
-    }
+    if (nameGroup) { nameGroup.style.display = 'flex'; nameGroup.style.flexDirection = 'column'; }
     if (nameInput) nameInput.required = true;
+    if (pwdBox) pwdBox.style.display = 'flex';
+    if (confirmGroup) { confirmGroup.style.display = 'flex'; confirmGroup.style.flexDirection = 'column'; }
+    if (confirmInput) confirmInput.required = true;
+    if (pwdInput) pwdInput.setAttribute('autocomplete', 'new-password');
     if (submitBtn) submitBtn.querySelector('span').textContent = 'Create account';
     if (forgotLink) forgotLink.style.display = 'none';
     if (switchBox) switchBox.innerHTML = `<span>Already have an account? </span><a href="javascript:void(0)" onclick="setModalAuthMode('login')">Log in</a>`;
+    updateModalPasswordValidation();
   } else {
     if (title) title.textContent = 'Welcome back';
     if (sub) sub.textContent = 'Log in to Iris AI to sync your diagnostics, track repair orders, and consult senior technicians.';
-    if (nameGroup) {
-      nameGroup.style.display = 'none';
-    }
-    if (nameInput) {
-      nameInput.required = false;
-      nameInput.value = '';
-    }
+    if (nameGroup) nameGroup.style.display = 'none';
+    if (nameInput) { nameInput.required = false; nameInput.value = ''; }
+    if (pwdBox) pwdBox.style.display = 'none';
+    if (confirmGroup) confirmGroup.style.display = 'none';
+    if (confirmInput) { confirmInput.required = false; confirmInput.value = ''; confirmInput.classList.remove('invalid', 'valid'); }
+    if (pwdInput) { pwdInput.setAttribute('autocomplete', 'current-password'); pwdInput.classList.remove('invalid', 'valid'); }
+    if (matchIndicator) { matchIndicator.textContent = ''; matchIndicator.className = 'pwd-match-indicator'; }
     if (submitBtn) submitBtn.querySelector('span').textContent = 'Continue';
     if (forgotLink) forgotLink.style.display = 'inline';
     if (switchBox) switchBox.innerHTML = `<span>Don't have an account? </span><a href="javascript:void(0)" onclick="setModalAuthMode('signup')">Sign up</a>`;
+  }
+}
+
+function updateModalPasswordValidation() {
+  if (currentModalMode !== 'signup') return;
+  const pwdInput = document.getElementById('modal-password');
+  const confirmInput = document.getElementById('modal-confirm-password');
+  if (!pwdInput) return;
+
+  const val = pwdInput.value;
+  const confirmVal = confirmInput ? confirmInput.value : '';
+
+  const hasLength = val.length >= 8;
+  const hasNumber = /\d/.test(val);
+  const hasLetter = /[A-Za-z]/.test(val);
+  const hasSpecial = /[^A-Za-z0-9]/.test(val);
+
+  const setRule = (id, met) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('met', met);
+    const icon = el.querySelector('.rule-icon');
+    if (icon) icon.textContent = met ? '✓' : '○';
+  };
+  setRule('modal-rule-length', hasLength);
+  setRule('modal-rule-number', hasNumber);
+  setRule('modal-rule-letter', hasLetter);
+
+  // Strength score 0-4
+  let score = 0;
+  if (val.length >= 6) score++;
+  if (hasLength) score++;
+  if (hasNumber && hasLetter) score++;
+  if ((val.length >= 10 && hasNumber && hasLetter) || hasSpecial) score++;
+
+  const strengthMeta = {
+    0: { color: '#e2e8f0', text: '', textColor: '#64748b' },
+    1: { color: '#ef4444', text: 'Weak',   textColor: '#ef4444' },
+    2: { color: '#f59e0b', text: 'Fair',   textColor: '#f59e0b' },
+    3: { color: '#3b82f6', text: 'Good',   textColor: '#3b82f6' },
+    4: { color: '#10b981', text: 'Strong', textColor: '#10b981' }
+  };
+  const level = val.length === 0 ? 0 : Math.max(1, score);
+  const meta = strengthMeta[level];
+
+  [1, 2, 3, 4].forEach(i => {
+    const seg = document.getElementById(`modal-pwd-seg-${i}`);
+    if (seg) seg.style.background = i <= level ? meta.color : '#e2e8f0';
+  });
+  const strengthText = document.getElementById('modal-pwd-strength-text');
+  if (strengthText) { strengthText.textContent = meta.text; strengthText.style.color = meta.textColor; }
+
+  // Match indicator
+  const matchIndicator = document.getElementById('modal-pwd-match-indicator');
+  if (matchIndicator && confirmInput) {
+    if (!confirmVal) {
+      matchIndicator.textContent = '';
+      matchIndicator.className = 'pwd-match-indicator';
+      confirmInput.classList.remove('invalid', 'valid');
+    } else if (confirmVal === val) {
+      matchIndicator.innerHTML = '<span style="font-weight:700;">✓</span> Passwords match';
+      matchIndicator.className = 'pwd-match-indicator match';
+      confirmInput.classList.remove('invalid'); confirmInput.classList.add('valid');
+    } else {
+      matchIndicator.innerHTML = '<span style="font-weight:700;">✕</span> Passwords do not match';
+      matchIndicator.className = 'pwd-match-indicator mismatch';
+      confirmInput.classList.remove('valid'); confirmInput.classList.add('invalid');
+    }
+  }
+
+  // Password border
+  if (hasLength && hasNumber && hasLetter) {
+    pwdInput.classList.remove('invalid'); pwdInput.classList.add('valid');
+  } else if (val.length > 0) {
+    pwdInput.classList.remove('valid'); pwdInput.classList.add('invalid');
+  } else {
+    pwdInput.classList.remove('invalid', 'valid');
   }
 }
 
@@ -517,15 +601,34 @@ async function handleModalAuthSubmit(e) {
   e.preventDefault();
   const errBox = document.getElementById('modal-auth-error');
   const submitBtn = document.getElementById('btn-modal-auth-submit');
+  const pwdInput = document.getElementById('modal-password');
+  const confirmInput = document.getElementById('modal-confirm-password');
   if (errBox) errBox.style.display = 'none';
 
   const email = (document.getElementById('modal-email')?.value || '').trim();
-  const password = (document.getElementById('modal-password')?.value || '').trim();
+  const password = (pwdInput?.value || '').trim();
   const name = (document.getElementById('modal-name')?.value || '').trim();
+  const confirmPassword = (confirmInput?.value || '').trim();
+
+  const showErr = (msg, focusEl) => {
+    if (errBox) { errBox.textContent = msg; errBox.style.display = 'block'; }
+    if (focusEl) focusEl.focus();
+  };
+
+  // --- Signup validation ---
+  if (currentModalMode === 'signup') {
+    if (!name) { showErr('Please enter your full name.', document.getElementById('modal-name')); return; }
+    if (!email || !email.includes('@')) { showErr('Please enter a valid email address.', document.getElementById('modal-email')); return; }
+    if (password.length < 8) { showErr('Password must be at least 8 characters long.', pwdInput); if (pwdInput) pwdInput.classList.add('invalid'); return; }
+    if (!/\d/.test(password)) { showErr('Password must contain at least one number (0-9).', pwdInput); if (pwdInput) pwdInput.classList.add('invalid'); return; }
+    if (!/[A-Za-z]/.test(password)) { showErr('Password must contain at least one letter (A-Z or a-z).', pwdInput); if (pwdInput) pwdInput.classList.add('invalid'); return; }
+    if (!confirmPassword) { showErr('Please re-enter your password.', confirmInput); if (confirmInput) confirmInput.classList.add('invalid'); return; }
+    if (password !== confirmPassword) { showErr('Passwords do not match. Please check both fields.', confirmInput); if (confirmInput) confirmInput.classList.add('invalid'); return; }
+  }
 
   if (submitBtn) {
     submitBtn.disabled = true;
-    submitBtn.querySelector('span').textContent = 'Continuing...';
+    submitBtn.querySelector('span').textContent = currentModalMode === 'signup' ? 'Creating account...' : 'Signing in...';
   }
 
   try {
