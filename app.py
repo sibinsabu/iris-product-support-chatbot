@@ -8,6 +8,8 @@ from openai import OpenAI  # pyrefly: ignore[missing-import]
 load_dotenv()
 app = Flask(__name__, template_folder="templates", static_folder="static")
 app.config["MAX_CONTENT_LENGTH"] = 25 * 1024 * 1024
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.jinja_env.auto_reload = True
 os.makedirs("uploads", exist_ok=True)
 
 AOAI_ENDPOINT=os.getenv("AZURE_OPENAI_ENDPOINT","").rstrip("/")
@@ -666,5 +668,5 @@ def health():
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
-    debug = os.getenv("FLASK_DEBUG", "false").lower() in ("true", "1", "yes")
+    debug = os.getenv("FLASK_DEBUG", "true").lower() in ("true", "1", "yes")
     app.run(debug=debug, host="0.0.0.0", port=port)
