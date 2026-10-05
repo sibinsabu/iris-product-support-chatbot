@@ -237,9 +237,14 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-* **Name**: Sibin Sabu
-* **GitHub Username**: [@sibinsabu](https://github.com/sibinsabu)
-* **GitHub Profile**: [https://github.com/sibinsabu](https://github.com/sibinsabu)
+* **Sibin Sabu**
+  * **GitHub Username**: [@sibinsabu](https://github.com/sibinsabu)
+  * **GitHub Profile**: [https://github.com/sibinsabu](https://github.com/sibinsabu)
+
+* **Anto Sajo**
+  * **GitHub Username**: [@Antosajo045](https://github.com/Antosajo045)
+  * **GitHub Profile**: [https://github.com/Antosajo045](https://github.com/Antosajo045)
+
 * **Project Link**: [https://github.com/sibinsabu/iris-product-support-chatbot](https://github.com/sibinsabu/iris-product-support-chatbot)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
