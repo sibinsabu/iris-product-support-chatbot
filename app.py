@@ -1,14 +1,18 @@
 import os, base64, mimetypes, uuid, requests, json, crawler
 from urllib.parse import quote
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify, send_file, session, redirect, url_for
+from werkzeug.security import generate_password_hash, check_password_hash
 from typing import Any, cast
 from dotenv import load_dotenv  # pyrefly: ignore[missing-import]
 from openai import OpenAI  # pyrefly: ignore[missing-import]
 
 load_dotenv()
 app = Flask(__name__, template_folder="templates", static_folder="static")
+app.secret_key = os.getenv("SECRET_KEY", "iris-chatgpt-auth-secret-key-2026-v1")
 app.config["MAX_CONTENT_LENGTH"] = 25 * 1024 * 1024
 app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.jinja_env.auto_reload = True
 os.makedirs("uploads", exist_ok=True)
 
@@ -128,11 +132,203 @@ def text_response(prompt, system=None, history=None):
     r = client().responses.create(model=TEXT_MODEL, instructions=instructions, input=prompt)
     return r.output_text
 
+# In-Memory User Registry for ChatGPT-Style Authentication
+USERS_STORE: dict[str, dict[str, Any]] = {
+    "rahul@gmail.com": {
+        "id": "usr_rahul",
+        "name": "Rahul Sharma",
+        "email": "rahul@gmail.com",
+        "password_hash": generate_password_hash("password123"),
+        "role": "customer",
+        "plan": "Iris Pro Member",
+        "avatar_initials": "RS",
+        "avatar_color": "#7c3aed",
+        "created_at": "March 2026",
+        "recent_orders": ["FIX-8A201C"]
+    },
+    "user@iris.com": {
+        "id": "usr_demo",
+        "name": "Iris Explorer",
+        "email": "user@iris.com",
+        "password_hash": generate_password_hash("iris2026"),
+        "role": "customer",
+        "plan": "Standard User",
+        "avatar_initials": "IE",
+        "avatar_color": "#2563eb",
+        "created_at": "Today",
+        "recent_orders": []
+    },
+    "arvind@iris.com": {
+        "id": "usr_tech_arvind",
+        "name": "Arvind M.",
+        "email": "arvind@iris.com",
+        "password_hash": generate_password_hash("admin123"),
+        "role": "technician",
+        "plan": "Senior Certified Tech",
+        "avatar_initials": "AM",
+        "avatar_color": "#10b981",
+        "created_at": "January 2026",
+        "recent_orders": ["FIX-8A201C", "FIX-94E21A"]
+    }
+}
+
+def sanitize_user(user: dict[str, Any]) -> dict[str, Any]:
+    """Return public user dict safe for client consumption."""
+    return {k: v for k, v in user.items() if k != "password_hash"}
+
 @app.get("/")
-def home(): return render_template("home.html")
+def home():
+    user = session.get("user")
+    return render_template("home.html", user=user)
 
 @app.get("/chat")
-def chat(): return render_template("home.html")
+def chat():
+    user = session.get("user")
+    return render_template("home.html", user=user)
+
+@app.get("/login")
+def login_view():
+    if session.get("user"):
+        return redirect(request.args.get("next") or url_for("home"))
+    return render_template("login.html", mode="login")
+
+@app.get("/signup")
+def signup_view():
+    if session.get("user"):
+        return redirect(request.args.get("next") or url_for("home"))
+    return render_template("login.html", mode="signup")
+
+@app.get("/logout")
+def logout_view():
+    session.pop("user", None)
+    return redirect(url_for("home"))
+
+@app.get("/api/auth/status")
+def api_auth_status():
+    user = session.get("user")
+    return jsonify(authenticated=bool(user), user=user)
+
+@app.post("/api/auth/login")
+def api_auth_login():
+    try:
+        data = request.json or {}
+        email = (data.get("email") or "").strip().lower()
+        password = (data.get("password") or "").strip()
+
+        if not email:
+            return jsonify(error="Please enter your email address."), 400
+        if not password:
+            return jsonify(error="Please enter your password."), 400
+
+        user = USERS_STORE.get(email)
+        if not user:
+            return jsonify(error="No account found with this email. Click 'Sign up' to create one or use Demo accounts."), 401
+
+        if not check_password_hash(user["password_hash"], password):
+            return jsonify(error="Incorrect password. Please verify and try again."), 401
+
+        clean_user = sanitize_user(user)
+        session["user"] = clean_user
+        return jsonify(success=True, user=clean_user, message=f"Welcome back, {clean_user['name']}!")
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+
+@app.post("/api/auth/signup")
+def api_auth_signup():
+    try:
+        data = request.json or {}
+        name = (data.get("name") or "").strip()
+        email = (data.get("email") or "").strip().lower()
+        password = (data.get("password") or "").strip()
+
+        if not email or "@" not in email:
+            return jsonify(error="Please enter a valid email address."), 400
+        if not password or len(password) < 6:
+            return jsonify(error="Password must be at least 6 characters long."), 400
+        if not name:
+            name = email.split("@")[0].replace(".", " ").title()
+
+        if email in USERS_STORE:
+            return jsonify(error="An account with this email already exists. Please log in instead."), 409
+
+        parts = name.split()
+        initials = (parts[0][0] + (parts[1][0] if len(parts) > 1 else "")).upper()
+        if not initials:
+            initials = email[0].upper()
+
+        new_user = {
+            "id": f"usr_{uuid.uuid4().hex[:8]}",
+            "name": name,
+            "email": email,
+            "password_hash": generate_password_hash(password),
+            "role": "customer",
+            "plan": "Iris Pro Member",
+            "avatar_initials": initials,
+            "avatar_color": "#7c3aed",
+            "created_at": "Today",
+            "recent_orders": []
+        }
+        USERS_STORE[email] = new_user
+        clean_user = sanitize_user(new_user)
+        session["user"] = clean_user
+        return jsonify(success=True, user=clean_user, message=f"Welcome to Iris, {name}!")
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+
+@app.post("/api/auth/social")
+def api_auth_social():
+    try:
+        data = request.json or {}
+        provider = (data.get("provider") or "google").strip().lower()
+        providers_map = {
+            "google": {
+                "name": "Alex Chen",
+                "email": "alex.chen.work@gmail.com",
+                "initials": "AC",
+                "color": "#ea4335"
+            },
+            "microsoft": {
+                "name": "Jordan Taylor",
+                "email": "jordan.taylor@outlook.com",
+                "initials": "JT",
+                "color": "#00a4ef"
+            },
+            "apple": {
+                "name": "Sam Rivera",
+                "email": "sam.rivera@icloud.com",
+                "initials": "SR",
+                "color": "#0f172a"
+            }
+        }
+        prof = providers_map.get(provider, providers_map["google"])
+        email = prof["email"]
+
+        if email not in USERS_STORE:
+            USERS_STORE[email] = {
+                "id": f"usr_{provider}_{uuid.uuid4().hex[:6]}",
+                "name": prof["name"],
+                "email": email,
+                "password_hash": generate_password_hash("social-token-iris-2026"),
+                "role": "customer",
+                "plan": "Iris Pro Member",
+                "avatar_initials": prof["initials"],
+                "avatar_color": prof["color"],
+                "created_at": "Today",
+                "recent_orders": ["FIX-8A201C"]
+            }
+
+        user = USERS_STORE[email]
+        clean_user = sanitize_user(user)
+        session["user"] = clean_user
+        return jsonify(success=True, user=clean_user, message=f"Connected via {provider.capitalize()}!")
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+
+@app.post("/api/auth/logout")
+def api_auth_logout():
+    session.pop("user", None)
+    return jsonify(success=True, message="Successfully logged out")
+
 
 @app.post("/api/chat")
 def api_chat():

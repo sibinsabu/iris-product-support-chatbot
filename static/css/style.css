@@ -511,6 +511,321 @@ button, input, textarea, select {
 }
 
 /* =========================================================
+   CHATGPT-STYLE AUTHENTICATION & SIDEBAR USER PROFILE
+   ========================================================= */
+.sidebar-account-section {
+  position: relative;
+  margin-top: 0.5rem;
+}
+
+/* Guest State: ChatGPT-style Sidebar Login Prompt */
+.sidebar-auth-guest-card {
+  background: #faf8ff;
+  border: 1px solid #ebdcfc;
+  border-radius: var(--radius-md);
+  padding: 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: all var(--transition);
+}
+
+.sidebar-auth-guest-card:hover {
+  border-color: #d8b4fe;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.08);
+}
+
+.auth-guest-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.auth-guest-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-title);
+  line-height: 1.25;
+}
+
+.auth-guest-sub {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  line-height: 1.25;
+}
+
+.auth-guest-btn-group {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.btn-sidebar-auth {
+  flex: 1;
+  padding: 0.38rem 0.5rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--transition);
+}
+
+.btn-sidebar-auth.login {
+  background: #0f172a;
+  color: #ffffff;
+  border: 1px solid #0f172a;
+}
+
+.btn-sidebar-auth.login:hover {
+  background: #1e293b;
+  border-color: #1e293b;
+}
+
+.btn-sidebar-auth.signup {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+}
+
+.btn-sidebar-auth.signup:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+/* Authenticated State: User Profile Row (Like ChatGPT) */
+.sidebar-user-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  border: 1px solid #e8e5f0;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.sidebar-user-profile-row:hover {
+  background: #faf8ff;
+  border-color: #d8b4fe;
+}
+
+.user-avatar-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 0.76rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.user-meta-block {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-meta-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-title);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+
+.user-meta-sub {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+
+.user-meta-more {
+  color: var(--text-faint);
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.user-meta-more svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* User Profile Floating Popover (ChatGPT-style Menu) */
+.user-profile-popover {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  min-width: 220px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.45rem;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+  display: none;
+  flex-direction: column;
+  z-index: 1000;
+  animation: popoverFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.user-profile-popover.open {
+  display: flex;
+}
+
+@keyframes popoverFadeIn {
+  from { opacity: 0; transform: translateY(4px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.popover-user-header {
+  padding: 0.45rem 0.6rem 0.35rem;
+}
+
+.popover-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.popover-email {
+  font-size: 0.72rem;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.popover-divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 0.35rem 0;
+}
+
+.popover-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #334155;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.popover-item:hover {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.popover-item svg {
+  width: 15px;
+  height: 15px;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.popover-item:hover svg {
+  color: #0f172a;
+}
+
+.popover-item.danger {
+  color: #e11d48;
+}
+
+.popover-item.danger svg {
+  color: #e11d48;
+}
+
+.popover-item.danger:hover {
+  background: #fff1f2;
+  color: #be123c;
+}
+
+/* Topbar Auth Buttons */
+.btn-topbar-login {
+  background: #0f172a;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.38rem 0.85rem;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
+}
+
+.btn-topbar-login:hover {
+  background: #1e293b;
+  transform: translateY(-0.5px);
+}
+
+.topbar-user-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.25rem 0.65rem 0.25rem 0.35rem;
+  background: #faf8ff;
+  border: 1px solid #ebdcfc;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.topbar-user-pill:hover {
+  background: #f3e8ff;
+  border-color: #d8b4fe;
+}
+
+.topbar-user-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.topbar-user-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.topbar-user-arrow {
+  width: 12px;
+  height: 12px;
+  color: #94a3b8;
+}
+
+/* =========================================================
    CENTER MAIN AREA (Matching Reference Hero & Chat)
    ========================================================= */
 .main-stage {

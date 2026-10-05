@@ -19,6 +19,19 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCart();
   initHealthBeacon();
   initDragAndDropZones();
+  checkAuthStatus();
+});
+
+// Close floating menus on click outside
+document.addEventListener('click', (e) => {
+  const popover = document.getElementById('user-profile-popover');
+  const userRow = document.getElementById('sidebar-user-logged');
+  const topbarPill = document.getElementById('topbar-user-pill');
+  if (popover && popover.classList.contains('open')) {
+    if (!popover.contains(e.target) && (!userRow || !userRow.contains(e.target)) && (!topbarPill || !topbarPill.contains(e.target))) {
+      closeUserMenu();
+    }
+  }
 });
 
 // Toast Notifications
@@ -384,4 +397,245 @@ function initDragAndDropZones() {
       }
     });
   });
+}
+
+// =========================================================
+// CHATGPT-STYLE AUTHENTICATION CONTROLLER
+// =========================================================
+let currentAuthUser = null;
+let currentModalMode = 'login';
+
+async function checkAuthStatus() {
+  try {
+    const res = await fetch('/api/auth/status');
+    const data = await res.json();
+    if (data.authenticated && data.user) {
+      currentAuthUser = data.user;
+      renderUserAuthUI(data.user);
+    } else {
+      currentAuthUser = null;
+      renderGuestAuthUI();
+    }
+  } catch (err) {
+    currentAuthUser = null;
+    renderGuestAuthUI();
+  }
+}
+
+function renderUserAuthUI(user) {
+  // Sidebar
+  const guestCard = document.getElementById('sidebar-auth-guest');
+  const userRow = document.getElementById('sidebar-user-logged');
+  const avatarEl = document.getElementById('sidebar-user-avatar');
+  const nameEl = document.getElementById('sidebar-user-name');
+  const subEl = document.getElementById('sidebar-user-sub');
+
+  if (guestCard) guestCard.style.display = 'none';
+  if (userRow) userRow.style.display = 'flex';
+  if (avatarEl) {
+    avatarEl.textContent = user.avatar_initials || 'U';
+    avatarEl.style.backgroundColor = user.avatar_color || '#7c3aed';
+  }
+  if (nameEl) nameEl.textContent = user.name || 'Valued Customer';
+  if (subEl) subEl.textContent = user.plan || (user.email ? user.email.split('@')[0] : 'Iris Member');
+
+  // Popover info
+  const popName = document.getElementById('popover-user-name');
+  const popEmail = document.getElementById('popover-user-email');
+  if (popName) popName.textContent = user.name || 'User';
+  if (popEmail) popEmail.textContent = user.email || 'customer@iris.com';
+
+  // Topbar
+  const topbarLogin = document.getElementById('topbar-login-btn');
+  const topbarUser = document.getElementById('topbar-user-pill');
+  const topbarAvatar = document.getElementById('topbar-user-avatar');
+  const topbarName = document.getElementById('topbar-user-name');
+
+  if (topbarLogin) topbarLogin.style.display = 'none';
+  if (topbarUser) topbarUser.style.display = 'inline-flex';
+  if (topbarAvatar) {
+    topbarAvatar.textContent = user.avatar_initials || 'U';
+    topbarAvatar.style.backgroundColor = user.avatar_color || '#7c3aed';
+  }
+  if (topbarName) {
+    topbarName.textContent = (user.name || 'User').split(' ')[0];
+  }
+}
+
+function renderGuestAuthUI() {
+  // Sidebar
+  const guestCard = document.getElementById('sidebar-auth-guest');
+  const userRow = document.getElementById('sidebar-user-logged');
+  if (guestCard) guestCard.style.display = 'flex';
+  if (userRow) userRow.style.display = 'none';
+
+  // Popover close
+  closeUserMenu();
+
+  // Topbar
+  const topbarLogin = document.getElementById('topbar-login-btn');
+  const topbarUser = document.getElementById('topbar-user-pill');
+  if (topbarLogin) topbarLogin.style.display = 'inline-block';
+  if (topbarUser) topbarUser.style.display = 'none';
+}
+
+function openLoginModal(mode = 'login') {
+  const modal = document.getElementById('login-modal');
+  if (!modal) return;
+  setModalAuthMode(mode);
+  modal.classList.add('open');
+}
+
+function closeLoginModal() {
+  const modal = document.getElementById('login-modal');
+  if (modal) modal.classList.remove('open');
+}
+
+function setModalAuthMode(mode) {
+  currentModalMode = mode;
+  const title = document.getElementById('modal-auth-title');
+  const sub = document.getElementById('modal-auth-subtitle');
+  const nameGroup = document.getElementById('modal-name-group');
+  const nameInput = document.getElementById('modal-name');
+  const submitBtn = document.getElementById('btn-modal-auth-submit');
+  const switchBox = document.getElementById('modal-auth-mode-switch');
+  const forgotLink = document.getElementById('modal-forgot-link');
+  const errBox = document.getElementById('modal-auth-error');
+
+  if (errBox) errBox.style.display = 'none';
+
+  if (mode === 'signup') {
+    if (title) title.textContent = 'Create your account';
+    if (sub) sub.textContent = 'Sign up to diagnose devices, save repair estimates, and sync consultation history.';
+    if (nameGroup) nameGroup.style.display = 'flex';
+    if (nameInput) nameInput.required = true;
+    if (submitBtn) submitBtn.querySelector('span').textContent = 'Create Account';
+    if (forgotLink) forgotLink.style.display = 'none';
+    if (switchBox) switchBox.innerHTML = `<span>Already have an account? </span><a href="javascript:void(0)" onclick="setModalAuthMode('login')" style="color:#0f172a; font-weight:600; text-decoration:underline;">Log in</a>`;
+  } else {
+    if (title) title.textContent = 'Welcome back';
+    if (sub) sub.textContent = 'Log in to Iris AI to sync your diagnostics, track repair orders, and consult senior technicians.';
+    if (nameGroup) nameGroup.style.display = 'none';
+    if (nameInput) nameInput.required = false;
+    if (submitBtn) submitBtn.querySelector('span').textContent = 'Continue';
+    if (forgotLink) forgotLink.style.display = 'inline';
+    if (switchBox) switchBox.innerHTML = `<span>Don't have an account? </span><a href="javascript:void(0)" onclick="setModalAuthMode('signup')" style="color:#0f172a; font-weight:600; text-decoration:underline;">Sign up</a>`;
+  }
+}
+
+async function handleModalAuthSubmit(e) {
+  e.preventDefault();
+  const errBox = document.getElementById('modal-auth-error');
+  const submitBtn = document.getElementById('btn-modal-auth-submit');
+  if (errBox) errBox.style.display = 'none';
+
+  const email = (document.getElementById('modal-email')?.value || '').trim();
+  const password = (document.getElementById('modal-password')?.value || '').trim();
+  const name = (document.getElementById('modal-name')?.value || '').trim();
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.querySelector('span').textContent = 'Please wait...';
+  }
+
+  const endpoint = currentModalMode === 'signup' ? '/api/auth/signup' : '/api/auth/login';
+  const payload = currentModalMode === 'signup' ? { name, email, password } : { email, password };
+
+  try {
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      currentAuthUser = data.user;
+      renderUserAuthUI(data.user);
+      closeLoginModal();
+      showToast(data.message || `Welcome back, ${data.user.name}!`, 'success');
+    } else {
+      if (errBox) {
+        errBox.textContent = data.error || 'Authentication failed. Please verify credentials.';
+        errBox.style.display = 'block';
+      }
+    }
+  } catch (err) {
+    if (errBox) {
+      errBox.textContent = 'Network communication error. Please try again.';
+      errBox.style.display = 'block';
+    }
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.querySelector('span').textContent = currentModalMode === 'signup' ? 'Create Account' : 'Continue';
+    }
+  }
+}
+
+async function handleModalSocialAuth(provider) {
+  const errBox = document.getElementById('modal-auth-error');
+  if (errBox) errBox.style.display = 'none';
+
+  try {
+    const res = await fetch('/api/auth/social', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ provider })
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      currentAuthUser = data.user;
+      renderUserAuthUI(data.user);
+      closeLoginModal();
+      showToast(data.message || `Connected via ${provider.toUpperCase()}`, 'success');
+    } else {
+      if (errBox) {
+        errBox.textContent = data.error || 'Social login failed.';
+        errBox.style.display = 'block';
+      }
+    }
+  } catch (e) {
+    if (errBox) {
+      errBox.textContent = 'Network error during social authentication.';
+      errBox.style.display = 'block';
+    }
+  }
+}
+
+function quickFillModalLogin(email, password) {
+  setModalAuthMode('login');
+  const emailInput = document.getElementById('modal-email');
+  const pwdInput = document.getElementById('modal-password');
+  if (emailInput) emailInput.value = email;
+  if (pwdInput) pwdInput.value = password;
+  const form = document.getElementById('modal-auth-form');
+  if (form) form.dispatchEvent(new Event('submit', { cancelable: true }));
+}
+
+async function handleLogout() {
+  closeUserMenu();
+  try {
+    const res = await fetch('/api/auth/logout', { method: 'POST' });
+    const data = await res.json();
+    currentAuthUser = null;
+    renderGuestAuthUI();
+    showToast('Logged out successfully', 'info');
+  } catch (err) {
+    currentAuthUser = null;
+    renderGuestAuthUI();
+    showToast('Logged out', 'info');
+  }
+}
+
+function toggleUserMenu(e) {
+  if (e) e.stopPropagation();
+  const popover = document.getElementById('user-profile-popover');
+  if (!popover) return;
+  popover.classList.toggle('open');
+}
+
+function closeUserMenu() {
+  const popover = document.getElementById('user-profile-popover');
+  if (popover) popover.classList.remove('open');
 }
