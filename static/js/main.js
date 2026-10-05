@@ -477,7 +477,7 @@ const FirebaseAuthManager = {
         return await this.syncWithBackend(userCred.user, name);
       } catch (fbErr) {
         if (fbErr.code === 'auth/email-already-in-use') {
-          throw new Error('An account with this email already exists in Firebase. Please log in.');
+          throw new Error('An account with this email already exists. Please log in.');
         }
         if (fbErr.code === 'auth/weak-password') {
           throw new Error('Password must be at least 6 characters.');
@@ -680,20 +680,25 @@ function setModalAuthMode(mode) {
 
   if (mode === 'signup') {
     if (title) title.textContent = 'Create your account';
-    if (sub) sub.textContent = 'Sign up with Firebase to diagnose devices, save repair estimates, and sync consultation history.';
-    if (nameGroup) nameGroup.style.display = 'flex';
+    if (sub) sub.textContent = 'Enter your details to diagnose devices, save repair estimates, and track tickets.';
+    if (nameGroup) {
+      nameGroup.style.display = 'flex';
+      nameGroup.style.flexDirection = 'column';
+    }
     if (nameInput) nameInput.required = true;
-    if (submitBtn) submitBtn.querySelector('span').textContent = 'Create Account with Firebase';
+    if (submitBtn) submitBtn.querySelector('span').textContent = 'Create account';
     if (forgotLink) forgotLink.style.display = 'none';
-    if (switchBox) switchBox.innerHTML = `<span>Already have an account? </span><a href="javascript:void(0)" onclick="setModalAuthMode('login')" style="color:#0f172a; font-weight:600; text-decoration:underline;">Log in</a>`;
+    if (switchBox) switchBox.innerHTML = `<span>Already have an account? </span><a href="javascript:void(0)" onclick="setModalAuthMode('login')">Log in</a>`;
   } else {
     if (title) title.textContent = 'Welcome back';
-    if (sub) sub.textContent = 'Log in with Firebase to sync your diagnostics, track repair orders, and consult senior technicians.';
-    if (nameGroup) nameGroup.style.display = 'none';
+    if (sub) sub.textContent = 'Log in to Iris AI to sync your diagnostics, track repair orders, and consult senior technicians.';
+    if (nameGroup) {
+      nameGroup.style.display = 'none';
+    }
     if (nameInput) nameInput.required = false;
-    if (submitBtn) submitBtn.querySelector('span').textContent = 'Continue with Firebase';
+    if (submitBtn) submitBtn.querySelector('span').textContent = 'Continue';
     if (forgotLink) forgotLink.style.display = 'inline';
-    if (switchBox) switchBox.innerHTML = `<span>Don't have an account? </span><a href="javascript:void(0)" onclick="setModalAuthMode('signup')" style="color:#0f172a; font-weight:600; text-decoration:underline;">Sign up</a>`;
+    if (switchBox) switchBox.innerHTML = `<span>Don't have an account? </span><a href="javascript:void(0)" onclick="setModalAuthMode('signup')">Sign up</a>`;
   }
 }
 
@@ -709,7 +714,7 @@ async function handleModalAuthSubmit(e) {
 
   if (submitBtn) {
     submitBtn.disabled = true;
-    submitBtn.querySelector('span').textContent = 'Authenticating with Firebase...';
+    submitBtn.querySelector('span').textContent = 'Continuing...';
   }
 
   try {
@@ -724,19 +729,19 @@ async function handleModalAuthSubmit(e) {
       currentAuthUser = result.user;
       renderUserAuthUI(result.user);
       closeLoginModal();
-      showToast(result.message || `Welcome, ${result.user.name}! (Firebase Auth)`, 'success');
+      showToast(result.message || `Welcome, ${result.user.name}!`, 'success');
     } else {
-      throw new Error(result?.error || 'Firebase authentication failed');
+      throw new Error(result?.error || 'Authentication failed. Please verify credentials.');
     }
   } catch (err) {
     if (errBox) {
-      errBox.textContent = err.message || 'Firebase authentication error. Please verify credentials.';
+      errBox.textContent = err.message || 'Authentication error. Please verify credentials.';
       errBox.style.display = 'block';
     }
   } finally {
     if (submitBtn) {
       submitBtn.disabled = false;
-      submitBtn.querySelector('span').textContent = currentModalMode === 'signup' ? 'Create Account with Firebase' : 'Continue with Firebase';
+      submitBtn.querySelector('span').textContent = currentModalMode === 'signup' ? 'Create account' : 'Continue';
     }
   }
 }
@@ -745,19 +750,21 @@ async function handleModalSocialAuth(provider) {
   const errBox = document.getElementById('modal-auth-error');
   if (errBox) errBox.style.display = 'none';
 
+  const providerTitle = provider.charAt(0).toUpperCase() + provider.slice(1);
+
   try {
     const result = await FirebaseAuthManager.signInProvider(provider);
     if (result && result.success && result.user) {
       currentAuthUser = result.user;
       renderUserAuthUI(result.user);
       closeLoginModal();
-      showToast(`Connected via Firebase ${provider.toUpperCase()}`, 'success');
+      showToast(`Connected with ${providerTitle}`, 'success');
     } else {
       throw new Error(result?.error || 'Social sign-in failed');
     }
   } catch (err) {
     if (errBox) {
-      errBox.textContent = err.message || `Firebase ${provider} sign-in failed.`;
+      errBox.textContent = err.message || `${providerTitle} sign-in failed. Please try again.`;
       errBox.style.display = 'block';
     }
   }
@@ -779,7 +786,7 @@ async function handleLogout() {
     await FirebaseAuthManager.signOut();
     currentAuthUser = null;
     renderGuestAuthUI();
-    showToast('Signed out from Firebase', 'info');
+    showToast('Signed out', 'info');
   } catch (err) {
     currentAuthUser = null;
     renderGuestAuthUI();

@@ -424,7 +424,7 @@ def api_firebase_session():
 
         clean_user = sanitize_user(user)
         session["user"] = clean_user
-        return jsonify(success=True, user=clean_user, message=f"Firebase login successful: {clean_user['name']}")
+        return jsonify(success=True, user=clean_user, message=f"Welcome back, {clean_user['name']}!")
     except Exception as e:
         return jsonify(error=str(e)), 500
 

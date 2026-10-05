@@ -368,14 +368,6 @@
       </svg>
     </div>
 
-    <!-- Firebase Authentication Badge -->
-    <div style="display:inline-flex; align-items:center; gap:0.4rem; padding:0.3rem 0.75rem; background:#fffbeb; border:1px solid #fde68a; border-radius:9999px; font-size:0.75rem; font-weight:600; color:#b45309; margin-bottom:1.25rem;">
-      <svg viewBox="0 0 24 24" width="15" height="15" fill="#f59e0b">
-        <path d="M4.14 18.06 8.35 1.77a.64.64 0 0 1 1.24-.03l2.84 8.79zm15.72 0L17.5 7.15a.64.64 0 0 0-1.19-.07l-2.02 4.1zm-8.32 3.86a2.05 2.05 0 0 1-1.63-.44L2.09 15.3l5.52-1.92 3.93 8.54zm8.32-3.86-1.54-1.22-3.8-8.15 3.1 6.84 2.24 2.53z"/>
-      </svg>
-      <span>Secured by Firebase Authentication</span>
-    </div>
-
     <!-- Title & Subtitle -->
     <h1 class="auth-title" id="auth-title">Welcome back</h1>
     <p class="auth-subtitle" id="auth-subtitle">Log in to your Iris account to access saved diagnostic tickets, track repair orders, and consult senior technicians.</p>
@@ -516,10 +508,11 @@ function setAuthMode(mode) {
 
   if (mode === 'signup') {
     title.textContent = 'Create your account';
-    subtitle.textContent = 'Sign up to diagnose devices, save repair estimates, and sync your consultation history.';
+    subtitle.textContent = 'Enter your details to diagnose devices, save repair estimates, and track tickets.';
     nameGroup.style.display = 'flex';
+    nameGroup.style.flexDirection = 'column';
     nameInput.required = true;
-    submitBtn.querySelector('span').textContent = 'Create Account';
+    submitBtn.querySelector('span').textContent = 'Create account';
     forgotLink.style.display = 'none';
     switchBox.innerHTML = `<span>Already have an account? </span><a href="javascript:void(0)" onclick="setAuthMode('login')">Log in</a>`;
   } else {
@@ -556,7 +549,7 @@ async function handleAuthSubmit(e) {
   const name = document.getElementById('auth-name').value.trim();
 
   submitBtn.disabled = true;
-  submitBtn.querySelector('span').textContent = 'Authenticating with Firebase...';
+  submitBtn.querySelector('span').textContent = 'Continuing...';
 
   try {
     let result;
@@ -567,7 +560,7 @@ async function handleAuthSubmit(e) {
     }
 
     if (result && result.success) {
-      showToast(result.message || 'Firebase login successful!', 'success');
+      showToast(result.message || 'Signed in successfully!', 'success');
       setTimeout(() => {
         window.location.href = '/';
       }, 400);
@@ -575,11 +568,11 @@ async function handleAuthSubmit(e) {
       throw new Error(result?.error || 'Authentication failed. Please verify credentials.');
     }
   } catch (err) {
-    errorBanner.textContent = err.message || 'Firebase authentication error. Please try again.';
+    errorBanner.textContent = err.message || 'Authentication error. Please try again.';
     errorBanner.style.display = 'block';
   } finally {
     submitBtn.disabled = false;
-    submitBtn.querySelector('span').textContent = currentAuthMode === 'signup' ? 'Create Account with Firebase' : 'Continue with Firebase';
+    submitBtn.querySelector('span').textContent = currentAuthMode === 'signup' ? 'Create account' : 'Continue';
   }
 }
 
@@ -587,10 +580,12 @@ async function handleSocialAuth(provider) {
   const errorBanner = document.getElementById('auth-error-banner');
   if (errorBanner) errorBanner.style.display = 'none';
 
+  const providerTitle = provider.charAt(0).toUpperCase() + provider.slice(1);
+
   try {
     const result = await FirebaseAuthManager.signInProvider(provider);
     if (result && result.success) {
-      showToast(`Connected via Firebase ${provider.toUpperCase()}`, 'success');
+      showToast(`Connected with ${providerTitle}`, 'success');
       setTimeout(() => {
         window.location.href = '/';
       }, 400);
@@ -599,7 +594,7 @@ async function handleSocialAuth(provider) {
     }
   } catch (e) {
     if (errorBanner) {
-      errorBanner.textContent = e.message || 'Error during social authentication.';
+      errorBanner.textContent = e.message || `${providerTitle} sign-in failed. Please try again.`;
       errorBanner.style.display = 'block';
     }
   }
