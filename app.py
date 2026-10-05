@@ -1,4 +1,5 @@
 import os, base64, mimetypes, uuid, requests, json, crawler
+from urllib.parse import quote
 from flask import Flask, render_template, request, jsonify, send_file
 from typing import Any, cast
 from dotenv import load_dotenv  # pyrefly: ignore[missing-import]
@@ -145,6 +146,89 @@ def api_chat():
         return jsonify(reply=text_response(p, history=history))
     except Exception as e: return jsonify(error=str(e)), 500
 
+# In-Memory Production Store for Live Repair Tracking & Callback Requests
+ORDERS_STORE: dict[str, Any] = {
+    "FIX-8A201C": {
+        "order_id": "FIX-8A201C",
+        "customer_name": "Rahul Sharma",
+        "phone": "+91 98765 43210",
+        "device": "Apple iPhone 14 Pro Max (Deep Purple, 256GB)",
+        "imei": "358920-04-192840-2",
+        "created_at": "Today, 09:15 AM",
+        "current_step": 3,
+        "status_title": "Precision Laser Glass Removal in Progress",
+        "status_desc": "Technician Arvind M. is performing laser rear back glass removal and installing genuine OEM tempered glass panel.",
+        "turnaround_estimate": "Estimated completion today by 10:45 AM (30 mins remaining)",
+        "technician": "Arvind M. (Master Certified Apple & Samsung Tech)",
+        "warranty": "90-Day Iris Warranty Guarantee",
+        "total": 2949.00,
+        "items": [
+            {"name": "iPhone Back Glass Laser Removal & Replacement", "price": 2499, "category": "Mobile Repair"},
+            {"name": "Full Diagnostic Bench Inspection & Water Damage Clean", "price": 299, "category": "Diagnostic Service"}
+        ],
+        "steps": [
+            {"number": 1, "title": "Device Intake & Inspection", "desc": "Logged into Iris repair portal, serial & defect photographed", "time": "09:15 AM", "status": "completed"},
+            {"number": 2, "title": "Cleanroom Bench Diagnostic", "desc": "Digitizer touch, True Tone sensor, and camera verified", "time": "09:25 AM", "status": "completed"},
+            {"number": 3, "title": "Laser Extraction & Glass Replacement", "desc": "Fiber-laser ablation and OEM glass clamping in progress", "time": "09:40 AM", "status": "active"},
+            {"number": 4, "title": "Pressure & Waterproof Gasket QC", "desc": "IP68 water-resistance seal and sensor bench test", "time": "Pending", "status": "pending"},
+            {"number": 5, "title": "Ready for Store Pickup / Delivery", "desc": "Customer notification and 90-day warranty card issuance", "time": "Pending", "status": "pending"}
+        ]
+    },
+    "FIX-DEMO01": {
+        "order_id": "FIX-DEMO01",
+        "customer_name": "Ananya Roy",
+        "phone": "+91 98450 11223",
+        "device": "MacBook Pro 16\" (M2 Pro, Space Gray)",
+        "imei": "C02G901ZMD6M",
+        "created_at": "Yesterday, 04:30 PM",
+        "current_step": 4,
+        "status_title": "Thermal Stress & QC Testing",
+        "status_desc": "Battery cell installed successfully. Running multi-core stress test and thermal fan calibration.",
+        "turnaround_estimate": "Ready for pickup today at 11:30 AM",
+        "technician": "Priya S. (Senior Apple Certified Mac Engineer)",
+        "warranty": "90-Day Iris Guarantee",
+        "total": 5898.00,
+        "items": [
+            {"name": "MacBook Pro High-Capacity Battery Pack", "price": 4999, "category": "Laptop Service"},
+            {"name": "Deep Thermal Cleaning & Heatsink Repaste", "price": 999, "category": "Laptop Maintenance"}
+        ],
+        "steps": [
+            {"number": 1, "title": "Device Intake & Inspection", "desc": "Diagnostic scan verified 68% battery health and throttled fans", "time": "Yesterday, 04:30 PM", "status": "completed"},
+            {"number": 2, "title": "Safety Teardown", "desc": "Logic board isolated and swollen battery solvent-released", "time": "Yesterday, 05:15 PM", "status": "completed"},
+            {"number": 3, "title": "OEM Battery Pack & Fan Service", "desc": "New Grade-A cells installed and liquid metal thermal paste applied", "time": "Today, 09:00 AM", "status": "completed"},
+            {"number": 4, "title": "Thermal Stress & QC Testing", "desc": "Full battery charge-discharge cycle and sensor benchmarking", "time": "Today, 09:45 AM", "status": "active"},
+            {"number": 5, "title": "Ready for Store Pickup", "desc": "Packaging with Iris certified repair certificate", "time": "Pending", "status": "pending"}
+        ]
+    },
+    "FIX-94E21A": {
+        "order_id": "FIX-94E21A",
+        "customer_name": "Vikram Patel",
+        "phone": "+91 97123 99881",
+        "device": "Apple AirPods Pro (2nd Generation)",
+        "imei": "H2LG4001PQ9X",
+        "created_at": "Today, 08:30 AM",
+        "current_step": 5,
+        "status_title": "Ready for Customer Pickup / Dispatch",
+        "status_desc": "Both earbuds balanced, acoustic mesh ultrasonically cleaned, new micro-battery operating at 100%.",
+        "turnaround_estimate": "Ready Now for Store Pickup or Courier Dispatch",
+        "technician": "Arvind M. (Master Certified Tech)",
+        "warranty": "90-Day Iris Guarantee",
+        "total": 1532.00,
+        "items": [
+            {"name": "AirPods Audio & Battery Restoration", "price": 1299, "category": "Audio Service"}
+        ],
+        "steps": [
+            {"number": 1, "title": "Intake & Audio Spectrum Test", "desc": "Left earbud confirmed 65% quieter with clogged mesh", "time": "08:30 AM", "status": "completed"},
+            {"number": 2, "title": "Ultrasonic Cleaning", "desc": "Solvent cerumen removal and mesh drying", "time": "08:45 AM", "status": "completed"},
+            {"number": 3, "title": "Battery Cell Micro-Soldering", "desc": "Button cell replaced and sealed with UV adhesive", "time": "09:05 AM", "status": "completed"},
+            {"number": 4, "title": "Frequency Spectrum QC Check", "desc": "Left and right stereo decibel parity confirmed", "time": "09:20 AM", "status": "completed"},
+            {"number": 5, "title": "Ready for Pickup", "desc": "Disinfected and packaged in Iris seal pouch", "time": "09:30 AM", "status": "active"}
+        ]
+    }
+}
+
+CALLBACKS_STORE = []
+
 @app.post("/api/checkout")
 def api_checkout():
     try:
@@ -152,6 +236,35 @@ def api_checkout():
         items = data.get("items", [])
         total = data.get("total", 0)
         order_id = f"FIX-{uuid.uuid4().hex[:6].upper()}"
+        
+        # Save to live tracking store
+        first_item_name = items[0].get("name", "Gadget Repair Service") if items else "Gadget Repair"
+        device_guess = items[0].get("compatibility", "Electronic Device") if items else "Smartphone / Laptop"
+        order_data: dict[str, Any] = {
+            "order_id": order_id,
+            "customer_name": data.get("customer_name") or "Valued Customer",
+            "phone": data.get("phone") or "+91 Verified",
+            "device": f"{device_guess} - {first_item_name}",
+            "imei": f"IMEI-35{uuid.uuid4().int % 1000000:06d}-88",
+            "created_at": "Just now",
+            "current_step": 1,
+            "status_title": "Repair Booking Confirmed & Station Allocated",
+            "status_desc": "Your repair ticket is active. OEM inventory parts are tagged and cleanroom bench is ready.",
+            "turnaround_estimate": "Same-Day Completion (45 Mins upon check-in)",
+            "technician": "Arvind M. (Master Certified Apple & Samsung Tech)",
+            "warranty": "90-Day Iris Guarantee",
+            "total": float(total) if total else 2499.00,
+            "items": items or [{"name": first_item_name, "price": float(total) if total else 2499.00, "category": "Repair Service"}],
+            "steps": [
+                {"number": 1, "title": "Booking Received & Verified", "desc": "Order logged and OEM parts reserved", "time": "Just now", "status": "active"},
+                {"number": 2, "title": "Cleanroom Bench Inspection", "desc": "Hardware sensor check & safety teardown", "time": "Pending", "status": "pending"},
+                {"number": 3, "title": "Precision Component Replacement", "desc": "Laser repair and OEM module installation", "time": "Pending", "status": "pending"},
+                {"number": 4, "title": "Waterproof & Pressure QC", "desc": "Bench testing and seal verification", "time": "Pending", "status": "pending"},
+                {"number": 5, "title": "Ready for Pickup / Dispatch", "desc": "Disinfected and packaged with warranty card", "time": "Pending", "status": "pending"}
+            ]
+        }
+        ORDERS_STORE[order_id] = order_data
+        
         return jsonify(
             success=True,
             order_id=order_id,
@@ -160,6 +273,174 @@ def api_checkout():
             total=total,
             items_count=len(items)
         )
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+
+@app.route("/api/track", methods=["GET", "POST"])
+def api_track():
+    try:
+        data = request.json if request.is_json else request.args
+        order_id = (data.get("order_id") or data.get("id") or "").strip().upper()
+        if not order_id:
+            return jsonify(
+                demo_orders=list(ORDERS_STORE.keys()),
+                error="Please enter an Order / Ticket ID (e.g. FIX-8A201C)"
+            ), 400
+
+        order = ORDERS_STORE.get(order_id)
+        if not order:
+            # Dynamically synthesize a live in-progress ticket for any custom ID entered
+            order = {
+                "order_id": order_id,
+                "customer_name": "Valued Customer",
+                "phone": "+91 Verified",
+                "device": "Registered Flagship Gadget",
+                "imei": f"IMEI-35{abs(hash(order_id)) % 1000000:06d}-01",
+                "created_at": "Today, Intake Logged",
+                "current_step": 2,
+                "status_title": "Diagnostic Bench Inspection in Progress",
+                "status_desc": "Certified technician is conducting teardown inspection and verifying component integrity.",
+                "turnaround_estimate": "Estimated completion within 45 mins",
+                "technician": "Priya S. (Senior Hardware Specialist)",
+                "warranty": "90-Day Iris Guarantee",
+                "total": 2499.00,
+                "items": [{"name": "Standard Hardware Diagnostic & Repair Service", "price": 2499, "category": "Hardware Repair"}],
+                "steps": [
+                    {"number": 1, "title": "Device Intake & Inspection", "desc": "Logged into Iris repair system", "time": "Completed", "status": "completed"},
+                    {"number": 2, "title": "Cleanroom Bench Inspection", "desc": "Diagnostic scan and component verification", "time": "In Progress", "status": "active"},
+                    {"number": 3, "title": "Component Replacement", "desc": "Installation of OEM grade parts", "time": "Pending", "status": "pending"},
+                    {"number": 4, "title": "Quality Bench Test", "desc": "Full functional testing and waterproofing check", "time": "Pending", "status": "pending"},
+                    {"number": 5, "title": "Ready for Pickup", "desc": "Ready for customer handover", "time": "Pending", "status": "pending"}
+                ]
+            }
+        return jsonify(success=True, order=order)
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+
+@app.post("/api/technician-callback")
+def api_technician_callback():
+    try:
+        data = request.json or {}
+        phone = data.get("phone", "").strip()
+        name = data.get("name", "Customer").strip()
+        device = data.get("device", "Electronic Device").strip()
+        issue = data.get("issue", "Hardware Fault / Diagnostic Request").strip()
+        time_slot = data.get("time_slot", "Within 15 minutes").strip()
+        if not phone:
+            return jsonify(error="Please provide a valid contact number."), 400
+        
+        callback_id = f"CALL-{uuid.uuid4().hex[:6].upper()}"
+        CALLBACKS_STORE.append({
+            "callback_id": callback_id,
+            "name": name,
+            "phone": phone,
+            "device": device,
+            "issue": issue,
+            "time_slot": time_slot,
+            "timestamp": "Just now",
+            "assigned_technician": "Arvind M. (Master Repair Tech)"
+        })
+        
+        wa_text = f"Hi Iris Lab, I need senior technician consultation for my {device}. Issue: {issue}. Reference: {callback_id}"
+        wa_url = f"https://wa.me/919876543210?text={quote(wa_text)}"
+        
+        return jsonify(
+            success=True,
+            callback_id=callback_id,
+            assigned_technician="Arvind M. (Master Repair Tech)",
+            eta=time_slot,
+            message=f"Callback confirmed! Master Tech Arvind M. will call you {time_slot}.",
+            whatsapp_url=wa_url
+        )
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+
+@app.get("/api/calculator")
+def api_calculator():
+    try:
+        options = {
+            "categories": [
+                {
+                    "id": "smartphones",
+                    "name": "Smartphones",
+                    "icon": "phone",
+                    "models": [
+                        "iPhone 15 / 15 Pro / Pro Max",
+                        "iPhone 14 / 14 Pro / Pro Max",
+                        "iPhone 13 / 13 Pro",
+                        "iPhone 12 / 11 / XR",
+                        "Samsung Galaxy S24 / S23 Ultra",
+                        "Samsung Galaxy Z Fold / Z Flip",
+                        "Google Pixel 8 / 7 Pro",
+                        "OnePlus 12 / 11 / 10 Pro"
+                    ],
+                    "issues": [
+                        {"id": "screen", "name": "Cracked OLED Screen & Touch Digitizer", "price": 4999, "turnaround": "30 Mins", "warranty": "90 Days"},
+                        {"id": "back-glass", "name": "Shattered Back Glass (Laser Extraction)", "price": 2499, "turnaround": "45 Mins", "warranty": "90 Days"},
+                        {"id": "battery", "name": "OEM Battery Replacement (100% Health)", "price": 1899, "turnaround": "25 Mins", "warranty": "90 Days"},
+                        {"id": "charging-port", "name": "USB-C / Lightning Port Repair & Cleaning", "price": 699, "turnaround": "20 Mins", "warranty": "90 Days"},
+                        {"id": "camera", "name": "Rear Camera Module / Broken Lens Glass", "price": 2199, "turnaround": "40 Mins", "warranty": "90 Days"},
+                        {"id": "water-damage", "name": "Liquid Damage Ultrasonic Clean & Micro-Solder", "price": 1499, "turnaround": "2 Hours", "warranty": "90 Days"}
+                    ]
+                },
+                {
+                    "id": "laptops",
+                    "name": "Laptops & MacBooks",
+                    "icon": "laptop",
+                    "models": [
+                        "Apple MacBook Pro (M1/M2/M3 / Intel)",
+                        "Apple MacBook Air (M1/M2/M3)",
+                        "Dell XPS 13 / 15 / Inspiron",
+                        "Lenovo ThinkPad X1 / Legion",
+                        "HP Spectre / Envy / Pavilion",
+                        "ASUS ROG / ZenBook"
+                    ],
+                    "issues": [
+                        {"id": "laptop-screen", "name": "Retina / IPS Display Panel Assembly", "price": 8999, "turnaround": "2 Hours", "warranty": "90 Days"},
+                        {"id": "laptop-battery", "name": "High-Capacity OEM Battery Pack", "price": 4999, "turnaround": "45 Mins", "warranty": "90 Days"},
+                        {"id": "thermal", "name": "Deep Thermal Cleaning & Heatsink Repaste", "price": 999, "turnaround": "45 Mins", "warranty": "90 Days"},
+                        {"id": "keyboard", "name": "Keyboard Assembly & Sticky Trackpad Fix", "price": 3299, "turnaround": "90 Mins", "warranty": "90 Days"},
+                        {"id": "hinge", "name": "Broken Display Hinge & Chassis Alignment", "price": 1899, "turnaround": "60 Mins", "warranty": "90 Days"},
+                        {"id": "ssd-ram", "name": "NVMe SSD & High-Speed RAM Upgrade", "price": 2499, "turnaround": "30 Mins", "warranty": "90 Days"}
+                    ]
+                },
+                {
+                    "id": "audio",
+                    "name": "Earphones & Audio",
+                    "icon": "headphones",
+                    "models": [
+                        "Apple AirPods Pro 1 / 2",
+                        "Apple AirPods 2 / 3",
+                        "Apple AirPods Max",
+                        "Sony WF-1000XM4 / XM5",
+                        "Sony WH-1000XM4 / XM5",
+                        "Bose QuietComfort Earbuds / 45"
+                    ],
+                    "issues": [
+                        {"id": "earbud-battery", "name": "Earbud Micro-Battery Replacement (Dead Bud)", "price": 1299, "turnaround": "40 Mins", "warranty": "90 Days"},
+                        {"id": "cushions", "name": "Cooling-Gel Ear Cushions (Pair)", "price": 899, "turnaround": "Instant", "warranty": "90 Days"},
+                        {"id": "mesh-clean", "name": "Acoustic Mesh Solvent & Ultrasonic Vacuum", "price": 499, "turnaround": "20 Mins", "warranty": "90 Days"},
+                        {"id": "case-port", "name": "Charging Case Battery & Lightning / USB-C Port", "price": 1499, "turnaround": "45 Mins", "warranty": "90 Days"}
+                    ]
+                },
+                {
+                    "id": "wearables",
+                    "name": "Smartwatches",
+                    "icon": "watch",
+                    "models": [
+                        "Apple Watch Ultra 1 / 2",
+                        "Apple Watch Series 9 / 8 / 7 / SE",
+                        "Samsung Galaxy Watch 6 / 5 Pro"
+                    ],
+                    "issues": [
+                        {"id": "watch-glass", "name": "Sapphire / OLED Glass Touch Digitizer", "price": 3999, "turnaround": "60 Mins", "warranty": "90 Days"},
+                        {"id": "watch-battery", "name": "Internal Lithium Polymer Battery Cell", "price": 1999, "turnaround": "45 Mins", "warranty": "90 Days"},
+                        {"id": "sensor-flex", "name": "Heart Rate & Bio-Sensor Glass Restoration", "price": 1699, "turnaround": "60 Mins", "warranty": "90 Days"}
+                    ]
+                }
+            ]
+        }
+        return jsonify(options)
     except Exception as e:
         return jsonify(error=str(e)), 500
 
