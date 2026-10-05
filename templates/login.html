@@ -344,6 +344,163 @@
 .auth-page-footer a:hover {
   color: #0f172a;
 }
+
+</style>
+{% endblock %}
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0);
+  pointer-events: none;
+  opacity: 0;
+  transition: none;
+}
+
+.auth-success-overlay.active {
+  pointer-events: all;
+  animation: overlayFadeIn 0.35s ease forwards;
+}
+
+.auth-success-overlay.fading-out {
+  animation: overlayFadeOut 0.45s ease forwards;
+}
+
+@keyframes overlayFadeIn {
+  from { background: rgba(255,255,255,0); opacity: 0; }
+  to   { background: rgba(255,255,255,0.96); opacity: 1; }
+}
+
+@keyframes overlayFadeOut {
+  from { background: rgba(255,255,255,0.96); opacity: 1; }
+  to   { background: rgba(255,255,255,0); opacity: 0; }
+}
+
+.auth-success-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  opacity: 0;
+  transform: translateY(16px) scale(0.96);
+  animation: cardSlideUp 0.45s cubic-bezier(0.34,1.56,0.64,1) 0.2s forwards;
+}
+
+@keyframes cardSlideUp {
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Ripple ring behind check circle */
+.auth-success-ripple {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.12);
+  animation: rippleExpand 1.2s cubic-bezier(0.2,0.8,0.4,1) 0.55s forwards;
+  opacity: 0;
+}
+
+.auth-success-ripple:nth-child(2) {
+  animation-delay: 0.75s;
+  background: rgba(124, 58, 237, 0.07);
+}
+
+@keyframes rippleExpand {
+  0%   { opacity: 0.9; transform: scale(1); }
+  100% { opacity: 0;   transform: scale(3.2); }
+}
+
+/* Check circle */
+.auth-success-circle-wrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-success-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.35), 0 2px 8px rgba(79, 70, 229, 0.2);
+  opacity: 0;
+  transform: scale(0.4);
+  animation: circlePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.35s forwards;
+}
+
+@keyframes circlePop {
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Animated SVG checkmark path draw */
+.auth-success-check {
+  width: 36px;
+  height: 36px;
+  overflow: visible;
+}
+
+.check-path {
+  stroke: #ffffff;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+  animation: drawCheck 0.5s cubic-bezier(0.65, 0, 0.35, 1) 0.75s forwards;
+}
+
+@keyframes drawCheck {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Welcome text */
+.auth-success-label {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  opacity: 0;
+  animation: textFadeUp 0.4s ease 0.9s forwards;
+}
+
+.auth-success-sublabel {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin-top: -0.75rem;
+  opacity: 0;
+  animation: textFadeUp 0.4s ease 1.05s forwards;
+}
+
+@keyframes textFadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Spinning dots loader shown on submit */
+.auth-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spinIt 0.6s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spinIt {
+  to { transform: rotate(360deg); }
+}
 </style>
 {% endblock %}
 
@@ -424,10 +581,9 @@
       <span>OR</span>
     </div>
 
-    <!-- Social Logins (Google, Microsoft, Apple) -->
+    <!-- Social Logins (Real Google Sign-In) -->
     <div class="auth-social-list">
-      <!-- Google -->
-      <button type="button" class="btn-chatgpt-social" onclick="handleSocialAuth('google')">
+      <button type="button" class="btn-chatgpt-social" onclick="handleGoogleAuth()">
         <span class="social-icon-slot">
           <svg viewBox="0 0 24 24" width="18" height="18">
             <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
@@ -438,47 +594,6 @@
         </span>
         <span class="social-text">Continue with Google</span>
       </button>
-
-      <!-- Microsoft -->
-      <button type="button" class="btn-chatgpt-social" onclick="handleSocialAuth('microsoft')">
-        <span class="social-icon-slot">
-          <svg viewBox="0 0 23 23" width="18" height="18">
-            <path fill="#f35325" d="M1 1h10v10H1z"/>
-            <path fill="#81bc06" d="M12 1h10v10H12z"/>
-            <path fill="#05a6f0" d="M1 12h10v10H1z"/>
-            <path fill="#ffba08" d="M12 12h10v10H12z"/>
-          </svg>
-        </span>
-        <span class="social-text">Continue with Microsoft Account</span>
-      </button>
-
-      <!-- Apple -->
-      <button type="button" class="btn-chatgpt-social" onclick="handleSocialAuth('apple')">
-        <span class="social-icon-slot">
-          <svg viewBox="0 0 170 170" width="17" height="17" fill="#0f172a">
-            <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.6-7.83-11.74-14.36-5.46-8.59-9.82-18.44-13.08-29.56-3.26-11.12-4.89-21.94-4.89-32.48 0-14.04 3.53-25.56 10.59-34.56 7.06-9 16.03-13.62 26.9-13.87 4.58 0 9.87 1.25 15.87 3.75 6 2.5 10.15 3.81 12.45 3.93 1.85-.24 6.22-1.66 13.11-4.25 6.89-2.59 12.39-3.71 16.5-3.37 12.63 1.02 22.42 5.92 29.38 14.71-11.02 6.64-16.42 15.82-16.2 27.54.22 9.25 3.76 16.94 10.63 23.08 6.87 6.13 14.86 9.77 23.97 10.92-2.17 6.31-4.78 12.87-7.83 19.67zM119.22 31.84c0-7.29 2.65-14.15 7.95-20.58 5.3-6.43 11.83-10.46 19.59-12.09.22 1.3.33 2.39.33 3.26 0 7.39-2.76 14.3-8.28 20.73-5.52 6.43-12.24 10.42-20.16 11.97-.11-.98-.22-2.07-.33-3.29z"/>
-          </svg>
-        </span>
-        <span class="social-text">Continue with Apple</span>
-      </button>
-    </div>
-
-    <!-- Fast 1-Click Demo Accounts -->
-    <div class="demo-accounts-pill">
-      <div class="demo-pill-title">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:13px;height:13px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-        <span>Instant Demo Login</span>
-      </div>
-      <div class="demo-pill-btns">
-        <button type="button" class="btn-demo-quick" onclick="quickFillAndLogin('rahul@gmail.com', 'password123')">
-          <span><strong>Rahul Sharma</strong> (Customer &bull; Active Ticket)</span>
-          <span style="color:#7c3aed;">1-Click &rarr;</span>
-        </button>
-        <button type="button" class="btn-demo-quick" onclick="quickFillAndLogin('arvind@iris.com', 'admin123')">
-          <span><strong>Arvind M.</strong> (Senior Certified Tech)</span>
-          <span style="color:#7c3aed;">1-Click &rarr;</span>
-        </button>
-      </div>
     </div>
   </div>
 
@@ -539,6 +654,32 @@ function togglePasswordVisibility(inputId, btn) {
   }
 }
 
+function showAuthSuccessAnimation(name, isSignup) {
+  const overlay = document.getElementById('auth-success-overlay');
+  const label   = document.getElementById('auth-success-label');
+  const sub     = document.getElementById('auth-success-sublabel');
+  if (!overlay) return;
+
+  const firstName = (name || 'there').split(' ')[0];
+  label.textContent = isSignup ? `Welcome, ${firstName}!` : `Welcome back, ${firstName}!`;
+  sub.innerHTML = isSignup
+    ? 'Your account is ready&hellip;'
+    : 'Taking you to Iris&hellip;';
+
+  // Force reflow so animations restart cleanly
+  overlay.classList.remove('active', 'fading-out');
+  void overlay.offsetWidth;
+  overlay.classList.add('active');
+
+  // After animation plays, fade out then redirect
+  setTimeout(() => {
+    overlay.classList.add('fading-out');
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 460);
+  }, 1900);
+}
+
 async function handleAuthSubmit(e) {
   e.preventDefault();
   const errorBanner = document.getElementById('auth-error-banner');
@@ -550,7 +691,8 @@ async function handleAuthSubmit(e) {
   const name = document.getElementById('auth-name').value.trim();
 
   submitBtn.disabled = true;
-  submitBtn.querySelector('span').textContent = 'Continuing...';
+  // Show spinner inside button
+  submitBtn.innerHTML = `<span class="auth-spinner"></span><span>${currentAuthMode === 'signup' ? 'Creating account...' : 'Signing in...'}</span>`;
 
   try {
     let result;
@@ -561,51 +703,43 @@ async function handleAuthSubmit(e) {
     }
 
     if (result && result.success) {
-      showToast(result.message || 'Signed in successfully!', 'success');
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 400);
+      showAuthSuccessAnimation(
+        result.user?.name || name || email.split('@')[0],
+        currentAuthMode === 'signup'
+      );
     } else {
       throw new Error(result?.error || 'Authentication failed. Please verify credentials.');
     }
   } catch (err) {
     errorBanner.textContent = err.message || 'Authentication error. Please try again.';
     errorBanner.style.display = 'block';
-  } finally {
     submitBtn.disabled = false;
-    submitBtn.querySelector('span').textContent = currentAuthMode === 'signup' ? 'Create account' : 'Continue';
+    submitBtn.innerHTML = `<span>${currentAuthMode === 'signup' ? 'Create account' : 'Continue'}</span>`;
   }
 }
 
-async function handleSocialAuth(provider) {
+async function handleGoogleAuth() {
   const errorBanner = document.getElementById('auth-error-banner');
   if (errorBanner) errorBanner.style.display = 'none';
 
-  const providerTitle = provider.charAt(0).toUpperCase() + provider.slice(1);
+  const googleBtn = document.querySelector('.btn-chatgpt-social');
+  if (googleBtn) { googleBtn.disabled = true; googleBtn.style.opacity = '0.7'; }
 
   try {
-    const result = await FirebaseAuthManager.signInProvider(provider);
+    const result = await FirebaseAuthManager.signInGoogle();
+    if (result && result.redirecting) return;
     if (result && result.success) {
-      showToast(`Connected with ${providerTitle}`, 'success');
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 400);
+      showAuthSuccessAnimation(result.user?.name || 'there', false);
     } else {
-      throw new Error(result?.error || 'Social sign-in failed');
+      throw new Error(result?.error || 'Google sign-in failed');
     }
   } catch (e) {
     if (errorBanner) {
-      errorBanner.textContent = e.message || `${providerTitle} sign-in failed. Please try again.`;
+      errorBanner.innerHTML = e.message || 'Google sign-in failed. Please try again.';
       errorBanner.style.display = 'block';
     }
+    if (googleBtn) { googleBtn.disabled = false; googleBtn.style.opacity = '1'; }
   }
-}
-
-function quickFillAndLogin(email, password) {
-  setAuthMode('login');
-  document.getElementById('auth-email').value = email;
-  document.getElementById('auth-password').value = password;
-  document.getElementById('auth-form').dispatchEvent(new Event('submit', { cancelable: true }));
 }
 
 document.addEventListener('DOMContentLoaded', () => {

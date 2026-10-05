@@ -1,0 +1,152 @@
+﻿
+LineNumber Line                                                                                                        
+---------- ----                                                                                                        
+         3 {% block title %}Iris &bull; AI Diagnostic &amp; Gadget Repair Copilot{% endblock %}                        
+        44       <a href="javascript:void(0)" class="nav-item" onclick="openDeviceDiagModal()" title="In-Browser Har...
+        48       <a href="javascript:void(0)" class="nav-item" onclick="openCostCalculatorModal()" title="Repair Cos...
+        52       <a href="javascript:void(0)" class="nav-item" onclick="openOrderTrackerModal()" title="Live Order &...
+        91             <span class="auth-guest-sub">Sync chats &amp; repair orders</span>                              
+       118           <a href="javascript:void(0)" class="popover-item" onclick="openOrderTrackerModal(); closeUserMe...
+       120             <span>My Repair Orders</span>                                                                   
+       122           <a href="javascript:void(0)" class="popover-item" onclick="openDiagnosticInvoiceModal(); closeU...
+       124             <span>Diagnostic &amp; Estimate Sheet</span>                                                    
+       126           <a href="javascript:void(0)" class="popover-item" onclick="openCostCalculatorModal(); closeUser...
+       128             <span>Price Calculator &amp; Catalog</span>                                                     
+       132             <span>Hardware Diagnostics</span>                                                               
+       171         <!-- Export chat / Diagnostic Report button -->                                                     
+       172         <button class="topbar-outline-tool" onclick="openDiagnosticInvoiceModal()" title="1-Click Printab...
+       177         <!-- Dark Pill Action Button: Upgrade / Track Order -->                                             
+       178         <button class="topbar-dark-pill" onclick="openOrderTrackerModal()" title="Track live repair order...
+       179           <span>Track Order</span>                                                                          
+       182         <!-- Repair Cart Button -->                                                                         
+       183         <button class="topbar-cart-pill" onclick="toggleCartDrawer()" title="View current repair ticket">   
+       185           <span class="cart-count-badge" id="topbar-cart-count">1</span>                                    
+       217               <button type="button" class="btn-deeper-research" id="btn-deep-research" onclick="toggleDee...
+       226               <button type="button" class="btn-prompt-subicon" onclick="openCostCalculatorModal()" title=...
+       269                 <div class="saved-prompt-item" onclick="selectPromptCard('Check warranty coverage and dia...
+       296           <div class="hero-fcard" onclick="openCostCalculatorModal()">                                      
+       344         <textarea id="docked-copilot-input" placeholder="Ask Iris about repairs, pricing in â‚¹ INR, or d...
+       354        SLIDE-OVER CHECKOUT DRAWER (Repair Ticket & Booking)                                                 
+       356   <aside class="checkout-drawer" id="checkout-drawer">                                                      
+       360         <span>Repair Ticket &amp; Booking</span>                                                            
+       362       <button class="drawer-close-btn" onclick="toggleCartDrawer()">                                        
+       367     <div class="cart-items-container" id="cart-items-list">                                                 
+       368       <!-- Rendered dynamically by main.js renderCart() -->                                                 
+       374         <span id="cart-subtotal">â‚¹2,499</span>                                                            
+       386         <span id="cart-tax">â‚¹450</span>                                                                   
+       390         <span id="cart-total">â‚¹2,949</span>                                                               
+       393       <button class="btn-drawer-checkout" id="btn-checkout" onclick="executeCheckout()">                    
+       398         Pay in store upon inspection or instant checkout &bull; No fix, no fee guarantee                    
+       404        1. LIVE ORDER & TICKET TRACKER MODAL                                                                 
+       406   <div class="modal-backdrop" id="order-tracker-modal">                                                     
+       411           <span>Live Repair Order &amp; Ticket Tracker</span>                                               
+       413         <button class="drawer-close-btn" onclick="closeOrderTrackerModal()">                                
+       420         <div class="tracker-search-container">                                                              
+       421           <input type="text" id="tracker-order-input" class="tracker-search-input" placeholder="ENTER TIC...
+       422           <button class="tracker-search-btn" onclick="searchOrderTracking()">                               
+       424             <span>Track</span>                                                                              
+       429         <div class="tracker-chip-row">                                                                      
+       430           <span>Quick demo tickets:</span>                                                                  
+       431           <button type="button" class="tracker-chip" onclick="quickTrackOrder('FIX-8A201C')">FIX-8A201C (...
+       432           <button type="button" class="tracker-chip" onclick="quickTrackOrder('FIX-DEMO01')">FIX-DEMO01 (...
+       433           <button type="button" class="tracker-chip" onclick="quickTrackOrder('FIX-94E21A')">FIX-94E21A (...
+       437         <div id="tracker-result-container">                                                                 
+       438           <!-- Dynamically populated by JS renderOrderTracker() -->                                         
+       445        2. REPAIR COST ESTIMATOR & CALCULATOR MODAL                                                          
+       447   <div class="modal-backdrop" id="cost-calculator-modal">                                                   
+       452           <span>Instant Repair Cost &amp; Turnaround Calculator</span>                                      
+       454         <button class="drawer-close-btn" onclick="closeCostCalculatorModal()">                              
+       498           <button class="btn-drawer-checkout" style="max-width:220px;" onclick="addCalcSelectionToCart()">  
+       499             Add to Repair Ticket &rarr;                                                                     
+       507        3. IN-BROWSER HARDWARE DIAGNOSTICS MODAL                                                             
+       514           <span>In-Browser Hardware Diagnostic Suite</span>                                                 
+       594        4. OFFICIAL DIAGNOSTIC & ESTIMATE SHEET MODAL                                                        
+       596   <div class="modal-backdrop" id="diagnostic-invoice-modal">                                                
+       601           <span>Iris Certified Diagnostic &amp; Repair Estimate Sheet</span>                                
+       608           <button class="drawer-close-btn" onclick="closeDiagnosticInvoiceModal()">                         
+       630               <div style="font-family:var(--font-mono); font-size:0.92rem; font-weight:700; color:var(--p...
+       649           <!-- Diagnostic Check Matrix -->                                                                  
+       651             <div style="font-size:0.78rem; text-transform:uppercase; color:var(--text-muted); font-weight...
+       682                   <td><strong>Cleanroom Diagnostic Bench &amp; IP68 Seal Verification</strong><br><small ...
+       683                   <td>Diagnostic Service</td>                                                               
+       741             Chat directly with Master Diagnostic Technician Arvind M. on WhatsApp. Your current device an...
+       763             <input type="text" id="callback-issue" class="modal-form-input" placeholder="e.g. iPhone 14 P...
+       801         <p class="auth-subtitle" id="modal-auth-subtitle">Log in to Iris AI to sync your diagnostics, tra...
+       888 const topbarCartCount = document.getElementById('topbar-cart-count');                                       
+      1054   { group: '7 days', title: "Dell XPS 15 battery swelling replacement", prompt: "Dell XPS 15 trackpad lif...
+      1095           <div class="history-item-title" title="${escapeHtml(s.title || 'Diagnostic Chat')}">${escapeHtm...
+      1185   const title = (firstPrompt || (currentMessages[0] ? currentMessages[0].text : 'Diagnostic Repair')).sli...
+      1234 function toggleCartDrawer() {                                                                               
+      1235   const drawer = document.getElementById('checkout-drawer');                                                
+      1332       <span>${isDeepResearchActive ? 'Iris is performing Deep Hardware Diagnostic & CPSC recall cross-che...
+      1510   if (dockedInput) dockedInput.placeholder = 'Ask Iris about repairs, pricing in â‚¹ INR, or diagnostic c...
+      1524     showToast('Deeper Research enabled: Iris will perform comprehensive multi-stage diagnostic & CPSC rec...
+      1526     showToast('Standard diagnostic mode active.', 'info');                                                  
+      1549   showToast('Iris Pro Neural Diagnostic v2.5: Hardware Fault Neural Classifier + DeepSeek R1 Reasoning En...
+      1567   showToast('Iris Options: Diagnostic Sheet Export, Senior Tech Consultation, Live Bench Tracking', 'info');
+      1578   showToast('Iris Audio Diagnostic Frequency Sweep (60Hz - 1200Hz)', 'info');                               
+      1592 // 2. LIVE ORDER STATUS TRACKER CONTROLLER                                                                  
+      1594 function openOrderTrackerModal(orderId) {                                                                   
+      1595   const modal = document.getElementById('order-tracker-modal');                                             
+      1597   const targetId = orderId || document.getElementById('tracker-order-input').value.trim() || 'FIX-8A201C';  
+      1598   document.getElementById('tracker-order-input').value = targetId;                                          
+      1602 function closeOrderTrackerModal() {                                                                         
+      1603   const modal = document.getElementById('order-tracker-modal');                                             
+      1607 function quickTrackOrder(id) {                                                                              
+      1608   document.getElementById('tracker-order-input').value = id;                                                
+      1612 function searchOrderTracking() {                                                                            
+      1613   const id = document.getElementById('tracker-order-input').value.trim();                                   
+      1615     showToast('Please enter an order ticket ID (e.g. FIX-8A201C)', 'info');                                 
+      1621 function trackCurrentReceiptOrder() {                                                                       
+      1622   const orderIdEl = document.getElementById('receipt-order-id');                                            
+      1628   closeReceiptModal();                                                                                      
+      1629   openOrderTrackerModal(id);                                                                                
+      1633   const container = document.getElementById('tracker-result-container');                                    
+      1639       <div>Connecting to Iris Cleanroom Lab Tracking System...</div>                                        
+      1644     const res = await fetch(`/api/track?order_id=${encodeURIComponent(id)}`);                               
+      1650           Ticket ID not found. Try one of our demo orders: FIX-8A201C, FIX-DEMO01, or FIX-94E21A.           
+      1657     activeTrackedOrder = o;                                                                                 
+      1660       <div class="tracker-card-summary">                                                                    
+      1661         <div class="tracker-card-header">                                                                   
+      1663             <span class="tracker-ticket-badge">${escapeHtml(o.order_id)}</span>                             
+      1664             <div class="tracker-device-title">${escapeHtml(o.device)}</div>                                 
+      1669           <div class="tracker-tech-badge">                                                                  
+      1711           <button class="btn-primary" onclick="openDiagnosticInvoiceModal(activeTrackedOrder)" style="pad...
+      1713             <span>View Diagnostic Sheet</span>                                                              
+      1719     container.innerHTML = `<div style="color:var(--rose-500); text-align:center; padding:1rem;">Failed to...
+      1723 let activeTrackedOrder = null;                                                                              
+      1726 // 3. REPAIR COST ESTIMATOR & CALCULATOR CONTROLLER                                                         
+      1728 let calculatorData = null;                                                                                  
+      1733 async function openCostCalculatorModal() {                                                                  
+      1734   const modal = document.getElementById('cost-calculator-modal');                                           
+      1737   if (!calculatorData) {                                                                                    
+      1739       const res = await fetch('/api/calculator');                                                           
+      1740       calculatorData = await res.json();                                                                    
+      1742       showToast('Could not load calculator catalog', 'error');                                              
+      1746   renderCalculator();                                                                                       
+      1749 function closeCostCalculatorModal() {                                                                       
+      1750   const modal = document.getElementById('cost-calculator-modal');                                           
+      1758   renderCalculator();                                                                                       
+      1761 function renderCalculator() {                                                                               
+      1762   if (!calculatorData || !calculatorData.categories) return;                                                
+      1763   const cat = calculatorData.categories.find(c => c.id === selectedCategory) || calculatorData.categories...
+      1792   const cat = calculatorData.categories.find(c => c.id === selectedCategory);                               
+      1813 function addCalcSelectionToCart() {                                                                         
+      1825   cart.push(item);                                                                                          
+      1826   renderCart();                                                                                             
+      1827   closeCostCalculatorModal();                                                                               
+      1828   showToast(`Added to repair ticket: ${selectedIssue.name}`, 'success');                                    
+      1829   toggleCartDrawer();                                                                                       
+      1833 // 4. IN-BROWSER HARDWARE DIAGNOSTIC TEST SUITE                                                             
+      2016 // 5. PRINTABLE DIAGNOSTIC SHEET & INVOICE ESTIMATE CONTROLLER                                              
+      2018 function openDiagnosticInvoiceModal(order) {                                                                
+      2019   const modal = document.getElementById('diagnostic-invoice-modal');                                        
+      2022   const o = order || activeTrackedOrder || {                                                                
+      2031       { name: 'Full Diagnostic Bench & Waterproofing Seal', category: 'Diagnostic Service', price: 299 }    
+      2035   document.getElementById('invoice-sheet-ticket-id').textContent = o.order_id;                              
+      2065 function closeDiagnosticInvoiceModal() {                                                                    
+      2066   const modal = document.getElementById('diagnostic-invoice-modal');                                        
+      2079   let issueSummary = lastUserMsg ? lastUserMsg.text.slice(0, 100) : 'Gadget hardware diagnostic inquiry';   
+      2082     const waText = `Hi Iris Lab, I need senior technician consultation. Diagnostic notes: ${issueSummary}`; 
+
+

@@ -1,26 +1,11 @@
 /**
  * Iris AI - Gadget Repair & Diagnostic Copilot
- * Fixing Mobiles, Laptops, Earphones, and Smart Gadgets
  */
 
-// Global Repair Order / Cart State
-let cart = [
-  {
-    id: "iphone-back-glass-repair",
-    name: "iPhone Back Glass Laser Replacement",
-    price: 2499,
-    quantity: 1,
-    category: "Mobile Repair",
-    compatibility: "iPhone 12 / 13 / 14 / 15 series"
-  }
-];
-
 document.addEventListener('DOMContentLoaded', () => {
-  renderCart();
-  initHealthBeacon();
-  initDragAndDropZones();
   checkAuthStatus();
 });
+
 
 // Close floating menus on click outside
 document.addEventListener('click', (e) => {
@@ -203,202 +188,6 @@ function addProductFromChat(encodedProduct, btn) {
   }
 }
 
-function addToCart(item) {
-  const existing = cart.find(i => i.id === item.id);
-  if (existing) {
-    existing.quantity += 1;
-  } else {
-    cart.push({
-      id: item.id || 'repair-' + Math.random().toString(36).substr(2, 6),
-      name: item.name || 'Gadget Repair Service',
-      price: parseFloat(item.price) || 49.99,
-      quantity: 1,
-      category: item.category || 'Repair Service',
-      compatibility: item.compatibility || 'Mobile / Laptop'
-    });
-  }
-
-  renderCart();
-  showToast(`Added "${item.name}" to repair booking`, 'success');
-  
-  // Auto open drawer so user sees their repair item
-  const drawer = document.getElementById('checkout-drawer');
-  if (drawer && !drawer.classList.contains('open')) {
-    drawer.classList.add('open');
-  }
-}
-
-function updateCartQuantity(id, delta) {
-  const item = cart.find(i => i.id === id);
-  if (!item) return;
-
-  item.quantity += delta;
-  if (item.quantity <= 0) {
-    removeFromCart(id);
-    return;
-  }
-  renderCart();
-}
-
-function removeFromCart(id) {
-  cart = cart.filter(i => i.id !== id);
-  renderCart();
-  showToast('Removed from repair booking', 'info');
-}
-
-function renderCart() {
-  const cartList = document.getElementById('cart-items-list');
-  const cartCountBadges = document.querySelectorAll('.cart-count-badge');
-  const topbarCount = document.getElementById('topbar-cart-count');
-  const subtotalEl = document.getElementById('cart-subtotal');
-  const taxEl = document.getElementById('cart-tax');
-  const totalEl = document.getElementById('cart-total');
-  const btnCheckout = document.getElementById('btn-checkout');
-
-  const totalCount = cart.reduce((acc, i) => acc + i.quantity, 0);
-  cartCountBadges.forEach(b => b.textContent = totalCount);
-  if (topbarCount) topbarCount.textContent = totalCount;
-
-  if (!cartList) return;
-
-  if (cart.length === 0) {
-    cartList.innerHTML = `
-      <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:180px; text-align:center; color:var(--text-faint); gap:0.5rem; padding:1rem;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:36px;height:36px;opacity:0.35;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
-        <div style="font-weight:600; font-size:0.9rem; color:var(--text-title);">No Repairs in Booking</div>
-        <p style="font-size:0.78rem;">Ask Iris or upload a photo of your broken mobile, laptop, or earphones to book a repair.</p>
-      </div>
-    `;
-    if (subtotalEl) subtotalEl.textContent = '₹0';
-    if (taxEl) taxEl.textContent = '₹0';
-    if (totalEl) totalEl.textContent = '₹0';
-    if (btnCheckout) btnCheckout.disabled = true;
-    return;
-  }
-
-  let subtotal = 0;
-  cartList.innerHTML = cart.map(item => {
-    const itemTotal = item.price * item.quantity;
-    subtotal += itemTotal;
-    return `
-      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:0.85rem; display:flex; gap:0.75rem; align-items:center;">
-        <div style="width:40px; height:40px; border-radius:8px; background:#e0e7ff; display:flex; align-items:center; justify-content:center; color:var(--primary-600); flex-shrink:0;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
-        </div>
-        <div style="flex:1; overflow:hidden;">
-          <div style="font-size:0.82rem; font-weight:700; color:var(--text-title); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(item.name)}</div>
-          <div style="font-size:0.78rem; font-weight:700; color:var(--primary-600); margin-top:0.1rem;">₹${Math.round(item.price).toLocaleString('en-IN')}</div>
-        </div>
-        <div style="display:flex; align-items:center; gap:0.35rem; background:#ffffff; border:1px solid #e2e8f0; border-radius:6px; padding:0.15rem 0.35rem;">
-          <button style="background:none; border:none; color:var(--text-body); cursor:pointer; font-weight:700;" onclick="updateCartQuantity('${item.id}', -1)">&minus;</button>
-          <span style="font-size:0.76rem; font-weight:600; min-width:14px; text-align:center;">${item.quantity}</span>
-          <button style="background:none; border:none; color:var(--text-body); cursor:pointer; font-weight:700;" onclick="updateCartQuantity('${item.id}', 1)">&plus;</button>
-        </div>
-        <button style="background:none; border:none; color:var(--rose-500); cursor:pointer; padding:0.2rem;" onclick="removeFromCart('${item.id}')" title="Remove">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-      </div>
-    `;
-  }).join('');
-
-  const tax = Math.round(subtotal * 0.18);
-  const grandTotal = subtotal + tax;
-
-  if (subtotalEl) subtotalEl.textContent = `₹${Math.round(subtotal).toLocaleString('en-IN')}`;
-  if (taxEl) taxEl.textContent = `₹${Math.round(tax).toLocaleString('en-IN')}`;
-  if (totalEl) totalEl.textContent = `₹${Math.round(grandTotal).toLocaleString('en-IN')}`;
-  if (btnCheckout) btnCheckout.disabled = false;
-}
-
-// 1-Click Instant Repair Booking / Checkout
-async function executeCheckout() {
-  if (cart.length === 0) return;
-
-  const btnCheckout = document.getElementById('btn-checkout');
-  if (btnCheckout) {
-    btnCheckout.disabled = true;
-    btnCheckout.innerHTML = `Confirming Repair Booking...`;
-  }
-
-  try {
-    const subtotal = cart.reduce((acc, i) => acc + (i.price * i.quantity), 0);
-    const tax = subtotal * 0.0825;
-    const total = subtotal + tax;
-
-    const res = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: cart, total: total.toFixed(2) })
-    });
-    const data = await res.json();
-
-    if (data.success) {
-      showReceiptModal(data);
-      cart = [];
-      renderCart();
-      const drawer = document.getElementById('checkout-drawer');
-      if (drawer) drawer.classList.remove('open');
-    } else {
-      showToast(data.error || 'Repair booking failed', 'error');
-    }
-  } catch (err) {
-    showToast('Network error during booking', 'error');
-  } finally {
-    if (btnCheckout) {
-      btnCheckout.disabled = false;
-      btnCheckout.innerHTML = `Confirm Repair Booking &rarr;`;
-    }
-  }
-}
-
-function showReceiptModal(order) {
-  const modal = document.getElementById('receipt-modal');
-  const orderIdEl = document.getElementById('receipt-order-id');
-  const totalEl = document.getElementById('receipt-total');
-  const deliveryEl = document.getElementById('receipt-delivery');
-
-  if (orderIdEl) orderIdEl.textContent = `Repair Ticket: ${order.order_id}`;
-  if (totalEl) totalEl.textContent = `₹${Number(order.total).toLocaleString('en-IN')}`;
-  if (deliveryEl) deliveryEl.textContent = order.delivery_estimate;
-
-  if (modal) modal.classList.add('open');
-}
-
-function closeReceiptModal() {
-  const modal = document.getElementById('receipt-modal');
-  if (modal) modal.classList.remove('open');
-}
-
-// Health check beacon
-async function initHealthBeacon() {
-  try {
-    const res = await fetch('/health');
-    const data = await res.json();
-    const active = Object.values(data).filter(Boolean).length;
-    const total = Object.keys(data).length;
-    const textEl = document.getElementById('health-text');
-    if (textEl) textEl.textContent = `Iris AI Live (${active}/${total})`;
-  } catch (err) {
-    const textEl = document.getElementById('health-text');
-    if (textEl) textEl.textContent = 'Iris Online';
-  }
-}
-
-function initDragAndDropZones() {
-  document.querySelectorAll('.file-dropzone').forEach(zone => {
-    const input = zone.querySelector('input[type="file"]');
-    if (!input) return;
-    ['dragenter', 'dragover'].forEach(n => zone.addEventListener(n, e => { e.preventDefault(); zone.classList.add('drag-active'); }));
-    ['dragleave', 'drop'].forEach(n => zone.addEventListener(n, e => { e.preventDefault(); zone.classList.remove('drag-active'); }));
-    zone.addEventListener('drop', e => {
-      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-        input.files = e.dataTransfer.files;
-        input.dispatchEvent(new Event('change'));
-      }
-    });
-  });
-}
-
 // =========================================================
 // FIREBASE AUTHENTICATION MANAGER & CONTROLLER
 // =========================================================
@@ -438,9 +227,24 @@ const FirebaseAuthManager = {
       }
       this.auth = firebase.auth();
       this.isInitialized = true;
+
+      // Handle redirect sign-in result if user came back from Google redirect
+      this.auth.getRedirectResult().then(async (result) => {
+        if (result && result.user) {
+          const syncRes = await this.syncWithBackend(result.user);
+          if (syncRes && syncRes.user) {
+            currentAuthUser = syncRes.user;
+            renderUserAuthUI(syncRes.user);
+            showToast(`Welcome back, ${syncRes.user.name}!`, 'success');
+          }
+        }
+      }).catch(e => {
+        console.warn('Redirect sign-in check:', e);
+      });
+
       return this.auth;
     } catch (err) {
-      console.warn('Firebase init error, using resilient mode:', err);
+      console.warn('Authentication init error:', err);
       return null;
     }
   },
@@ -488,47 +292,51 @@ const FirebaseAuthManager = {
     return await this.fallbackBackendAuth(email, password, true, name);
   },
 
-  async signInProvider(providerName) {
+  async signInGoogle() {
     const auth = await this.init();
-    if (auth) {
-      let provider;
-      if (providerName === 'google') {
-        provider = new firebase.auth.GoogleAuthProvider();
-        provider.addScope('profile');
-        provider.addScope('email');
-      } else if (providerName === 'microsoft') {
-        provider = new firebase.auth.OAuthProvider('microsoft.com');
-      } else if (providerName === 'apple') {
-        provider = new firebase.auth.OAuthProvider('apple.com');
-      } else {
-        provider = new firebase.auth.GoogleAuthProvider();
-      }
-
-      try {
-        const userCred = await auth.signInWithPopup(provider);
-        return await this.syncWithBackend(userCred.user);
-      } catch (fbErr) {
-        if (fbErr.code === 'auth/popup-closed-by-user') {
-          throw new Error('Sign-in popup was closed.');
-        }
-        // Fallback to demo social provider flow if domain or demo API key
-        const res = await fetch('/api/auth/social', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ provider: providerName })
-        });
-        const data = await res.json();
-        if (data.success) return data;
-        throw new Error(data.error || 'Social sign-in failed');
-      }
+    if (!auth) {
+      throw new Error('Authentication service is initializing. Please try again.');
     }
 
-    const res = await fetch('/api/auth/social', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ provider: providerName })
-    });
-    return await res.json();
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('profile');
+    provider.addScope('email');
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    try {
+      const userCred = await auth.signInWithPopup(provider);
+      return await this.syncWithBackend(userCred.user);
+    } catch (fbErr) {
+      console.error('Google Sign-In Error:', fbErr);
+      if (fbErr.code === 'auth/popup-closed-by-user') {
+        throw new Error('Google sign-in popup was closed.');
+      }
+      if (fbErr.code === 'auth/popup-blocked') {
+        await auth.signInWithRedirect(provider);
+        return { success: true, redirecting: true };
+      }
+      if (fbErr.code === 'auth/unauthorized-domain') {
+        const isLocalIp = window.location.hostname === '127.0.0.1' || /^(\d{1,3}\.){3}\d{1,3}$/.test(window.location.hostname);
+        const port = window.location.port ? `:${window.location.port}` : '';
+        const localhostUrl = `${window.location.protocol}//localhost${port}${window.location.pathname}${window.location.search}`;
+
+        if (isLocalIp) {
+          if (typeof showToast === 'function') {
+            showToast('Switching to http://localhost (authorized by Firebase by default)...', 'info');
+          }
+          setTimeout(() => {
+            window.location.href = localhostUrl;
+          }, 1200);
+          return { success: false, redirecting: true };
+        }
+
+        throw new Error(`Domain "${window.location.hostname}" is not authorized for Google Sign-In in Firebase. Switch to <a href="${localhostUrl}" style="text-decoration:underline; font-weight:600; color:#3b82f6;">http://localhost${port}</a> or add "${window.location.hostname}" in Firebase Console &gt; Authentication &gt; Settings &gt; Authorized domains.`);
+      }
+      if (fbErr.code === 'auth/operation-not-allowed') {
+        throw new Error('Google sign-in is not enabled in Firebase Console. Please enable Google under Authentication > Sign-in method.');
+      }
+      throw new Error(fbErr.message || 'Google sign-in failed. Please try again.');
+    }
   },
 
   async syncWithBackend(fbUser, customName = '') {
@@ -749,38 +557,27 @@ async function handleModalAuthSubmit(e) {
   }
 }
 
-async function handleModalSocialAuth(provider) {
+async function handleModalGoogleAuth() {
   const errBox = document.getElementById('modal-auth-error');
   if (errBox) errBox.style.display = 'none';
 
-  const providerTitle = provider.charAt(0).toUpperCase() + provider.slice(1);
-
   try {
-    const result = await FirebaseAuthManager.signInProvider(provider);
+    const result = await FirebaseAuthManager.signInGoogle();
+    if (result && result.redirecting) return;
     if (result && result.success && result.user) {
       currentAuthUser = result.user;
       renderUserAuthUI(result.user);
       closeLoginModal();
-      showToast(`Connected with ${providerTitle}`, 'success');
+      showToast(result.message || `Welcome, ${result.user.name}!`, 'success');
     } else {
-      throw new Error(result?.error || 'Social sign-in failed');
+      throw new Error(result?.error || 'Google sign-in failed');
     }
   } catch (err) {
     if (errBox) {
-      errBox.textContent = err.message || `${providerTitle} sign-in failed. Please try again.`;
+      errBox.textContent = err.message || 'Google sign-in failed. Please try again.';
       errBox.style.display = 'block';
     }
   }
-}
-
-function quickFillModalLogin(email, password) {
-  setModalAuthMode('login');
-  const emailInput = document.getElementById('modal-email');
-  const pwdInput = document.getElementById('modal-password');
-  if (emailInput) emailInput.value = email;
-  if (pwdInput) pwdInput.value = password;
-  const form = document.getElementById('modal-auth-form');
-  if (form) form.dispatchEvent(new Event('submit', { cancelable: true }));
 }
 
 async function handleLogout() {

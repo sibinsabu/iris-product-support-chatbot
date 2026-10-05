@@ -39,20 +39,8 @@
       <span class="search-shortcut-badge">⌘K</span>
     </div>
 
-    <!-- Navigation Menu Items (Explore, Library, Files, History) -->
+    <!-- Navigation Menu Items -->
     <nav class="sidebar-nav-menu">
-      <a href="javascript:void(0)" class="nav-item" onclick="openDeviceDiagModal()" title="In-Browser Hardware Diagnostics">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
-        <span>Explore</span>
-      </a>
-      <a href="javascript:void(0)" class="nav-item" onclick="openCostCalculatorModal()" title="Repair Cost Calculator & Parts Catalog">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-        <span>Library</span>
-      </a>
-      <a href="javascript:void(0)" class="nav-item" onclick="openOrderTrackerModal()" title="Live Order & Ticket Tracker">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-        <span>Files</span>
-      </a>
       <a href="javascript:void(0)" class="nav-item active" onclick="focusChatHistory()" title="Saved Chat Sessions">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
         <span>History</span>
@@ -88,7 +76,7 @@
         <div class="sidebar-auth-guest-card" id="sidebar-auth-guest">
           <div class="auth-guest-meta">
             <span class="auth-guest-title">Iris AI Account</span>
-            <span class="auth-guest-sub">Sync chats &amp; repair orders</span>
+            <span class="auth-guest-sub">Sign in to sync your chats</span>
           </div>
           <div class="auth-guest-btn-group">
             <button type="button" class="btn-sidebar-auth login" onclick="openLoginModal('login')">Log in</button>
@@ -114,23 +102,6 @@
             <div class="popover-name" id="popover-user-name">Rahul Sharma</div>
             <div class="popover-email" id="popover-user-email">rahul@gmail.com</div>
           </div>
-          <div class="popover-divider"></div>
-          <a href="javascript:void(0)" class="popover-item" onclick="openOrderTrackerModal(); closeUserMenu();">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-            <span>My Repair Orders</span>
-          </a>
-          <a href="javascript:void(0)" class="popover-item" onclick="openDiagnosticInvoiceModal(); closeUserMenu();">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-            <span>Diagnostic &amp; Estimate Sheet</span>
-          </a>
-          <a href="javascript:void(0)" class="popover-item" onclick="openCostCalculatorModal(); closeUserMenu();">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path><path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path></svg>
-            <span>Price Calculator &amp; Catalog</span>
-          </a>
-          <a href="javascript:void(0)" class="popover-item" onclick="openDeviceDiagModal(); closeUserMenu();">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
-            <span>Hardware Diagnostics</span>
-          </a>
           <div class="popover-divider"></div>
           <a href="javascript:void(0)" class="popover-item danger" onclick="handleLogout()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
@@ -158,31 +129,9 @@
 
       <!-- Right Action Tools matching reference -->
       <div class="stage-topbar-tools">
-        <!-- More options ··· -->
-        <button class="topbar-icon-tool" onclick="toggleMoreOptionsDropdown(event)" title="More options">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
-        </button>
-
         <!-- Share / Link icon -->
         <button class="topbar-icon-tool" onclick="copyCurrentConsultationLink()" title="Share consultation link">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-        </button>
-
-        <!-- Export chat / Diagnostic Report button -->
-        <button class="topbar-outline-tool" onclick="openDiagnosticInvoiceModal()" title="1-Click Printable / PDF Diagnostic Report & Estimate">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-          <span>Export chat</span>
-        </button>
-
-        <!-- Dark Pill Action Button: Upgrade / Track Order -->
-        <button class="topbar-dark-pill" onclick="openOrderTrackerModal()" title="Track live repair order & ticket progress">
-          <span>Track Order</span>
-        </button>
-
-        <!-- Repair Cart Button -->
-        <button class="topbar-cart-pill" onclick="toggleCartDrawer()" title="View current repair ticket">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-          <span class="cart-count-badge" id="topbar-cart-count">1</span>
         </button>
 
         <!-- Topbar Auth Action / User Profile Pill (ChatGPT Style) -->
@@ -190,7 +139,7 @@
           <button type="button" class="btn-topbar-login" id="topbar-login-btn" onclick="openLoginModal('login')" title="Log in or create account">
             Log in
           </button>
-          <div class="topbar-user-pill" id="topbar-user-pill" style="display:none;" onclick="toggleUserMenu(event)" title="Account details & orders">
+          <div class="topbar-user-pill" id="topbar-user-pill" style="display:none;" onclick="toggleUserMenu(event)" title="Account details">
             <span class="topbar-user-avatar" id="topbar-user-avatar">RS</span>
             <span class="topbar-user-name" id="topbar-user-name">Rahul</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="topbar-user-arrow"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -218,14 +167,10 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>
                 <span>Deeper Research</span>
               </button>
-              
+
               <a href="/crawl" class="btn-prompt-subicon" title="Repair Datasets & Federated Crawler">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
               </a>
-
-              <button type="button" class="btn-prompt-subicon" onclick="openCostCalculatorModal()" title="Instant Price Quote & Diagnostic Estimator">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path></svg>
-              </button>
             </div>
 
             <!-- Right Controls (Waveform, Voice Mic, Send) -->
@@ -281,24 +226,24 @@
           </div>
         </div>
 
-        <!-- 3 Feature Suggestion Cards (Matching Reference Mockup) -->
+        <!-- 3 Feature Suggestion Cards -->
         <div class="hero-feature-cards">
-          <!-- Card 1: Synthesize Data -->
-          <div class="hero-fcard" onclick="openDeviceDiagModal()">
+          <!-- Card 1: Diagnose Device -->
+          <div class="hero-fcard" onclick="selectPromptCard('My phone screen is cracked and unresponsive. What are my repair options and cost?')">
             <div class="fcard-icon-wrap">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
             </div>
-            <div class="fcard-title">Synthesize Data</div>
-            <div class="fcard-desc">Run display pixel test, audio balance &amp; touch digitizer benchmark.</div>
+            <div class="fcard-title">Diagnose Device</div>
+            <div class="fcard-desc">Describe your issue and get expert repair advice with pricing in ₹ INR.</div>
           </div>
 
-          <!-- Card 2: Creative Brainstorm -->
-          <div class="hero-fcard" onclick="openCostCalculatorModal()">
+          <!-- Card 2: Troubleshoot Issue -->
+          <div class="hero-fcard" onclick="selectPromptCard('My MacBook Pro fan is very loud and the laptop runs hot. How do I fix this?')">
             <div class="fcard-icon-wrap">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"></path></svg>
             </div>
-            <div class="fcard-title">Creative Brainstorm</div>
-            <div class="fcard-desc">Instant price quotes in ₹ INR for screens, back glass &amp; batteries.</div>
+            <div class="fcard-title">Troubleshoot Issue</div>
+            <div class="fcard-desc">Get step-by-step guidance on cooling, battery and performance problems.</div>
           </div>
 
           <!-- Card 3: Check Facts -->
@@ -307,7 +252,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-1.5 1.5L12 11l-4 4-3-3 4-4 5.5-5.5"></path><path d="m15 7 4 4"></path><path d="M3 21l3-3"></path></svg>
             </div>
             <div class="fcard-title">Check Facts</div>
-            <div class="fcard-desc">Cross-reference official CPSC, Apple, Dell, and Samsung recalls.</div>
+            <div class="fcard-desc">Cross-reference official Apple, Samsung, and Dell service bulletins.</div>
           </div>
         </div>
 
@@ -350,374 +295,7 @@
     </div>
   </main>
 
-  <!-- ==============================================
-       SLIDE-OVER CHECKOUT DRAWER (Repair Ticket & Booking)
-       ============================================== -->
-  <aside class="checkout-drawer" id="checkout-drawer">
-    <div class="drawer-header">
-      <div class="drawer-title">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:var(--primary-500);"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
-        <span>Repair Ticket &amp; Booking</span>
-      </div>
-      <button class="drawer-close-btn" onclick="toggleCartDrawer()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-      </button>
-    </div>
-
-    <div class="cart-items-container" id="cart-items-list">
-      <!-- Rendered dynamically by main.js renderCart() -->
-    </div>
-
-    <div class="drawer-footer">
-      <div class="drawer-price-row">
-        <span>Repair Service Subtotal</span>
-        <span id="cart-subtotal">₹2,499</span>
-      </div>
-      <div class="drawer-price-row">
-        <span>Turnaround Estimate</span>
-        <span style="color: var(--emerald-600); font-weight:600;">Same-Day (45 Mins)</span>
-      </div>
-      <div class="drawer-price-row">
-        <span>Store Warranty</span>
-        <span style="color: var(--primary-600); font-weight:600;">90-Day Guarantee</span>
-      </div>
-      <div class="drawer-price-row">
-        <span>Estimated GST (18%)</span>
-        <span id="cart-tax">₹450</span>
-      </div>
-      <div class="drawer-price-row total">
-        <span>Total Due</span>
-        <span id="cart-total">₹2,949</span>
-      </div>
-
-      <button class="btn-drawer-checkout" id="btn-checkout" onclick="executeCheckout()">
-        Confirm Repair Booking &rarr;
-      </button>
-
-      <div style="font-size:0.72rem; color:var(--text-faint); text-align:center;">
-        Pay in store upon inspection or instant checkout &bull; No fix, no fee guarantee
-      </div>
-    </div>
-  </aside>
-
-  <!-- ==============================================
-       1. LIVE ORDER & TICKET TRACKER MODAL
-       ============================================== -->
-  <div class="modal-backdrop" id="order-tracker-modal">
-    <div class="modal-dialog">
-      <div class="modal-dialog-header">
-        <div class="modal-dialog-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--primary-500);"><path d="M10 17h4V5H2v12h3m15 0h2v-3.34a2 2 0 0 0-.59-1.42L18.8 9.66A2 2 0 0 0 17.38 9H14v8h2"></path><circle cx="7" cy="17" r="2"></circle><circle cx="17" cy="17" r="2"></circle></svg>
-          <span>Live Repair Order &amp; Ticket Tracker</span>
-        </div>
-        <button class="drawer-close-btn" onclick="closeOrderTrackerModal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-      </div>
-
-      <div class="modal-dialog-body">
-        <!-- Search Input -->
-        <div class="tracker-search-container">
-          <input type="text" id="tracker-order-input" class="tracker-search-input" placeholder="ENTER TICKET ID (E.G. FIX-8A201C)" value="FIX-8A201C">
-          <button class="tracker-search-btn" onclick="searchOrderTracking()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <span>Track</span>
-          </button>
-        </div>
-
-        <!-- Quick Demo Chips -->
-        <div class="tracker-chip-row">
-          <span>Quick demo tickets:</span>
-          <button type="button" class="tracker-chip" onclick="quickTrackOrder('FIX-8A201C')">FIX-8A201C (iPhone Glass)</button>
-          <button type="button" class="tracker-chip" onclick="quickTrackOrder('FIX-DEMO01')">FIX-DEMO01 (MacBook Battery)</button>
-          <button type="button" class="tracker-chip" onclick="quickTrackOrder('FIX-94E21A')">FIX-94E21A (AirPods Pro)</button>
-        </div>
-
-        <!-- Order Result Container -->
-        <div id="tracker-result-container">
-          <!-- Dynamically populated by JS renderOrderTracker() -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==============================================
-       2. REPAIR COST ESTIMATOR & CALCULATOR MODAL
-       ============================================== -->
-  <div class="modal-backdrop" id="cost-calculator-modal">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-dialog-header">
-        <div class="modal-dialog-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--primary-500);"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path><path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path></svg>
-          <span>Instant Repair Cost &amp; Turnaround Calculator</span>
-        </div>
-        <button class="drawer-close-btn" onclick="closeCostCalculatorModal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-      </div>
-
-      <div class="modal-dialog-body">
-        <!-- Step 1: Category Selector -->
-        <div>
-          <label style="font-size:0.78rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.4rem; display:block;">1. Select Device Category</label>
-          <div class="calc-nav-tabs" id="calc-category-tabs">
-            <button class="calc-tab-btn active" data-cat="smartphones" onclick="selectCalcCategory('smartphones', this)">📱 Smartphones</button>
-            <button class="calc-tab-btn" data-cat="laptops" onclick="selectCalcCategory('laptops', this)">💻 Laptops &amp; MacBooks</button>
-            <button class="calc-tab-btn" data-cat="audio" onclick="selectCalcCategory('audio', this)">🎧 Earphones &amp; Audio</button>
-            <button class="calc-tab-btn" data-cat="wearables" onclick="selectCalcCategory('wearables', this)">⌚ Smartwatches</button>
-          </div>
-        </div>
-
-        <!-- Step 2: Model Selector -->
-        <div>
-          <label style="font-size:0.78rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.4rem; display:block;">2. Choose Device Model</label>
-          <select id="calc-model-select" class="calc-model-select" onchange="updateCalcModel(this.value)">
-            <!-- Populated dynamically -->
-          </select>
-        </div>
-
-        <!-- Step 3: Issue Grid -->
-        <div>
-          <label style="font-size:0.78rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.4rem; display:block;">3. Select Repair Service / Fault</label>
-          <div class="calc-issues-grid" id="calc-issues-grid">
-            <!-- Populated dynamically -->
-          </div>
-        </div>
-
-        <!-- Live Quote Box -->
-        <div class="calc-quote-box" id="calc-quote-summary">
-          <div>
-            <div style="font-size:0.8rem; color:#94a3b8; font-weight:500;" id="calc-selected-label">Estimated Repair Fee</div>
-            <div style="font-size:1.85rem; font-weight:800; font-family:var(--font-brand);" id="calc-total-display">₹2,499</div>
-            <div style="font-size:0.75rem; color:#cbd5e1; display:flex; gap:0.75rem; margin-top:0.25rem;">
-              <span id="calc-turnaround-display">⏱ 45 Mins Express</span>
-              <span>🛡 90-Day Iris Warranty</span>
-              <span>✨ OEM Certified</span>
-            </div>
-          </div>
-          <button class="btn-drawer-checkout" style="max-width:220px;" onclick="addCalcSelectionToCart()">
-            Add to Repair Ticket &rarr;
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==============================================
-       3. IN-BROWSER HARDWARE DIAGNOSTICS MODAL
-       ============================================== -->
-  <div class="modal-backdrop" id="device-diag-modal">
-    <div class="modal-dialog">
-      <div class="modal-dialog-header">
-        <div class="modal-dialog-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--emerald-500);"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
-          <span>In-Browser Hardware Diagnostic Suite</span>
-        </div>
-        <button class="drawer-close-btn" onclick="closeDeviceDiagModal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-      </div>
-
-      <div class="modal-dialog-body">
-        <div class="diag-tab-row">
-          <button class="diag-tab active" data-diag="screen" onclick="switchDiagTab('screen', this)">🖥 Screen &amp; Pixel Test</button>
-          <button class="diag-tab" data-diag="audio" onclick="switchDiagTab('audio', this)">🔊 Speaker &amp; Frequency</button>
-          <button class="diag-tab" data-diag="touch" onclick="switchDiagTab('touch', this)">👆 Touch Digitizer Grid</button>
-        </div>
-
-        <!-- 1. Screen Tab -->
-        <div id="diag-panel-screen" class="diag-panel">
-          <div style="background:#f8fafc; border:1px solid var(--border-light); border-radius:var(--radius-md); padding:1.25rem; text-align:center;">
-            <div style="font-weight:700; font-size:1.05rem; color:var(--text-title); margin-bottom:0.4rem;">Dead Pixel &amp; Screen Burn-In Inspection</div>
-            <p style="font-size:0.84rem; color:var(--text-muted); line-height:1.5; margin-bottom:1.25rem;">
-              Launches an interactive fullscreen canvas cycling through Pure White, Black, Red, Green, and Blue. Inspect your display closely for stuck subpixels, OLED burn-in, or backlight bleed halos.
-            </p>
-            <button class="btn-primary" onclick="startPixelTest()">
-              Launch Fullscreen Screen Test &rarr;
-            </button>
-          </div>
-        </div>
-
-        <!-- 2. Audio Tab -->
-        <div id="diag-panel-audio" class="diag-panel" style="display:none;">
-          <div class="audio-tester-box">
-            <div style="font-weight:700; font-size:1.05rem; color:var(--text-title);">Speaker &amp; Earbud Frequency Generator</div>
-            <p style="font-size:0.82rem; color:var(--text-muted);">
-              Generates pure acoustic sine tones using the Web Audio API to test left and right channel balance, crackling diaphragms, or clogged acoustic meshes.
-            </p>
-            <div class="audio-controls-row">
-              <button class="btn-audio-test" onclick="playAudioTone('left', 440)">
-                <span>◀ Left Earbud (440Hz)</span>
-              </button>
-              <button class="btn-audio-test" onclick="playAudioTone('right', 440)">
-                <span>Right Earbud (440Hz) ▶</span>
-              </button>
-              <button class="btn-audio-test" onclick="playAudioSweep()">
-                <span>Frequency Sweep (60-1200Hz)</span>
-              </button>
-              <button class="btn-audio-test" style="color:var(--rose-500); border-color:#fecaca;" onclick="stopAllAudio()">
-                <span>⏹ Stop Audio</span>
-              </button>
-            </div>
-            <div id="audio-status-indicator" style="font-size:0.75rem; color:var(--text-faint); margin-top:0.35rem;">
-              Ready. Ensure your device volume is set to a comfortable level.
-            </div>
-          </div>
-        </div>
-
-        <!-- 3. Touch Grid Tab -->
-        <div id="diag-panel-touch" class="diag-panel" style="display:none;">
-          <div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-              <span style="font-size:0.82rem; font-weight:700; color:var(--text-title);">Drag finger/mouse across all cells to test touch digitizer</span>
-              <button onclick="resetTouchGrid()" style="background:none; border:none; color:var(--primary-600); font-size:0.78rem; font-weight:700; cursor:pointer;">Reset Grid</button>
-            </div>
-            <div class="touch-grid-board" id="touch-grid-board">
-              <!-- 48 Cells generated dynamically -->
-            </div>
-            <div style="display:flex; justify-content:space-between; font-size:0.74rem; color:var(--text-muted); margin-top:0.4rem;">
-              <span id="touch-grid-progress">Tested: 0 / 48 cells</span>
-              <span>Any unlit cell indicates a dead digitizer line</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Fullscreen Pixel Test Overlay -->
-  <div id="pixel-test-overlay" class="pixel-test-overlay" onclick="cyclePixelTestColor()">
-    <div class="pixel-test-hint">Click anywhere to cycle colors &bull; Press <kbd>ESC</kbd> or double-click to exit</div>
-  </div>
-
-  <!-- ==============================================
-       4. OFFICIAL DIAGNOSTIC & ESTIMATE SHEET MODAL
-       ============================================== -->
-  <div class="modal-backdrop" id="diagnostic-invoice-modal">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-dialog-header">
-        <div class="modal-dialog-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--primary-500);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-          <span>Iris Certified Diagnostic &amp; Repair Estimate Sheet</span>
-        </div>
-        <div style="display:flex; align-items:center; gap:0.5rem;">
-          <button class="btn-primary btn-print-action" onclick="window.print()" style="padding:0.4rem 0.85rem; font-size:0.8rem; display:inline-flex; align-items:center; gap:0.35rem;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-            <span>Print / Save PDF</span>
-          </button>
-          <button class="drawer-close-btn" onclick="closeDiagnosticInvoiceModal()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-          </button>
-        </div>
-      </div>
-
-      <div class="modal-dialog-body" style="padding:1rem;">
-        <div class="invoice-sheet" id="invoice-sheet-content">
-          <!-- Header -->
-          <div class="invoice-header-row">
-            <div>
-              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
-                <img src="{{ url_for('static', filename='img/iris-logo.svg') }}" alt="Iris" style="width:26px; height:26px;">
-                <span class="invoice-lab-title">Iris Certified Hardware Lab</span>
-              </div>
-              <div style="font-size:0.78rem; color:var(--text-muted);">
-                Authorized Micro-Electronics Bench &bull; ISO-9001 Certified Repair Facility<br>
-                Support Hotline: +91 98765 43210 &bull; support@irislab.ai
-              </div>
-            </div>
-            <div style="text-align:right;">
-              <span class="invoice-seal-badge">🛡 Official 90-Day Warranty</span>
-              <div style="font-family:var(--font-mono); font-size:0.92rem; font-weight:700; color:var(--primary-600); margin-top:0.35rem;" id="invoice-sheet-ticket-id">FIX-8A201C</div>
-              <div style="font-size:0.75rem; color:var(--text-faint);" id="invoice-sheet-date">Date: Oct 5, 2026</div>
-            </div>
-          </div>
-
-          <!-- Customer & Device Information -->
-          <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:1rem; background:#f8fafc; border:1px solid #e2e8f0; padding:1rem; border-radius:8px;">
-            <div>
-              <div style="font-size:0.72rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Customer Details</div>
-              <div style="font-weight:700; color:var(--text-title);" id="invoice-customer-name">Rahul Sharma</div>
-              <div style="font-size:0.8rem; color:var(--text-muted);" id="invoice-customer-phone">+91 98765 43210</div>
-            </div>
-            <div>
-              <div style="font-size:0.72rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Target Device &amp; Identifiers</div>
-              <div style="font-weight:700; color:var(--text-title);" id="invoice-device-name">Apple iPhone 14 Pro Max (Deep Purple)</div>
-              <div style="font-size:0.8rem; font-family:var(--font-mono); color:var(--primary-600);" id="invoice-device-imei">IMEI: 358920-04-192840-2</div>
-            </div>
-          </div>
-
-          <!-- Diagnostic Check Matrix -->
-          <div>
-            <div style="font-size:0.78rem; text-transform:uppercase; color:var(--text-muted); font-weight:700; margin-bottom:0.4rem;">Certified Diagnostic Check Matrix</div>
-            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:0.5rem; font-size:0.78rem;">
-              <div style="background:#f1f5f9; padding:0.5rem; border-radius:6px;"><strong>OLED Digitizer:</strong> <span style="color:#059669;">Passed Test</span></div>
-              <div style="background:#f1f5f9; padding:0.5rem; border-radius:6px;"><strong>Rear Glass Housing:</strong> <span style="color:#dc2626;">Fractured (Laser Fix)</span></div>
-              <div style="background:#f1f5f9; padding:0.5rem; border-radius:6px;"><strong>True Tone Sensors:</strong> <span style="color:#059669;">Calibrated</span></div>
-              <div style="background:#f1f5f9; padding:0.5rem; border-radius:6px;"><strong>Battery Cell Health:</strong> <span style="color:#059669;">Passed (94% Peak)</span></div>
-              <div style="background:#f1f5f9; padding:0.5rem; border-radius:6px;"><strong>Microphone &amp; Audio:</strong> <span style="color:#059669;">60-1200Hz Pass</span></div>
-              <div style="background:#f1f5f9; padding:0.5rem; border-radius:6px;"><strong>Waterproofing Seal:</strong> <span style="color:#059669;">IP68 Gasket Replaced</span></div>
-            </div>
-          </div>
-
-          <!-- Itemized Pricing Table -->
-          <div>
-            <div style="font-size:0.78rem; text-transform:uppercase; color:var(--text-muted); font-weight:700; margin-bottom:0.4rem;">Service Quotation &amp; OEM Parts</div>
-            <table class="invoice-table">
-              <thead>
-                <tr>
-                  <th>Description</th>
-                  <th>Category</th>
-                  <th>Warranty</th>
-                  <th style="text-align:right;">Amount (₹ INR)</th>
-                </tr>
-              </thead>
-              <tbody id="invoice-items-tbody">
-                <tr>
-                  <td><strong>iPhone Back Glass Laser Removal &amp; Replacement</strong><br><small style="color:var(--text-muted);">Precision fiber laser separation of shattered glass panel and genuine tempered back plate install.</small></td>
-                  <td>Mobile Repair</td>
-                  <td>90 Days</td>
-                  <td style="text-align:right; font-weight:700;">₹2,499.00</td>
-                </tr>
-                <tr>
-                  <td><strong>Cleanroom Diagnostic Bench &amp; IP68 Seal Verification</strong><br><small style="color:var(--text-muted);">Complete sensor sweep and automated pressure gasket chamber check.</small></td>
-                  <td>Diagnostic Service</td>
-                  <td>Included</td>
-                  <td style="text-align:right; font-weight:700;">₹299.00</td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td colspan="3" style="text-align:right; font-weight:600; padding:0.4rem 0.85rem;">Estimated GST (18%):</td>
-                  <td style="text-align:right; font-weight:600;" id="invoice-tax-display">₹503.64</td>
-                </tr>
-                <tr>
-                  <td colspan="3" style="text-align:right; font-weight:800; font-size:1.05rem; padding:0.4rem 0.85rem; border-top:2px solid #0f172a;">Total Quote Due:</td>
-                  <td style="text-align:right; font-weight:800; font-size:1.15rem; color:var(--primary-600); border-top:2px solid #0f172a;" id="invoice-total-display">₹3,301.64</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-
-          <!-- Signoff Footer -->
-          <div style="display:flex; justify-content:space-between; align-items:flex-end; border-top:1px dashed #cbd5e1; padding-top:1rem; margin-top:0.5rem; font-size:0.78rem;">
-            <div>
-              <strong>Assigned Master Technician:</strong> Arvind M. (Cert. Tech #9420)<br>
-              <strong>Turnaround Time:</strong> 45 Minutes Same-Day Walk-in or Express Mail-In<br>
-              <small style="color:var(--text-muted);">All repairs carry Iris 90-Day Guarantee. No fix, no fee policy applies.</small>
-            </div>
-            <div style="text-align:center;">
-              <div style="font-family:'Brush Script MT', cursive; font-size:1.4rem; color:var(--primary-600);">Arvind M.</div>
-              <div style="border-top:1px solid #94a3b8; font-size:0.7rem; color:var(--text-muted); padding-top:2px;">Authorized Master Inspector Seal</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==============================================
-       5. SENIOR TECHNICIAN & WHATSAPP ESCALATION MODAL
-       ============================================== -->
+  <!-- SENIOR TECH MODAL -->
   <div class="modal-backdrop" id="technician-modal">
     <div class="modal-dialog">
       <div class="modal-dialog-header">
@@ -852,11 +430,11 @@
           <span>OR</span>
         </div>
 
-        <!-- Social Buttons -->
+        <!-- Social Buttons (Real Google Sign-In) -->
         <div class="auth-social-list">
-          <button type="button" class="btn-chatgpt-social" onclick="handleModalSocialAuth('google')">
+          <button type="button" class="btn-chatgpt-social" onclick="handleModalGoogleAuth()">
             <span class="social-icon-slot">
-              <svg viewBox="0 0 24 24" width="16" height="16">
+              <svg viewBox="0 0 24 24" width="18" height="18">
                 <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
                 <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
                 <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
@@ -865,34 +443,6 @@
             </span>
             <span class="social-text">Continue with Google</span>
           </button>
-
-          <button type="button" class="btn-chatgpt-social" onclick="handleModalSocialAuth('microsoft')">
-            <span class="social-icon-slot">
-              <svg viewBox="0 0 23 23" width="16" height="16">
-                <path fill="#f35325" d="M1 1h10v10H1z"/>
-                <path fill="#81bc06" d="M12 1h10v10H12z"/>
-                <path fill="#05a6f0" d="M1 12h10v10H1z"/>
-                <path fill="#ffba08" d="M12 12h10v10H12z"/>
-              </svg>
-            </span>
-            <span class="social-text">Continue with Microsoft</span>
-          </button>
-
-          <button type="button" class="btn-chatgpt-social" onclick="handleModalSocialAuth('apple')">
-            <span class="social-icon-slot">
-              <svg viewBox="0 0 170 170" width="15" height="15" fill="#0f172a">
-                <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.6-7.83-11.74-14.36-5.46-8.59-9.82-18.44-13.08-29.56-3.26-11.12-4.89-21.94-4.89-32.48 0-14.04 3.53-25.56 10.59-34.56 7.06-9 16.03-13.62 26.9-13.87 4.58 0 9.87 1.25 15.87 3.75 6 2.5 10.15 3.81 12.45 3.93 1.85-.24 6.22-1.66 13.11-4.25 6.89-2.59 12.39-3.71 16.5-3.37 12.63 1.02 22.42 5.92 29.38 14.71-11.02 6.64-16.42 15.82-16.2 27.54.22 9.25 3.76 16.94 10.63 23.08 6.87 6.13 14.86 9.77 23.97 10.92-2.17 6.31-4.78 12.87-7.83 19.67zM119.22 31.84c0-7.29 2.65-14.15 7.95-20.58 5.3-6.43 11.83-10.46 19.59-12.09.22 1.3.33 2.39.33 3.26 0 7.39-2.76 14.3-8.28 20.73-5.52 6.43-12.24 10.42-20.16 11.97-.11-.98-.22-2.07-.33-3.29z"/>
-              </svg>
-            </span>
-            <span class="social-text">Continue with Apple</span>
-          </button>
-        </div>
-
-        <!-- Subtle Test Demo Credentials Line -->
-        <div class="auth-demo-hint">
-          <span>Demo logins:</span>
-          <button type="button" class="auth-demo-tag" onclick="quickFillModalLogin('rahul@gmail.com', 'password123')">Rahul (Customer)</button>
-          <button type="button" class="auth-demo-tag" onclick="quickFillModalLogin('arvind@iris.com', 'admin123')">Arvind (Tech)</button>
         </div>
 
         <!-- Terms Footer -->
@@ -913,7 +463,6 @@ const hero = document.getElementById('hero-welcome');
 const chatStream = document.getElementById('chat-stream');
 const scrollArea = document.getElementById('stage-scroll-area');
 const btnSend = document.getElementById('btn-send-msg');
-const topbarCartCount = document.getElementById('topbar-cart-count');
 const btnClearActiveChat = document.getElementById('btn-clear-active-chat');
 const dockedInputBar = document.getElementById('docked-bottom-input');
 const dockedInput = document.getElementById('docked-copilot-input');
@@ -1468,23 +1017,179 @@ async function handleImageAttachment(inputEl) {
 }
 
 // =========================================================
-// 1. LIVE VOICE INPUT & SPEECH DICTATION (Microphone)
+// =========================================================
+// 1. LIVE VOICE INPUT & SPEECH DICTATION (Hybrid Web Speech + Azure Speech Fallback)
 // =========================================================
 let speechRecognitionInstance = null;
 let isVoiceRecording = false;
+let isDirectAudioRecording = false;
+let webSpeechNetworkBlocked = false;
 
-function toggleVoiceDictation() {
+// AudioContext & PCM state for direct recording fallback
+let directAudioStream = null;
+let directAudioCtx = null;
+let directScriptNode = null;
+let directPcmChunks = [];
+let directPcmTotalSamples = 0;
+
+function updateVoiceUI(recording, placeholderText) {
   const btn = document.getElementById('btn-voice-record');
   const dockedBtn = document.getElementById('btn-docked-voice-record');
-  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (btn) btn.classList.toggle('recording', recording);
+  if (dockedBtn) dockedBtn.classList.toggle('recording', recording);
 
-  if (!SpeechRec) {
-    showToast('Speech recognition not supported in this browser. Try Chrome/Edge or /speech page.', 'info');
+  if (recording) {
+    const text = placeholderText || '🎙 Listening... Describe gadget damage or symptoms...';
+    if (input) input.placeholder = text;
+    if (dockedInput) dockedInput.placeholder = text;
+  } else {
+    if (input) input.placeholder = 'Ask me anything...';
+    if (dockedInput) dockedInput.placeholder = 'Ask Iris about repairs, pricing in ₹ INR, or diagnostic codes...';
+  }
+}
+
+function writeWavString(view, offset, str) {
+  for (let i = 0; i < str.length; i++) {
+    view.setUint8(offset + i, str.charCodeAt(i));
+  }
+}
+
+function encodeWavBlob(chunks, totalSamples, sampleRate = 16000) {
+  const flat = new Float32Array(totalSamples);
+  let offset = 0;
+  for (const c of chunks) {
+    flat.set(c, offset);
+    offset += c.length;
+  }
+  const buffer = new ArrayBuffer(44 + flat.length * 2);
+  const view = new DataView(buffer);
+
+  writeWavString(view, 0, 'RIFF');
+  view.setUint32(4, 36 + flat.length * 2, true);
+  writeWavString(view, 8, 'WAVE');
+  writeWavString(view, 12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true); // PCM
+  view.setUint16(22, 1, true); // Mono
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * 2, true); // Byte rate
+  view.setUint16(32, 2, true); // Block align
+  view.setUint16(34, 16, true); // 16-bit
+  writeWavString(view, 36, 'data');
+  view.setUint32(40, flat.length * 2, true);
+
+  let p = 44;
+  for (let i = 0; i < flat.length; i++) {
+    const s = Math.max(-1, Math.min(1, flat[i]));
+    view.setInt16(p, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+    p += 2;
+  }
+  return new Blob([view], { type: 'audio/wav' });
+}
+
+async function startDirectAudioCapture() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    directAudioStream = stream;
+    directAudioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+    const source = directAudioCtx.createMediaStreamSource(stream);
+    directScriptNode = directAudioCtx.createScriptProcessor(4096, 1, 1);
+    directPcmChunks = [];
+    directPcmTotalSamples = 0;
+
+    directScriptNode.onaudioprocess = (e) => {
+      if (!isVoiceRecording) return;
+      const ch = e.inputBuffer.getChannelData(0);
+      directPcmChunks.push(new Float32Array(ch));
+      directPcmTotalSamples += ch.length;
+    };
+
+    source.connect(directScriptNode);
+    directScriptNode.connect(directAudioCtx.destination);
+
+    isVoiceRecording = true;
+    isDirectAudioRecording = true;
+    updateVoiceUI(true, '🎙 Listening (Iris Azure Voice)... Speak now, click mic to finish');
+    showToast('Direct microphone active. Speak to Iris...', 'info');
+  } catch (err) {
+    stopVoiceDictation();
+    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+      showToast('Microphone access blocked. Please enable mic permissions in your browser.', 'error');
+    } else {
+      showToast('Could not access microphone: ' + (err.message || 'Check audio device'), 'error');
+    }
+  }
+}
+
+async function stopDirectAudioCapture() {
+  if (!isDirectAudioRecording) return;
+  isDirectAudioRecording = false;
+  isVoiceRecording = false;
+  updateVoiceUI(false);
+
+  if (directScriptNode) {
+    try { directScriptNode.disconnect(); } catch (e) {}
+    directScriptNode = null;
+  }
+  if (directAudioStream) {
+    directAudioStream.getTracks().forEach(t => t.stop());
+    directAudioStream = null;
+  }
+  if (directAudioCtx && directAudioCtx.state !== 'closed') {
+    try { directAudioCtx.close(); } catch (e) {}
+  }
+
+  if (directPcmTotalSamples < 6000) {
+    showToast('Voice clip was too brief. Please speak clearly into the mic.', 'info');
     return;
   }
 
+  const wavBlob = encodeWavBlob(directPcmChunks, directPcmTotalSamples, 16000);
+  directPcmChunks = [];
+  directPcmTotalSamples = 0;
+
+  showToast('Transcribing audio via Iris Cognitive Voice...', 'info');
+  if (input) input.placeholder = 'Transcribing your voice...';
+  if (dockedInput) dockedInput.placeholder = 'Transcribing your voice...';
+
+  try {
+    const formData = new FormData();
+    formData.append('audio', wavBlob, 'dictation.wav');
+    formData.append('language', 'en-US');
+
+    const res = await fetch('/api/speech', { method: 'POST', body: formData });
+    const data = await res.json();
+
+    if (data.result && data.result.text) {
+      const recognized = data.result.text.trim();
+      if (input) input.value = recognized;
+      if (dockedInput) dockedInput.value = recognized;
+      if (input) input.focus();
+      showToast('Voice recognized: "' + (recognized.length > 35 ? recognized.slice(0, 35) + '...' : recognized) + '"', 'success');
+    } else if (data.result && data.result.message) {
+      showToast(data.result.message, 'info');
+    } else {
+      showToast(data.error || 'Could not recognize speech. Please speak louder.', 'error');
+    }
+  } catch (err) {
+    showToast('Speech service network error. Please try again.', 'error');
+  } finally {
+    updateVoiceUI(false);
+  }
+}
+
+function toggleVoiceDictation() {
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  // If already recording in any mode, stop
   if (isVoiceRecording) {
     stopVoiceDictation();
+    return;
+  }
+
+  // If Web Speech already failed with network previously or is not available, use direct audio capture
+  if (webSpeechNetworkBlocked || !SpeechRec) {
+    startDirectAudioCapture();
     return;
   }
 
@@ -1492,14 +1197,12 @@ function toggleVoiceDictation() {
     speechRecognitionInstance = new SpeechRec();
     speechRecognitionInstance.continuous = false;
     speechRecognitionInstance.interimResults = true;
-    speechRecognitionInstance.lang = 'en-IN';
+    speechRecognitionInstance.lang = navigator.language || 'en-US';
 
     speechRecognitionInstance.onstart = () => {
       isVoiceRecording = true;
-      if (btn) btn.classList.add('recording');
-      if (dockedBtn) dockedBtn.classList.add('recording');
-      input.placeholder = '🎙 Listening... Describe gadget damage or symptoms...';
-      if (dockedInput) dockedInput.placeholder = '🎙 Listening... Describe gadget damage or symptoms...';
+      isDirectAudioRecording = false;
+      updateVoiceUI(true, '🎙 Listening... Describe gadget damage or symptoms...');
       showToast('Microphone active. Speak to Iris...', 'info');
     };
 
@@ -1508,36 +1211,60 @@ function toggleVoiceDictation() {
       for (let i = event.resultIndex; i < event.results.length; ++i) {
         transcript += event.results[i][0].transcript;
       }
-      input.value = transcript;
+      if (input) input.value = transcript;
       if (dockedInput) dockedInput.value = transcript;
     };
 
     speechRecognitionInstance.onerror = (event) => {
+      const err = event.error || '';
+      console.warn('SpeechRecognition event error:', err);
+
+      if (err === 'network') {
+        // Browser/Google Speech network service unreachable (e.g. Brave, adblocker, VPN, proxy)
+        webSpeechNetworkBlocked = true;
+        stopVoiceDictation();
+        showToast('Browser speech network offline. Switching to direct Iris Azure Voice...', 'info');
+        startDirectAudioCapture();
+        return;
+      }
+
       stopVoiceDictation();
-      showToast('Voice error: ' + (event.error || 'Microphone error'), 'error');
+
+      if (err === 'no-speech') {
+        showToast('No speech detected. Click the mic to try again.', 'info');
+      } else if (err === 'not-allowed' || err === 'service-not-allowed') {
+        showToast('Microphone permission blocked. Please allow mic in browser.', 'error');
+      } else if (err === 'aborted') {
+        // User stopped or interrupted
+      } else {
+        showToast('Voice status: ' + err, 'info');
+      }
     };
 
     speechRecognitionInstance.onend = () => {
-      stopVoiceDictation();
+      if (!isDirectAudioRecording) {
+        stopVoiceDictation();
+      }
     };
 
     speechRecognitionInstance.start();
   } catch (err) {
-    stopVoiceDictation();
-    showToast('Could not initialize microphone.', 'error');
+    // If Web Speech initiation failed, fall back to direct audio capture
+    webSpeechNetworkBlocked = true;
+    startDirectAudioCapture();
   }
 }
 
 function stopVoiceDictation() {
+  if (isDirectAudioRecording) {
+    stopDirectAudioCapture();
+    return;
+  }
   isVoiceRecording = false;
-  const btn = document.getElementById('btn-voice-record');
-  const dockedBtn = document.getElementById('btn-docked-voice-record');
-  if (btn) btn.classList.remove('recording');
-  if (dockedBtn) dockedBtn.classList.remove('recording');
-  input.placeholder = 'Ask me anything...';
-  if (dockedInput) dockedInput.placeholder = 'Ask Iris about repairs, pricing in ₹ INR, or diagnostic codes...';
+  updateVoiceUI(false);
   if (speechRecognitionInstance) {
     try { speechRecognitionInstance.stop(); } catch (e) {}
+    speechRecognitionInstance = null;
   }
 }
 

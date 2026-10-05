@@ -14,6 +14,11 @@ except ImportError:
     firebase_admin = None
     credentials = None
     fb_admin_auth = None
+# Azure Cognitive Services Speech SDK
+try:
+    import azure.cognitiveservices.speech as speechsdk  # pyrefly: ignore[missing-import]
+except ImportError:
+    speechsdk = None
 
 load_dotenv()
 app = Flask(__name__, template_folder="templates", static_folder="static")
@@ -228,6 +233,10 @@ def logout_view():
 @app.get("/api/auth/status")
 def api_auth_status():
     user = session.get("user")
+    # Clean out any old dummy session
+    if user and (user.get("email") == "alex.chen.work@gmail.com" or user.get("name") == "Alex Chen"):
+        session.pop("user", None)
+        user = None
     return jsonify(authenticated=bool(user), user=user)
 
 @app.post("/api/auth/login")
@@ -244,7 +253,7 @@ def api_auth_login():
 
         user = USERS_STORE.get(email)
         if not user:
-            return jsonify(error="No account found with this email. Click 'Sign up' to create one or use Demo accounts."), 401
+            return jsonify(error="No account found with this email. Please check your spelling or sign up."), 401
 
         if not check_password_hash(user["password_hash"], password):
             return jsonify(error="Incorrect password. Please verify and try again."), 401
@@ -294,55 +303,6 @@ def api_auth_signup():
         clean_user = sanitize_user(new_user)
         session["user"] = clean_user
         return jsonify(success=True, user=clean_user, message=f"Welcome to Iris, {name}!")
-    except Exception as e:
-        return jsonify(error=str(e)), 500
-
-@app.post("/api/auth/social")
-def api_auth_social():
-    try:
-        data = request.json or {}
-        provider = (data.get("provider") or "google").strip().lower()
-        providers_map = {
-            "google": {
-                "name": "Alex Chen",
-                "email": "alex.chen.work@gmail.com",
-                "initials": "AC",
-                "color": "#ea4335"
-            },
-            "microsoft": {
-                "name": "Jordan Taylor",
-                "email": "jordan.taylor@outlook.com",
-                "initials": "JT",
-                "color": "#00a4ef"
-            },
-            "apple": {
-                "name": "Sam Rivera",
-                "email": "sam.rivera@icloud.com",
-                "initials": "SR",
-                "color": "#0f172a"
-            }
-        }
-        prof = providers_map.get(provider, providers_map["google"])
-        email = prof["email"]
-
-        if email not in USERS_STORE:
-            USERS_STORE[email] = {
-                "id": f"usr_{provider}_{uuid.uuid4().hex[:6]}",
-                "name": prof["name"],
-                "email": email,
-                "password_hash": generate_password_hash("social-token-iris-2026"),
-                "role": "customer",
-                "plan": "Iris Pro Member",
-                "avatar_initials": prof["initials"],
-                "avatar_color": prof["color"],
-                "created_at": "Today",
-                "recent_orders": ["FIX-8A201C"]
-            }
-
-        user = USERS_STORE[email]
-        clean_user = sanitize_user(user)
-        session["user"] = clean_user
-        return jsonify(success=True, user=clean_user, message=f"Connected via {provider.capitalize()}!")
     except Exception as e:
         return jsonify(error=str(e)), 500
 
@@ -403,22 +363,25 @@ def api_firebase_session():
             user = USERS_STORE[email]
             user["firebase_uid"] = uid
             if photo_url: user["photo_url"] = photo_url
-            user["auth_provider"] = "firebase"
+            if name and user.get("name") in ["Rahul Sharma", "Iris Explorer", "Arvind M.", "Alex Chen"]:
+                user["name"] = name
+                user["avatar_initials"] = initials
+            user["auth_provider"] = "google" if "google" in provider_id else "email"
         else:
             user = {
-                "id": f"usr_fb_{uid[:8]}",
+                "id": f"usr_google_{uid[:8]}" if "google" in provider_id else f"usr_{uid[:8]}",
                 "firebase_uid": uid,
                 "name": name,
                 "email": email,
-                "password_hash": generate_password_hash("firebase-auth-verified"),
+                "password_hash": generate_password_hash("auth-verified"),
                 "role": "customer",
                 "plan": "Iris Pro Member",
                 "avatar_initials": initials,
-                "avatar_color": "#f59e0b" if "google" in provider_id else "#7c3aed",
+                "avatar_color": "#4285F4" if "google" in provider_id else "#7c3aed",
                 "photo_url": photo_url,
-                "auth_provider": "firebase",
+                "auth_provider": "google" if "google" in provider_id else "email",
                 "created_at": "Today",
-                "recent_orders": ["FIX-8A201C"]
+                "recent_orders": []
             }
             USERS_STORE[email] = user
 
@@ -854,22 +817,57 @@ def speech(): return render_template("speech.html")
 @app.post("/api/speech")
 def api_speech():
     try:
-        f=request.files.get("audio")
-        if not f: return jsonify(error="Upload an audio file."),400
-        if not SPEECH_KEY: raise RuntimeError("Set SPEECH_API_KEY.")
-        # Azure Speech REST endpoint for short audio transcription.
-        # The exact language can be changed in the UI.
-        language=request.form.get("language","en-US")
-        url=f"{SPEECH_ENDPOINT}/speechtotext/v3.2/transcriptions:transcribe?api-version=2024-11-15"
-        headers={"Ocp-Apim-Subscription-Key":SPEECH_KEY}
-        files={"audio":(f.filename,f.stream,f.mimetype or "audio/wav")}
-        data={"definition":'{"locales":["'+language+'"],"profanityFilterMode":"Masked"}'}
-        r=requests.post(url,headers=headers,files=files,data=data,timeout=120)
-        if not r.ok:
-            # Fall back to the common Speech SDK route through a helpful error.
-            return jsonify(error=f"Speech service returned {r.status_code}: {r.text}"),r.status_code
-        return jsonify(result=r.json())
-    except Exception as e: return jsonify(error=str(e)),500
+        f = request.files.get("audio")
+        if not f:
+            return jsonify(error="Upload an audio file."), 400
+        if not SPEECH_KEY:
+            raise RuntimeError("Set SPEECH_API_KEY in .env")
+
+        language = request.form.get("language", "en-US")
+        suffix = os.path.splitext(f.filename or "audio.wav")[1] or ".wav"
+        temp_name = f"speech_{uuid.uuid4().hex}{suffix}"
+        temp_path = os.path.join("uploads", temp_name)
+        f.save(temp_path)
+
+        recognizer = None
+        audio_config = None
+        try:
+            if speechsdk is None:
+                raise RuntimeError("azure-cognitiveservices-speech package is not available.")
+
+            endpoint = SPEECH_ENDPOINT.rstrip("/")
+            speech_config = speechsdk.SpeechConfig(endpoint=endpoint, subscription=SPEECH_KEY)
+            speech_config.speech_recognition_language = language
+
+            audio_config = speechsdk.audio.AudioConfig(filename=temp_path)
+            recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)
+            result = recognizer.recognize_once()
+
+            if result.reason == speechsdk.ResultReason.RecognizedSpeech:
+                text = result.text.strip()
+                return jsonify(result={
+                    "text": text,
+                    "phrases": [{"text": text}],
+                    "combinedPhrases": [{"text": text}]
+                })
+            elif result.reason == speechsdk.ResultReason.NoMatch:
+                return jsonify(result={"text": "", "message": "No audible speech identified. Please speak closer to the microphone."})
+            elif result.reason == speechsdk.ResultReason.Canceled:
+                cancellation = result.cancellation_details
+                err_detail = cancellation.error_details or "Speech recognition canceled."
+                return jsonify(error=f"Azure Speech: {err_detail}"), 500
+            else:
+                return jsonify(result={"text": ""})
+        finally:
+            del recognizer
+            del audio_config
+            try:
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
+            except Exception:
+                pass
+    except Exception as e:
+        return jsonify(error=str(e)), 500
 
 @app.get("/content-understanding")
 def content_understanding(): return render_template("content.html")
