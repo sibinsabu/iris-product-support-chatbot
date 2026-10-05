@@ -94,13 +94,7 @@ function renderMarkdown(md) {
             </div>
             <div class="product-title">${escapeHtml(product.name)}</div>
             <div class="product-desc">${escapeHtml(product.desc || '')}</div>
-          </div>
-          <div class="product-buy-row">
-            <div class="product-price">₹${Math.round(parseFloat(product.price)).toLocaleString('en-IN')}</div>
-            <button class="btn-add-to-cart" onclick="addProductFromChat('${encodedProduct}', this)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-              Book Repair
-            </button>
+            <div class="product-price-label">Estimated cost: <strong>₹${Math.round(parseFloat(product.price)).toLocaleString('en-IN')}</strong></div>
           </div>
         </div>
       `;
