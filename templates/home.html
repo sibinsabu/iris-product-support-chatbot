@@ -66,17 +66,18 @@
       </div>
     </div>
 
-    <!-- User Profile Footer matching Emerson Sterling in reference -->
+    <!-- Contact Senior Technician Action in Sidebar Footer -->
     <div class="sidebar-user-footer">
-      <div class="user-profile-left">
-        <img src="{{ url_for('static', filename='img/user-avatar.png') }}" alt="User Avatar" class="user-avatar-img">
-        <div class="user-meta">
-          <div class="user-display-name">Emerson Sterling</div>
-          <div class="user-email-text">sterling@gmail.com</div>
+      <button type="button" class="btn-contact-technician" onclick="openTechnicianModal()" title="Contact Senior Diagnostic Technician">
+        <div class="tech-icon-pulse">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          <span class="online-dot"></span>
         </div>
-      </div>
-      <button class="btn-user-action" onclick="openTechnicianModal()" title="Certified Senior Technician Escalation">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        <div class="tech-meta">
+          <span class="tech-title">Contact Senior Technician</span>
+          <span class="tech-sub">Master Tech &bull; Available</span>
+        </div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="tech-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
       </button>
     </div>
   </aside>

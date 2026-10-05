@@ -365,77 +365,98 @@ body {
   background: #fee2e2;
 }
 
-/* Bottom User Profile matching Emerson Sterling in reference */
+/* Bottom Sidebar Action: Contact Senior Technician */
 .sidebar-user-footer {
   margin-top: auto;
   padding-top: 0.85rem;
   border-top: 1px solid #f1eff7;
+}
+
+.btn-contact-technician {
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-}
-
-.user-profile-left {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  overflow: hidden;
-}
-
-.user-avatar-img {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid #e2e8f0;
-  flex-shrink: 0;
-}
-
-.user-meta {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.user-display-name {
-  font-size: 0.84rem;
-  font-weight: 700;
-  color: var(--text-title);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.user-email-text {
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.btn-user-action {
-  background: none;
-  border: none;
-  color: var(--text-faint);
+  gap: 0.65rem;
+  padding: 0.6rem 0.75rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: var(--radius-md);
+  color: #166534;
   cursor: pointer;
-  padding: 0.35rem;
-  border-radius: 6px;
+  transition: all var(--transition);
+  text-align: left;
+}
+
+.btn-contact-technician:hover {
+  background: #dcfce7;
+  border-color: #86efac;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(22, 101, 52, 0.08);
+}
+
+.tech-icon-pulse {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #16a34a;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all var(--transition);
   flex-shrink: 0;
 }
 
-.btn-user-action:hover {
-  background: var(--bg-sidebar-hover);
-  color: var(--text-title);
+.tech-icon-pulse svg {
+  width: 17px;
+  height: 17px;
 }
 
-.btn-user-action svg {
-  width: 16px;
-  height: 16px;
+.tech-icon-pulse .online-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  border: 2px solid #ffffff;
+}
+
+.tech-meta {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.tech-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #14532d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tech-sub {
+  font-size: 0.68rem;
+  color: #15803d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tech-arrow {
+  width: 14px;
+  height: 14px;
+  color: #16a34a;
+  flex-shrink: 0;
+  transition: transform var(--transition);
+}
+
+.btn-contact-technician:hover .tech-arrow {
+  transform: translateX(2px);
 }
 
 /* =========================================================
