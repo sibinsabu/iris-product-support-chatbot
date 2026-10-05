@@ -426,7 +426,7 @@ const FirebaseAuthManager = {
         const res = await fetch('/api/auth/firebase-config');
         if (res.ok) {
           const remoteConfig = await res.json();
-          if (remoteConfig && remoteConfig.apiKey) {
+          if (remoteConfig && remoteConfig.apiKey && !remoteConfig.apiKey.includes('YOUR_')) {
             config = remoteConfig;
           }
         }
