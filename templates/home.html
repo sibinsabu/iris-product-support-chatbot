@@ -175,6 +175,19 @@
 
             <!-- Right Controls (Waveform, Voice Mic, Send) -->
             <div class="prompt-tools-right">
+              <!-- Live Voice Listening Badge -->
+              <div class="voice-listening-badge" id="voice-listening-badge" style="display: none;">
+                <div class="vbadge-pulse-dot"></div>
+                <span class="vbadge-title">Listening...</span>
+                <div class="vbadge-equalizer">
+                  <span class="ve-bar ve-1"></span>
+                  <span class="ve-bar ve-2"></span>
+                  <span class="ve-bar ve-3"></span>
+                  <span class="ve-bar ve-4"></span>
+                  <span class="ve-bar ve-5"></span>
+                </div>
+              </div>
+
               <button type="button" class="btn-prompt-subicon" onclick="playIrisWaveAudio()" title="Sound effects">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
               </button>
@@ -285,6 +298,19 @@
         <button type="button" class="btn-lavender-voice-small" id="btn-docked-voice-record" onclick="toggleVoiceDictation()" title="Voice input: Speak to Iris">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
         </button>
+
+        <!-- Live Voice Listening Badge for docked input -->
+        <div class="voice-listening-badge docked-badge" id="docked-voice-listening-badge" style="display: none;">
+          <div class="vbadge-pulse-dot"></div>
+          <span class="vbadge-title">Listening...</span>
+          <div class="vbadge-equalizer">
+            <span class="ve-bar ve-1"></span>
+            <span class="ve-bar ve-2"></span>
+            <span class="ve-bar ve-3"></span>
+            <span class="ve-bar ve-4"></span>
+            <span class="ve-bar ve-5"></span>
+          </div>
+        </div>
 
         <textarea id="docked-copilot-input" placeholder="Ask Iris about repairs, pricing in ₹ INR, or diagnostic codes..." rows="1"></textarea>
 
@@ -1063,11 +1089,41 @@ let directPcmTotalSamples = 0;
 function updateVoiceUI(recording, placeholderText) {
   const btn = document.getElementById('btn-voice-record');
   const dockedBtn = document.getElementById('btn-docked-voice-record');
-  if (btn) btn.classList.toggle('recording', recording);
-  if (dockedBtn) dockedBtn.classList.toggle('recording', recording);
+  const badge = document.getElementById('voice-listening-badge');
+  const dockedBadge = document.getElementById('docked-voice-listening-badge');
+  const heroCard = document.querySelector('.hero-prompt-card');
+  const dockedCapsule = document.querySelector('.docked-input-capsule');
+
+  const micIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>`;
+  const activeContent = `
+    <div class="mic-wave-bars" title="Listening... Click to finish">
+      <span class="mwb mwb-1"></span>
+      <span class="mwb mwb-2"></span>
+      <span class="mwb mwb-3"></span>
+      <span class="mwb mwb-4"></span>
+    </div>
+    <svg class="stop-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+  `;
+
+  if (btn) {
+    btn.classList.toggle('recording', recording);
+    btn.innerHTML = recording ? activeContent : micIcon;
+    btn.title = recording ? 'Click to stop listening' : 'Voice input: Speak to Iris';
+  }
+  if (dockedBtn) {
+    dockedBtn.classList.toggle('recording', recording);
+    dockedBtn.innerHTML = recording ? activeContent : micIcon;
+    dockedBtn.title = recording ? 'Click to stop listening' : 'Voice input: Speak to Iris';
+  }
+
+  if (badge) badge.style.display = recording ? 'inline-flex' : 'none';
+  if (dockedBadge) dockedBadge.style.display = recording ? 'inline-flex' : 'none';
+
+  if (heroCard) heroCard.classList.toggle('is-listening', recording);
+  if (dockedCapsule) dockedCapsule.classList.toggle('is-listening', recording);
 
   if (recording) {
-    const text = placeholderText || '🎙 Listening... Describe gadget damage or symptoms...';
+    const text = placeholderText || '🎙 Listening to your voice... Speak to Iris...';
     if (input) input.placeholder = text;
     if (dockedInput) dockedInput.placeholder = text;
   } else {
