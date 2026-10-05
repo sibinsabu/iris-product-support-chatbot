@@ -6,74 +6,78 @@
 <div class="app-viewport">
   
   <!-- ==============================================
-       LEFT SIDEBAR (Gadget Repair Store Context)
+       LEFT SIDEBAR (Matching Reference Mockup)
        ============================================== -->
   <aside class="sidebar" id="app-sidebar">
     <!-- Brand Title -->
     <div class="sidebar-header">
       <div class="sidebar-brand">
-        <div class="brand-icon">
-          <img src="{{ url_for('static', filename='img/iris-logo.svg') }}" alt="Iris AI">
+        <div class="brand-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <rect width="18" height="18" x="3" y="3" rx="4" ry="4"></rect>
+            <line x1="12" y1="8" x2="12" y2="16"></line>
+            <line x1="8" y1="12" x2="16" y2="12"></line>
+          </svg>
         </div>
-        <div>
-          <span class="brand-title">Iris</span>
-          <div style="font-size:0.68rem; color:var(--text-faint); font-weight:700; letter-spacing:0.04em;">DIAGNOSTIC COPILOT</div>
-        </div>
+        <span class="brand-name">Iris</span>
       </div>
-      <button class="btn-sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+      <button class="btn-sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar" title="Collapse sidebar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
       </button>
     </div>
 
-    <!-- + New Repair Chat Button -->
-    <button class="btn-new-chat" onclick="startNewChat()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-      New Repair Chat
+    <!-- Pitch Black + New Chat Button -->
+    <button class="btn-new-chat-dark" onclick="startNewChat()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:15px;height:15px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      <span>New chat</span>
     </button>
 
-    <!-- Repair Datasets & Crawler Link -->
-    <a href="/crawl" class="btn-new-chat" style="background:#f0fdf4; border-color:#bbf7d0; color:#15803d; text-decoration:none; margin-top:0.4rem; justify-content:center;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:16px;height:16px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-      Repair Datasets &amp; Crawl
-    </a>
-
-    <!-- Search Input -->
-    <div class="sidebar-search">
+    <!-- Search Input with ⌘K Badge -->
+    <div class="sidebar-search-box">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      <input type="text" placeholder="Search by device, repair, model..." id="history-search" oninput="filterHistory(this.value)">
+      <input type="text" placeholder="Search" id="history-search" oninput="filterHistory(this.value)">
+      <span class="search-shortcut-badge">⌘K</span>
     </div>
 
-    <!-- Pinned & Recent Repairs Scroll -->
+    <!-- Navigation Menu Items (Explore, Library, Files, History) -->
+    <nav class="sidebar-nav-menu">
+      <a href="javascript:void(0)" class="nav-item" onclick="openDeviceDiagModal()" title="In-Browser Hardware Diagnostics">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+        <span>Explore</span>
+      </a>
+      <a href="javascript:void(0)" class="nav-item" onclick="openCostCalculatorModal()" title="Repair Cost Calculator & Parts Catalog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        <span>Library</span>
+      </a>
+      <a href="javascript:void(0)" class="nav-item" onclick="openOrderTrackerModal()" title="Live Order & Ticket Tracker">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+        <span>Files</span>
+      </a>
+      <a href="javascript:void(0)" class="nav-item active" onclick="focusChatHistory()" title="Saved Chat Sessions">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <span>History</span>
+      </a>
+    </nav>
+
+    <!-- Grouped Chat History (Today, Yesterday, 7 days) -->
     <div class="sidebar-content-scroll" id="sidebar-scroll">
-      <!-- Recent / Saved Inquiries Section with Delete Options -->
-      <div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem; padding-right:0.25rem;">
-          <div class="sidebar-section-title" style="margin-bottom:0;">Chat History</div>
-          <button onclick="clearAllChatHistory()" style="background:none; border:none; font-size:0.7rem; color:var(--rose-500); cursor:pointer; font-weight:700; padding:0.1rem 0.35rem; border-radius:4px;" title="Delete all saved chats">
-            Clear All
-          </button>
-        </div>
-        <div class="sidebar-items-group" id="recent-inquiries-list">
-          <!-- Dynamically populated from localStorage -->
-        </div>
+      <div id="recent-inquiries-list">
+        <!-- Rendered dynamically by renderRecentInquiries() -->
       </div>
     </div>
 
-    <!-- Customer Profile / Store Status Footer -->
-    <div class="sidebar-user">
-      <div class="user-profile-info">
-        <div class="user-avatar" style="background:linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%); display:flex; align-items:center; justify-content:center; padding:4px;">
-          <img src="{{ url_for('static', filename='img/iris-logo.svg') }}" alt="Iris" style="width:22px; height:22px; display:block;">
-        </div>
-        <div>
-          <div class="user-name">Iris Lab</div>
-          <div class="user-role">Certified Diagnostic Lab</div>
+    <!-- User Profile Footer matching Emerson Sterling in reference -->
+    <div class="sidebar-user-footer">
+      <div class="user-profile-left">
+        <img src="{{ url_for('static', filename='img/user-avatar.png') }}" alt="User Avatar" class="user-avatar-img">
+        <div class="user-meta">
+          <div class="user-display-name">Emerson Sterling</div>
+          <div class="user-email-text">sterling@gmail.com</div>
         </div>
       </div>
-      <div style="font-size: 0.72rem; color: var(--emerald-600); font-weight: 600; display: flex; align-items: center; gap: 0.3rem;">
-        <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--emerald-500); display: inline-block;"></span>
-        Open Now
-      </div>
+      <button class="btn-user-action" onclick="openTechnicianModal()" title="Certified Senior Technician Escalation">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </button>
     </div>
   </aside>
 
@@ -81,102 +85,176 @@
        MAIN STAGE (Center Clean Area)
        ============================================== -->
   <main class="main-stage">
-    <!-- Topbar with Cart Button -->
+    <!-- Topbar matching reference -->
     <header class="stage-topbar">
-      <div style="margin-right:auto; font-size:0.8rem; color:var(--text-muted); display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-        <span style="background:#ecfdf5; color:var(--emerald-600); font-weight:700; padding:0.15rem 0.5rem; border-radius:999px; font-size:0.7rem;">90-Day Warranty</span>
-        <span>Mobiles &bull; Laptops &bull; Earphones &bull; Smart Gadgets</span>
-        <a href="/crawl" style="text-decoration:none; display:inline-flex; align-items:center; gap:0.35rem; font-size:0.75rem; font-weight:700; color:var(--primary-600); background:#eef2ff; padding:0.2rem 0.65rem; border-radius:var(--radius-full); border:1px solid rgba(79,70,229,0.25);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-          <span>Repair Datasets</span>
-        </a>
+      <!-- Left: Model Selector Badge Pill (Iris Pro ▾) -->
+      <div class="model-selector-pill" onclick="showModelDetailsToast()" title="Model details">
+        <div class="model-badge-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="18" height="18" x="3" y="3" rx="4" ry="4"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+        </div>
+        <span class="model-title">Iris Pro</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="model-arrow-down"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </div>
 
-      <div class="stage-topbar-actions">
-        <!-- Live Order Status Tracker Button -->
-        <button class="topbar-action-btn" onclick="openOrderTrackerModal()" title="Track live repair order & ticket progress">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17h4V5H2v12h3m15 0h2v-3.34a2 2 0 0 0-.59-1.42L18.8 9.66A2 2 0 0 0 17.38 9H14v8h2"></path><circle cx="7" cy="17" r="2"></circle><circle cx="17" cy="17" r="2"></circle></svg>
+      <!-- Right Action Tools matching reference -->
+      <div class="stage-topbar-tools">
+        <!-- More options ··· -->
+        <button class="topbar-icon-tool" onclick="toggleMoreOptionsDropdown(event)" title="More options">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+        </button>
+
+        <!-- Share / Link icon -->
+        <button class="topbar-icon-tool" onclick="copyCurrentConsultationLink()" title="Share consultation link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+        </button>
+
+        <!-- Export chat / Diagnostic Report button -->
+        <button class="topbar-outline-tool" onclick="openDiagnosticInvoiceModal()" title="1-Click Printable / PDF Diagnostic Report & Estimate">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span>Export chat</span>
+        </button>
+
+        <!-- Dark Pill Action Button: Upgrade / Track Order -->
+        <button class="topbar-dark-pill" onclick="openOrderTrackerModal()" title="Track live repair order & ticket progress">
           <span>Track Order</span>
         </button>
 
-        <!-- Repair Cost Calculator Button -->
-        <button class="topbar-action-btn" onclick="openCostCalculatorModal()" title="Instant repair quote & cost calculator">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path><path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path></svg>
-          <span>Price Calculator</span>
-        </button>
-
-        <!-- Hardware Diagnostic Tests Button -->
-        <button class="topbar-action-btn" onclick="openDeviceDiagModal()" title="Interactive in-browser screen, audio, and touch tests">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
-          <span>Hardware Tests</span>
-        </button>
-
-        <!-- Senior Technician Escalation Button -->
-        <button class="topbar-action-btn tech-btn" onclick="openTechnicianModal()" title="Chat with Senior Certified Technician on WhatsApp or request callback">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-          <span>Senior Tech</span>
-        </button>
-
-        <!-- Clear Current Chat Button -->
-        <button class="btn-clear-chat-topbar" id="btn-clear-active-chat" onclick="clearCurrentChat()" title="Delete / clear current conversation" style="display:none;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-          <span>Clear</span>
-        </button>
-
-        <!-- Cart / Ticket Button -->
-        <button class="btn-open-cart" onclick="toggleCartDrawer()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-          <span>Repair Ticket</span>
-          <span class="cart-pill-count" id="topbar-cart-count">1</span>
+        <!-- Repair Cart Button -->
+        <button class="topbar-cart-pill" onclick="toggleCartDrawer()" title="View current repair ticket">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+          <span class="cart-count-badge" id="topbar-cart-count">1</span>
         </button>
       </div>
     </header>
 
     <!-- Scrollable Center Canvas -->
     <div class="stage-scroll-area" id="stage-scroll-area">
-      <!-- 1. Hero State (Matching Reference) -->
+      <!-- 1. Hero State (Matching Reference Mockup) -->
       <div class="hero-state" id="hero-welcome">
-        <div class="hero-bot-icon">
-          <img src="{{ url_for('static', filename='img/iris-logo.svg') }}" alt="Iris AI">
+        <!-- 3D Iridescent Lavender Sphere / Orb with Floating Animation -->
+        <div class="hero-orb-wrap">
+          <img src="{{ url_for('static', filename='img/iris-orb.png') }}" alt="Iris AI Core" class="hero-orb-img">
+          <div class="hero-orb-shadow"></div>
         </div>
 
-        <h1 class="hero-title">Meet Iris — Your Gadget Diagnostic &amp; Repair Copilot</h1>
-        <p class="hero-subtitle">
-          Ask Iris for instant repair estimates in ₹ INR, diagnose hardware faults, search iFixit guides, or upload a photo of your damaged gadget.
-        </p>
+        <!-- Greeting Subtitle -->
+        <div class="hero-user-greet">Hello, Jackson</div>
+        <!-- Main Headline -->
+        <h1 class="hero-main-title">How can I assist you today?</h1>
 
-        <!-- 4 Prompt Cards Grid (Mobile, Laptop, Earphones, Defect Photo) -->
-        <div class="prompt-cards-grid">
-          <div class="prompt-card" onclick="selectPromptCard('How much does it cost to replace a shattered back glass or cracked OLED screen on my iPhone?')">
-            <div class="prompt-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+        <!-- Centered Floating Prompt Capsule (Matching Reference Mockup) -->
+        <div class="hero-prompt-card">
+          <textarea id="copilot-input" class="hero-prompt-textarea" placeholder="Ask me anything..." rows="2"></textarea>
+          
+          <!-- Middle Action Toolbar inside card -->
+          <div class="hero-prompt-midbar">
+            <!-- Left Badges & Tools -->
+            <div class="prompt-tools-left">
+              <button type="button" class="btn-deeper-research" id="btn-deep-research" onclick="toggleDeepResearch()" title="Deep Diagnostic Search across OEM codes & iFixit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+                <span>Deeper Research</span>
+              </button>
+              
+              <a href="/crawl" class="btn-prompt-subicon" title="Repair Datasets & Federated Crawler">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+              </a>
+
+              <button type="button" class="btn-prompt-subicon" onclick="openCostCalculatorModal()" title="Instant Price Quote & Diagnostic Estimator">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path></svg>
+              </button>
             </div>
-            <div class="prompt-card-title">Mobile Repair</div>
-            <div class="prompt-card-desc">Cracked screens, shattered back glass, and battery replacements.</div>
+
+            <!-- Right Controls (Waveform, Voice Mic, Send) -->
+            <div class="prompt-tools-right">
+              <button type="button" class="btn-prompt-subicon" onclick="playIrisWaveAudio()" title="Sound effects">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+              </button>
+
+              <!-- Glowing Lavender Voice Dictation Microphone -->
+              <button type="button" class="btn-lavender-voice" id="btn-voice-record" onclick="toggleVoiceDictation()" title="Voice input: Speak to Iris">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+              </button>
+
+              <!-- Send Button -->
+              <button type="button" class="btn-hero-send" id="btn-send-msg" onclick="handleSendMessage()" title="Send prompt to Iris">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+              </button>
+            </div>
           </div>
 
-          <div class="prompt-card" onclick="selectPromptCard('My laptop is overheating, fan running loudly, and battery barely lasts 1 hour. Can you repair it?')">
-            <div class="prompt-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="12" x="3" y="4" rx="2" ry="2"></rect><line x1="2" y1="20" x2="22" y2="20"></line></svg>
+          <!-- Bottom Sub-bar inside card: Saved Prompts & Attach File -->
+          <div class="hero-prompt-bottom-bar">
+            <!-- Saved Prompts Dropdown Trigger -->
+            <div class="saved-prompts-wrap">
+              <button type="button" class="btn-saved-prompts" onclick="toggleSavedPromptsMenu(event)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
+                <span>Saved prompts</span>
+              </button>
+              
+              <!-- Popup Menu of Saved Prompts -->
+              <div class="saved-prompts-dropdown" id="saved-prompts-menu">
+                <div class="saved-prompt-item" onclick="selectPromptCard('How much does it cost to replace a shattered back glass or cracked OLED screen on my iPhone?')">
+                  <span>📱 iPhone Screen &amp; Back Glass Replacement (₹2,499)</span>
+                </div>
+                <div class="saved-prompt-item" onclick="selectPromptCard('My MacBook Pro battery health is degraded and fans are loud. Can you diagnose and give estimate?')">
+                  <span>💻 MacBook Pro Battery &amp; Thermal Repaste (₹4,999)</span>
+                </div>
+                <div class="saved-prompt-item" onclick="selectPromptCard('One side of my wireless AirPods is very quiet and muffled. How can this be repaired?')">
+                  <span>🎧 AirPods Audio Balance &amp; Ultrasonic Cleaning (₹499)</span>
+                </div>
+                <div class="saved-prompt-item" onclick="selectPromptCard('Check warranty coverage and diagnostic fault codes for my Apple/Samsung device.')">
+                  <span>🛡️ 90-Day Iris Warranty &amp; Hardware Fault Code Check</span>
+                </div>
+              </div>
             </div>
-            <div class="prompt-card-title">Laptop Service</div>
-            <div class="prompt-card-desc">MacBook &amp; PC displays, keyboards, fans, and SSD upgrades.</div>
+
+            <!-- Attach File Button for Broken Gadget Photos -->
+            <input type="file" id="inline-file-picker" accept="image/*" style="display: none;" onchange="handleImageAttachment(this)">
+            <button type="button" class="btn-attach-file" onclick="document.getElementById('inline-file-picker').click()" title="Attach photo of broken gadget">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+              <span>Attach file</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3 Feature Suggestion Cards (Matching Reference Mockup) -->
+        <div class="hero-feature-cards">
+          <!-- Card 1: Synthesize Data -->
+          <div class="hero-fcard" onclick="openDeviceDiagModal()">
+            <div class="fcard-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <div class="fcard-title">Synthesize Data</div>
+            <div class="fcard-desc">Run display pixel test, audio balance &amp; touch digitizer benchmark.</div>
           </div>
 
-          <div class="prompt-card" onclick="selectPromptCard('One side of my wireless earbuds is very quiet and the battery dies quickly. How can this be repaired?')">
-            <div class="prompt-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+          <!-- Card 2: Creative Brainstorm -->
+          <div class="hero-fcard" onclick="openCostCalculatorModal()">
+            <div class="fcard-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path></svg>
             </div>
-            <div class="prompt-card-title">Earphones &amp; Audio</div>
-            <div class="prompt-card-desc">AirPods battery restoration, ear cushions, and speaker fixes.</div>
+            <div class="fcard-title">Creative Brainstorm</div>
+            <div class="fcard-desc">Instant price quotes in ₹ INR for screens, back glass &amp; batteries.</div>
           </div>
 
-          <div class="prompt-card" onclick="triggerPhotoUpload()">
-            <div class="prompt-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M2 12s3.636-7 10-7 10 7 10 7-3.636 7-10 7-10-7-10-7Z"></path></svg>
+          <!-- Card 3: Check Facts -->
+          <div class="hero-fcard" onclick="quickRecallCheck()">
+            <div class="fcard-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-1.5 1.5L12 11l-4 4-3-3 4-4 5.5-5.5"></path><path d="m15 7 4 4"></path><path d="M3 21l3-3"></path></svg>
             </div>
-            <div class="prompt-card-title">Upload Photo for Quote</div>
-            <div class="prompt-card-desc">Snap your broken gadget for instant AI damage assessment.</div>
+            <div class="fcard-title">Check Facts</div>
+            <div class="fcard-desc">Cross-reference official CPSC, Apple, Dell, and Samsung recalls.</div>
+          </div>
+        </div>
+
+        <!-- Footer Notice matching reference -->
+        <div class="stage-bottom-footer">
+          <div class="footer-center-text">
+            Join the Iris certified repair community for more insights. <a href="javascript:void(0)" onclick="openTechnicianModal()">Join WhatsApp</a>
+          </div>
+          <div class="footer-right-tools">
+            <button class="footer-icon-btn" onclick="showToast('Language: English (UK / IN)', 'info')" title="Language"><span style="font-size:0.85rem; font-weight:700;">あ</span></button>
+            <button class="footer-icon-btn" onclick="openTechnicianModal()" title="Help &amp; Senior Tech Support"><span>?</span></button>
           </div>
         </div>
       </div>
@@ -187,32 +265,23 @@
       </div>
     </div>
 
-    <!-- Floating Bottom Input Bar -->
-    <div class="bottom-input-container">
-      <div class="input-capsule">
-        <div class="input-actions-left">
-          <!-- Attachment Photo Button -->
-          <input type="file" id="inline-file-picker" accept="image/*" style="display: none;" onchange="handleImageAttachment(this)">
-          <button class="input-icon-btn" onclick="document.getElementById('inline-file-picker').click()" title="Attach photo of damaged mobile, laptop or earphones">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-          </button>
-          
-          <!-- Live Voice Dictation Button (Microphone) -->
-          <button type="button" class="input-icon-btn" id="btn-voice-record" onclick="toggleVoiceDictation()" title="Voice input: Click to speak to Iris">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
-          </button>
-        </div>
+    <!-- Docked Bottom Input Bar when Chat is active -->
+    <div class="docked-bottom-input" id="docked-bottom-input" style="display: none;">
+      <div class="docked-input-capsule">
+        <input type="file" id="docked-file-picker" accept="image/*" style="display: none;" onchange="handleImageAttachment(this)">
+        <button type="button" class="btn-prompt-subicon" onclick="document.getElementById('docked-file-picker').click()" title="Attach photo of broken gadget">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+        </button>
 
-        <textarea id="copilot-input" placeholder="Ask Iris about iPhone back glass, laptop overheating, AirPods repair, error codes..." rows="1"></textarea>
+        <button type="button" class="btn-lavender-voice-small" id="btn-docked-voice-record" onclick="toggleVoiceDictation()" title="Voice input: Speak to Iris">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+        </button>
 
-        <button class="btn-circle-send" id="btn-send-msg" onclick="handleSendMessage()">
+        <textarea id="docked-copilot-input" placeholder="Ask Iris about repairs, pricing in ₹ INR, or diagnostic codes..." rows="1"></textarea>
+
+        <button type="button" class="btn-hero-send" onclick="handleDockedSendMessage()" title="Send">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
         </button>
-      </div>
-
-      <div class="input-hint-row">
-        <span>Press <kbd style="background:#f1f5f9; padding:0.1rem 0.3rem; border-radius:4px; border:1px solid #e2e8f0; font-size:0.7rem;">Enter</kbd> to send</span>
-        <span>Iris AI provides instant repair estimates. All repairs backed by 90-day warranty.</span>
       </div>
     </div>
   </main>
@@ -657,15 +726,27 @@ const scrollArea = document.getElementById('stage-scroll-area');
 const btnSend = document.getElementById('btn-send-msg');
 const topbarCartCount = document.getElementById('topbar-cart-count');
 const btnClearActiveChat = document.getElementById('btn-clear-active-chat');
+const dockedInputBar = document.getElementById('docked-bottom-input');
+const dockedInput = document.getElementById('docked-copilot-input');
 
 const IRIS_LOGO_URL = "{{ url_for('static', filename='img/iris-logo.svg') }}";
 
 // Active Chat State
 let currentSessionId = null;
 let currentMessages = [];
+let isDeepResearchActive = false;
 
 document.addEventListener('DOMContentLoaded', () => {
   initChatHistory();
+
+  if (dockedInput) {
+    dockedInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleDockedSendMessage();
+      }
+    });
+  }
 });
 
 input.addEventListener('keydown', (e) => {
@@ -675,8 +756,30 @@ input.addEventListener('keydown', (e) => {
   }
 });
 
+// ⌘K / Ctrl+K shortcut to focus history search
+window.addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    const search = document.getElementById('history-search');
+    if (search) {
+      search.focus();
+      search.select();
+    }
+  }
+});
+
 function selectPromptCard(text) {
   input.value = text;
+  handleSendMessage();
+}
+
+function handleDockedSendMessage() {
+  const dInput = document.getElementById('docked-copilot-input');
+  if (!dInput) return;
+  const val = dInput.value.trim();
+  if (!val) return;
+  input.value = val;
+  dInput.value = '';
   handleSendMessage();
 }
 
@@ -691,7 +794,9 @@ function startNewChat() {
   chatStream.style.display = 'none';
   hero.style.display = 'flex';
   if (btnClearActiveChat) btnClearActiveChat.style.display = 'none';
+  if (dockedInputBar) dockedInputBar.style.display = 'none';
   input.value = '';
+  if (dockedInput) dockedInput.value = '';
   input.focus();
   document.querySelectorAll('.history-item').forEach(el => el.classList.remove('active'));
   showToast('Started new chat session with Iris', 'info');
@@ -705,7 +810,9 @@ function clearCurrentChat() {
   chatStream.style.display = 'none';
   hero.style.display = 'flex';
   if (btnClearActiveChat) btnClearActiveChat.style.display = 'none';
+  if (dockedInputBar) dockedInputBar.style.display = 'none';
   input.value = '';
+  if (dockedInput) dockedInput.value = '';
 
   if (currentSessionId) {
     deleteChatSessionById(currentSessionId, false);
@@ -740,6 +847,7 @@ function deleteMessageBubble(buttonEl) {
       chatStream.style.display = 'none';
       hero.style.display = 'flex';
       if (btnClearActiveChat) btnClearActiveChat.style.display = 'none';
+      if (dockedInputBar) dockedInputBar.style.display = 'none';
     }
     showToast('Message deleted', 'info');
   }, 200);
@@ -774,33 +882,89 @@ function initChatHistory() {
   renderRecentInquiries();
 }
 
+// Curated authentic Iris repair demo inquiries matching reference screenshot layout
+const DEMO_INQUIRIES = [
+  { group: 'Today', title: "iPhone 14 Pro Max rear glass laser fix", prompt: "How much does it cost to fix shattered rear glass on iPhone 14 Pro Max with laser removal?" },
+  { group: 'Today', title: "MacBook Pro M2 battery & thermal repaste", prompt: "Diagnose degraded battery health and loud fan noise on MacBook Pro M2" },
+  { group: 'Today', title: "AirPods right earbud crackling audio fix", prompt: "One side of my AirPods has low muffled volume and crackling sound" },
+  { group: 'Yesterday', title: "Compare OEM vs Aftermarket OLED screens", prompt: "What are the main differences between OEM Apple screen and aftermarket OLED display?" },
+  { group: 'Yesterday', title: "Galaxy S23 Ultra moisture in port fix", prompt: "Samsung S23 Ultra alert: moisture detected in charging port error" },
+  { group: '7 days', title: "iPad Air touch digitizer unresponsive", prompt: "iPad Air 5th gen touchscreen not responding to touch gestures" },
+  { group: '7 days', title: "Dell XPS 15 battery swelling replacement", prompt: "Dell XPS 15 trackpad lifting due to swollen battery" },
+  { group: '7 days', title: "Sony WH-1000XM5 cushion & hinge repair", prompt: "Sony WH-1000XM5 headphone ear pads worn out and hinge loose" },
+  { group: '7 days', title: "Nintendo Switch Joy-Con stick drift fix", prompt: "Nintendo Switch Joy-Con analog joystick drifting to the left" },
+  { group: '7 days', title: "Water damage ultrasonic board cleaning", prompt: "MacBook water spill on keyboard: what is ultrasonic board cleaning procedure?" }
+];
+
 function renderRecentInquiries() {
   const container = document.getElementById('recent-inquiries-list');
   if (!container) return;
 
   const sessions = getSavedSessions();
-  if (sessions.length === 0) {
-    container.innerHTML = `
-      <div style="font-size:0.75rem; color:var(--text-faint); padding:0.4rem 0.6rem; font-style:italic;">
-        No saved chats yet.
+  const now = Date.now();
+  const oneDay = 24 * 60 * 60 * 1000;
+  const twoDays = 48 * 60 * 60 * 1000;
+
+  const todaySessions = [];
+  const yesterdaySessions = [];
+  const sevenDaysSessions = [];
+
+  sessions.forEach(s => {
+    const age = now - (s.createdAt || now);
+    if (age < oneDay) {
+      todaySessions.push(s);
+    } else if (age < twoDays) {
+      yesterdaySessions.push(s);
+    } else {
+      sevenDaysSessions.push(s);
+    }
+  });
+
+  const demoToday = DEMO_INQUIRIES.filter(d => d.group === 'Today');
+  const demoYesterday = DEMO_INQUIRIES.filter(d => d.group === 'Yesterday');
+  const demo7Days = DEMO_INQUIRIES.filter(d => d.group === '7 days');
+
+  function renderGroup(groupTitle, userItems, demoItems) {
+    let itemsHtml = '';
+    
+    // User items first
+    userItems.forEach(s => {
+      itemsHtml += `
+        <div class="history-item ${s.id === currentSessionId ? 'active' : ''}" onclick="loadSession('${s.id}')">
+          <div class="history-item-title" title="${escapeHtml(s.title || 'Diagnostic Chat')}">${escapeHtml(s.title || 'Diagnostic Chat')}</div>
+          <div class="history-item-actions">
+            <button class="btn-delete-history" onclick="deleteHistorySession(event, '${s.id}')" title="Delete chat session">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>
+          </div>
+        </div>
+      `;
+    });
+
+    // Supplement with demo items if total in this group is small
+    const needed = Math.max(0, (groupTitle === '7 days' ? 5 : 3) - userItems.length);
+    demoItems.slice(0, needed).forEach(d => {
+      itemsHtml += `
+        <div class="history-item" onclick="selectPromptCard('${escapeHtml(d.prompt)}')" title="${escapeHtml(d.title)}">
+          <div class="history-item-title">${escapeHtml(d.title)}</div>
+        </div>
+      `;
+    });
+
+    return `
+      <div class="history-group-section">
+        <div class="history-group-title">${groupTitle}</div>
+        ${itemsHtml}
       </div>
     `;
-    return;
   }
 
-  container.innerHTML = sessions.map(s => `
-    <div class="history-item ${s.id === currentSessionId ? 'active' : ''}" onclick="loadSession('${s.id}')">
-      <div class="history-item-left">
-        <span class="history-item-title">${escapeHtml(s.title || 'Diagnostic Chat')}</span>
-        <span class="history-item-sub">${escapeHtml(s.timeAgo || 'Recent')} &bull; ${s.messagesCount || 1} msg</span>
-      </div>
-      <div class="history-item-actions">
-        <button class="btn-delete-history" onclick="deleteHistorySession(event, '${s.id}')" title="Delete chat session">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-        </button>
-      </div>
-    </div>
-  `).join('');
+  let html = '';
+  html += renderGroup('Today', todaySessions, demoToday);
+  html += renderGroup('Yesterday', yesterdaySessions, demoYesterday);
+  html += renderGroup('7 days', sevenDaysSessions, demo7Days);
+
+  container.innerHTML = html;
 }
 
 // Delete Chat Session from History
@@ -821,6 +985,7 @@ function deleteChatSessionById(id, notify = true) {
     chatStream.style.display = 'none';
     hero.style.display = 'flex';
     if (btnClearActiveChat) btnClearActiveChat.style.display = 'none';
+    if (dockedInputBar) dockedInputBar.style.display = 'none';
   }
 
   renderRecentInquiries();
@@ -842,6 +1007,7 @@ function clearAllChatHistory() {
   chatStream.style.display = 'none';
   hero.style.display = 'flex';
   if (btnClearActiveChat) btnClearActiveChat.style.display = 'none';
+  if (dockedInputBar) dockedInputBar.style.display = 'none';
 
   renderRecentInquiries();
   showToast('All chat history deleted', 'success');
@@ -889,6 +1055,7 @@ function loadSession(id) {
   hero.style.display = 'none';
   chatStream.style.display = 'flex';
   if (btnClearActiveChat) btnClearActiveChat.style.display = 'inline-flex';
+  if (dockedInputBar) dockedInputBar.style.display = 'block';
 
   // Render stored messages
   currentMessages.forEach(msg => {
@@ -914,10 +1081,23 @@ function toggleSidebar() {
 }
 
 function filterHistory(query) {
-  const q = query.toLowerCase();
+  const q = (query || '').toLowerCase().trim();
+  const groupSections = document.querySelectorAll('.history-group-section');
+  
   document.querySelectorAll('.history-item').forEach(el => {
-    const text = el.innerText.toLowerCase();
-    el.style.display = text.includes(q) ? 'flex' : 'none';
+    const titleEl = el.querySelector('.history-item-title') || el;
+    const text = titleEl.innerText.toLowerCase();
+    const match = !q || text.includes(q);
+    el.style.display = match ? 'flex' : 'none';
+  });
+
+  groupSections.forEach(section => {
+    const items = section.querySelectorAll('.history-item');
+    let hasVisible = false;
+    items.forEach(it => {
+      if (it.style.display !== 'none') hasVisible = true;
+    });
+    section.style.display = hasVisible ? 'block' : 'none';
   });
 }
 
@@ -972,9 +1152,11 @@ async function handleSendMessage() {
   hero.style.display = 'none';
   chatStream.style.display = 'flex';
   if (btnClearActiveChat) btnClearActiveChat.style.display = 'inline-flex';
+  if (dockedInputBar) dockedInputBar.style.display = 'block';
 
   appendUserBubble(query, true);
   input.value = '';
+  if (dockedInput) dockedInput.value = '';
   scrollArea.scrollTop = scrollArea.scrollHeight;
 
   const loadingRow = document.createElement('div');
@@ -986,7 +1168,7 @@ async function handleSendMessage() {
     </div>
     <div class="bubble-body" style="display:flex; align-items:center; gap:0.5rem; color:var(--text-muted);">
       <span class="spinner" style="display:inline-block; width:16px; height:16px; border:2px solid #e2e8f0; border-top-color:var(--primary-500); border-radius:50%; animation:spin 0.75s linear infinite;"></span>
-      <span>Iris is diagnosing fault and checking repair catalog...</span>
+      <span>${isDeepResearchActive ? 'Iris is performing Deep Hardware Diagnostic & CPSC recall cross-check...' : 'Iris is diagnosing fault and checking repair catalog...'}</span>
     </div>
   `;
   chatStream.appendChild(loadingRow);
@@ -1000,7 +1182,8 @@ async function handleSendMessage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         message: query,
-        history: currentMessages
+        history: currentMessages,
+        deep_research: isDeepResearchActive
       })
     });
     const data = await res.json();
@@ -1019,7 +1202,11 @@ async function handleSendMessage() {
   } finally {
     btnSend.disabled = false;
     scrollArea.scrollTop = scrollArea.scrollHeight;
-    input.focus();
+    if (dockedInputBar && dockedInputBar.style.display !== 'none' && dockedInput) {
+      dockedInput.focus();
+    } else {
+      input.focus();
+    }
   }
 }
 
@@ -1031,6 +1218,7 @@ async function handleImageAttachment(inputEl) {
   hero.style.display = 'none';
   chatStream.style.display = 'flex';
   if (btnClearActiveChat) btnClearActiveChat.style.display = 'inline-flex';
+  if (dockedInputBar) dockedInputBar.style.display = 'block';
 
   // Add user context for image upload to history
   const photoContext = `[Customer uploaded photo of broken gadget: ${file.name}] Please diagnose the physical defect, model, repair options, and quote in ₹ INR.`;
@@ -1098,10 +1286,11 @@ let isVoiceRecording = false;
 
 function toggleVoiceDictation() {
   const btn = document.getElementById('btn-voice-record');
+  const dockedBtn = document.getElementById('btn-docked-voice-record');
   const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
 
   if (!SpeechRec) {
-    showToast('Speech recognition not supported in this browser. You can use /speech page.', 'info');
+    showToast('Speech recognition not supported in this browser. Try Chrome/Edge or /speech page.', 'info');
     return;
   }
 
@@ -1119,7 +1308,9 @@ function toggleVoiceDictation() {
     speechRecognitionInstance.onstart = () => {
       isVoiceRecording = true;
       if (btn) btn.classList.add('recording');
-      input.placeholder = '🎙 Listening... Speak your gadget issue clearly...';
+      if (dockedBtn) dockedBtn.classList.add('recording');
+      input.placeholder = '🎙 Listening... Describe gadget damage or symptoms...';
+      if (dockedInput) dockedInput.placeholder = '🎙 Listening... Describe gadget damage or symptoms...';
       showToast('Microphone active. Speak to Iris...', 'info');
     };
 
@@ -1129,6 +1320,7 @@ function toggleVoiceDictation() {
         transcript += event.results[i][0].transcript;
       }
       input.value = transcript;
+      if (dockedInput) dockedInput.value = transcript;
     };
 
     speechRecognitionInstance.onerror = (event) => {
@@ -1150,10 +1342,88 @@ function toggleVoiceDictation() {
 function stopVoiceDictation() {
   isVoiceRecording = false;
   const btn = document.getElementById('btn-voice-record');
+  const dockedBtn = document.getElementById('btn-docked-voice-record');
   if (btn) btn.classList.remove('recording');
-  input.placeholder = 'Ask Iris about iPhone back glass, laptop overheating, AirPods repair, error codes...';
+  if (dockedBtn) dockedBtn.classList.remove('recording');
+  input.placeholder = 'Ask me anything...';
+  if (dockedInput) dockedInput.placeholder = 'Ask Iris about repairs, pricing in ₹ INR, or diagnostic codes...';
   if (speechRecognitionInstance) {
     try { speechRecognitionInstance.stop(); } catch (e) {}
+  }
+}
+
+// Auxiliary UI Helper Functions matching reference mockup
+function toggleDeepResearch() {
+  isDeepResearchActive = !isDeepResearchActive;
+  const btn = document.querySelector('.btn-deeper-research');
+  if (btn) {
+    btn.classList.toggle('active', isDeepResearchActive);
+  }
+  if (isDeepResearchActive) {
+    showToast('Deeper Research enabled: Iris will perform comprehensive multi-stage diagnostic & CPSC recall cross-check.', 'success');
+  } else {
+    showToast('Standard diagnostic mode active.', 'info');
+  }
+}
+
+function toggleSavedPromptsMenu(event) {
+  if (event) event.stopPropagation();
+  const menu = document.getElementById('saved-prompts-menu');
+  if (menu) {
+    menu.classList.toggle('open');
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('saved-prompts-menu');
+  const btn = document.querySelector('.btn-saved-prompts');
+  if (menu && menu.classList.contains('open')) {
+    if (!menu.contains(e.target) && (!btn || !btn.contains(e.target))) {
+      menu.classList.remove('open');
+    }
+  }
+});
+
+function showModelDetailsToast() {
+  showToast('Iris Pro Neural Diagnostic v2.5: Hardware Fault Neural Classifier + DeepSeek R1 Reasoning Engine with 90-Day Warranty Assurance', 'info');
+}
+
+function copyCurrentConsultationLink() {
+  const url = window.location.href;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(() => {
+      showToast('Consultation link copied to clipboard!', 'success');
+    }).catch(() => {
+      showToast('Link: ' + url, 'info');
+    });
+  } else {
+    showToast('Link: ' + url, 'info');
+  }
+}
+
+function toggleMoreOptionsDropdown(event) {
+  if (event) event.stopPropagation();
+  showToast('Iris Options: Diagnostic Sheet Export, Senior Tech Consultation, Live Bench Tracking', 'info');
+}
+
+function quickRecallCheck() {
+  input.value = 'Check CPSC, Apple, Dell, and Samsung safety recalls and service programs for my device.';
+  handleSendMessage();
+}
+
+function playIrisWaveAudio() {
+  initAudioCtx();
+  playAudioSweep();
+  showToast('Iris Audio Diagnostic Frequency Sweep (60Hz - 1200Hz)', 'info');
+}
+
+function focusChatHistory() {
+  const el = document.getElementById('sidebar-scroll');
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+  const search = document.getElementById('history-search');
+  if (search) {
+    search.focus();
+    search.select();
   }
 }
 
