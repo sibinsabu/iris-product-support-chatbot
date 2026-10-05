@@ -334,6 +334,15 @@ function deleteMessageBubble(buttonEl) {
   const row = buttonEl.closest('.chat-bubble-row');
   if (!row) return;
 
+  const allRows = Array.from(chatStream.querySelectorAll('.chat-bubble-row'));
+  const rowIdx = allRows.indexOf(row);
+  if (rowIdx !== -1 && rowIdx < currentMessages.length) {
+    currentMessages.splice(rowIdx, 1);
+    if (currentSessionId) {
+      persistActiveChatSession();
+    }
+  }
+
   row.style.opacity = '0';
   row.style.transform = 'translateY(-6px)';
   row.style.transition = 'all 0.2s ease';
@@ -475,12 +484,13 @@ function persistActiveChatSession(firstPrompt) {
   let sessions = getSavedSessions();
   let existing = sessions.find(s => s.id === currentSessionId);
 
-  const title = (firstPrompt || 'Diagnostic Repair').slice(0, 36) + (firstPrompt && firstPrompt.length > 36 ? '...' : '');
+  const title = (firstPrompt || (currentMessages[0] ? currentMessages[0].text : 'Diagnostic Repair')).slice(0, 36) + ((firstPrompt || (currentMessages[0] ? currentMessages[0].text : '')).length > 36 ? '...' : '');
 
   if (existing) {
     existing.messagesCount = currentMessages.length;
     existing.lastUpdated = Date.now();
     existing.timeAgo = 'Just now';
+    existing.messages = currentMessages;
   } else {
     sessions.unshift({
       id: currentSessionId,
@@ -624,7 +634,10 @@ async function handleSendMessage() {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: query })
+      body: JSON.stringify({
+        message: query,
+        history: currentMessages
+      })
     });
     const data = await res.json();
     loadingRow.remove();
@@ -654,6 +667,10 @@ async function handleImageAttachment(inputEl) {
   hero.style.display = 'none';
   chatStream.style.display = 'flex';
   if (btnClearActiveChat) btnClearActiveChat.style.display = 'inline-flex';
+
+  // Add user context for image upload to history
+  const photoContext = `[Customer uploaded photo of broken gadget: ${file.name}] Please diagnose the physical defect, model, repair options, and quote in ₹ INR.`;
+  currentMessages.push({ role: 'user', text: photoContext });
 
   const userRow = document.createElement('div');
   userRow.className = 'chat-bubble-row user';
@@ -691,6 +708,8 @@ async function handleImageAttachment(inputEl) {
   const form = new FormData();
   form.append('image', file);
   form.append('prompt', 'Inspect this broken or damaged gadget photo (mobile, laptop, earphones, smartwatch). Identify the model, diagnose the exact physical damage (cracked screen, shattered back glass, broken hinge, worn cushions), recommend the repair service, and provide estimated cost and turnaround time.');
+  // Send previous conversation context if any
+  form.append('history', JSON.stringify(currentMessages.slice(0, -1)));
 
   try {
     const res = await fetch('/api/vision', { method: 'POST', body: form });
