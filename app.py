@@ -8,10 +8,11 @@ from openai import OpenAI  # pyrefly: ignore[missing-import]
 
 # Firebase Admin SDK
 try:
-    import firebase_admin
-    from firebase_admin import credentials, auth as fb_admin_auth
+    import firebase_admin  # pyrefly: ignore[missing-import]
+    from firebase_admin import credentials, auth as fb_admin_auth  # pyrefly: ignore[missing-import]
 except ImportError:
     firebase_admin = None
+    credentials = None
     fb_admin_auth = None
 
 load_dotenv()
@@ -25,18 +26,17 @@ app.jinja_env.auto_reload = True
 os.makedirs("uploads", exist_ok=True)
 
 # Initialize Firebase Admin app safely
-FIREBASE_PROJECT_ID = os.getenv("FIREBASE_PROJECT_ID", "iris-repair-copilot")
+FIREBASE_PROJECT_ID = os.getenv("FIREBASE_PROJECT_ID", "iris-gadget-repair")
 FIREBASE_SERVICE_ACCOUNT = os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY")
 if firebase_admin and not firebase_admin._apps:
     try:
-        if FIREBASE_SERVICE_ACCOUNT and os.path.exists(FIREBASE_SERVICE_ACCOUNT):
+        if FIREBASE_SERVICE_ACCOUNT and os.path.exists(FIREBASE_SERVICE_ACCOUNT) and credentials is not None:
             cred = credentials.Certificate(FIREBASE_SERVICE_ACCOUNT)
             firebase_admin.initialize_app(cred)
         else:
             firebase_admin.initialize_app(options={"projectId": FIREBASE_PROJECT_ID})
     except Exception:
         pass
-os.makedirs("uploads", exist_ok=True)
 
 AOAI_ENDPOINT=os.getenv("AZURE_OPENAI_ENDPOINT","").rstrip("/")
 AOAI_KEY=os.getenv("AZURE_OPENAI_API_KEY","")
