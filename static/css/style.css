@@ -94,8 +94,28 @@ body {
 }
 
 button, input, textarea, select {
-  font-family: var(--font-sans);
+  font-family: var(--font-sans) !important;
   letter-spacing: inherit;
+}
+
+.modal-form-input {
+  width: 100%;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.85rem;
+  font-family: var(--font-sans) !important;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-title);
+  outline: none;
+  transition: all var(--transition);
+}
+
+.modal-form-input:focus {
+  background: #ffffff;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
 /* Outer Centered App Container */
@@ -1710,8 +1730,9 @@ button, input, textarea, select {
 }
 
 .receipt-order-id {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 0.85rem;
+  font-weight: 600;
   color: var(--primary-500);
   margin-bottom: 1.25rem;
 }
@@ -1947,8 +1968,8 @@ button, input, textarea, select {
   padding: 0.5rem 0.75rem;
   font-size: 0.92rem;
   outline: none;
-  font-family: var(--font-mono);
-  font-weight: 600;
+  font-family: var(--font-sans);
+  font-weight: 500;
   color: var(--text-title);
   text-transform: uppercase;
 }
@@ -1986,8 +2007,8 @@ button, input, textarea, select {
   border: 1px solid var(--border-light);
   padding: 0.2rem 0.55rem;
   border-radius: var(--radius-full);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-title);
   cursor: pointer;
@@ -2018,7 +2039,7 @@ button, input, textarea, select {
 }
 
 .tracker-ticket-badge {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 0.82rem;
   font-weight: 700;
   color: var(--primary-600);
@@ -2123,7 +2144,7 @@ button, input, textarea, select {
 
 .timeline-step-time {
   font-size: 0.72rem;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--text-faint);
 }
 
