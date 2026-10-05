@@ -53,6 +53,7 @@
     <li><a href="#api-endpoints">API Endpoints</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#top-contributors">Top Contributors</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
@@ -214,6 +215,18 @@ Contributions make the open-source community an incredible place to learn, inspi
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<!-- TOP CONTRIBUTORS -->
+## Top Contributors
+
+<a href="https://github.com/sibinsabu/iris-product-support-chatbot/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=sibinsabu/iris-product-support-chatbot" alt="Top Contributors" />
+</a>
+
+* **Sibin Sabu** ([@sibinsabu](https://github.com/sibinsabu)) — Creator & Lead Maintainer
+* **Anto Sajo** ([@Antosajo045](https://github.com/Antosajo045)) — Contributor
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 <!-- LICENSE -->
 ## License
 
@@ -224,9 +237,10 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-**Sibin Sabu** - [@sibinsabu](https://github.com/sibinsabu)
-
-Project Link: [https://github.com/sibinsabu/iris-product-support-chatbot](https://github.com/sibinsabu/iris-product-support-chatbot)
+* **Name**: Sibin Sabu
+* **GitHub Username**: [@sibinsabu](https://github.com/sibinsabu)
+* **GitHub Profile**: [https://github.com/sibinsabu](https://github.com/sibinsabu)
+* **Project Link**: [https://github.com/sibinsabu/iris-product-support-chatbot](https://github.com/sibinsabu/iris-product-support-chatbot)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
