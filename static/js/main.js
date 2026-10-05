@@ -414,12 +414,13 @@ const FirebaseAuthManager = {
     }
     try {
       let config = {
-        apiKey: "AIzaSyDemo-iris-gadget-repair-auth-key",
-        authDomain: "iris-repair-copilot.firebaseapp.com",
-        projectId: "iris-repair-copilot",
-        storageBucket: "iris-repair-copilot.appspot.com",
-        messagingSenderId: "839102948102",
-        appId: "1:839102948102:web:9f8a02c81928019284"
+        apiKey: "AIzaSyAfC-CSnBr3Gt0BUk3RN2Yt50WdBMth7_0",
+        authDomain: "iris-gadget-repair.firebaseapp.com",
+        projectId: "iris-gadget-repair",
+        storageBucket: "iris-gadget-repair.firebasestorage.app",
+        messagingSenderId: "650673193941",
+        appId: "1:650673193941:web:2ffdbb5349d9922196b35c",
+        measurementId: "G-TH1V9HGGPT"
       };
 
       try {

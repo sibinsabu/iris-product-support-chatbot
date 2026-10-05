@@ -355,12 +355,13 @@ def api_auth_logout():
 def api_firebase_config():
     """Exposes Firebase client configuration for Web Auth SDK."""
     return jsonify({
-        "apiKey": os.getenv("FIREBASE_API_KEY", "AIzaSyDemo-iris-gadget-repair-auth-key"),
-        "authDomain": os.getenv("FIREBASE_AUTH_DOMAIN", "iris-repair-copilot.firebaseapp.com"),
-        "projectId": os.getenv("FIREBASE_PROJECT_ID", "iris-repair-copilot"),
-        "storageBucket": os.getenv("FIREBASE_STORAGE_BUCKET", "iris-repair-copilot.appspot.com"),
-        "messagingSenderId": os.getenv("FIREBASE_MESSAGING_SENDER_ID", "839102948102"),
-        "appId": os.getenv("FIREBASE_APP_ID", "1:839102948102:web:9f8a02c81928019284")
+        "apiKey": os.getenv("FIREBASE_API_KEY", "AIzaSyAfC-CSnBr3Gt0BUk3RN2Yt50WdBMth7_0"),
+        "authDomain": os.getenv("FIREBASE_AUTH_DOMAIN", "iris-gadget-repair.firebaseapp.com"),
+        "projectId": os.getenv("FIREBASE_PROJECT_ID", "iris-gadget-repair"),
+        "storageBucket": os.getenv("FIREBASE_STORAGE_BUCKET", "iris-gadget-repair.firebasestorage.app"),
+        "messagingSenderId": os.getenv("FIREBASE_MESSAGING_SENDER_ID", "650673193941"),
+        "appId": os.getenv("FIREBASE_APP_ID", "1:650673193941:web:2ffdbb5349d9922196b35c"),
+        "measurementId": os.getenv("FIREBASE_MEASUREMENT_ID", "G-TH1V9HGGPT")
     })
 
 @app.post("/api/auth/firebase-session")
