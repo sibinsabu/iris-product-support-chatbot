@@ -520,6 +520,7 @@ function setAuthMode(mode) {
     subtitle.textContent = 'Log in to your Iris account to access saved diagnostic tickets, track repair orders, and consult senior technicians.';
     nameGroup.style.display = 'none';
     nameInput.required = false;
+    nameInput.value = '';
     submitBtn.querySelector('span').textContent = 'Continue';
     forgotLink.style.display = 'inline';
     switchBox.innerHTML = `<span>Don't have an account? </span><a href="javascript:void(0)" onclick="setAuthMode('signup')">Sign up</a>`;

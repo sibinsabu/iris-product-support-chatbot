@@ -695,7 +695,10 @@ function setModalAuthMode(mode) {
     if (nameGroup) {
       nameGroup.style.display = 'none';
     }
-    if (nameInput) nameInput.required = false;
+    if (nameInput) {
+      nameInput.required = false;
+      nameInput.value = '';
+    }
     if (submitBtn) submitBtn.querySelector('span').textContent = 'Continue';
     if (forgotLink) forgotLink.style.display = 'inline';
     if (switchBox) switchBox.innerHTML = `<span>Don't have an account? </span><a href="javascript:void(0)" onclick="setModalAuthMode('signup')">Sign up</a>`;
