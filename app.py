@@ -1,4 +1,4 @@
-import os, base64, mimetypes, uuid, requests, crawler
+import os, base64, mimetypes, uuid, requests, json, crawler
 from flask import Flask, render_template, request, jsonify, send_file
 from typing import Any, cast
 from dotenv import load_dotenv  # pyrefly: ignore[missing-import]
@@ -85,9 +85,44 @@ Common repair catalog items in our store (all prices in Indian Rupees ₹):
 
 Format replies in clean, friendly Markdown with clear step-by-step guidance. Maintain a welcoming, professional repair technician tone and emphasize our 90-day Iris warranty on all repairs."""
 
-def text_response(prompt, system=None):
+def text_response(prompt, system=None, history=None):
     instructions = system or SUPPORT_SYSTEM_PROMPT
-    r=client().responses.create(model=TEXT_MODEL, instructions=instructions, input=prompt)
+    if history and isinstance(history, list):
+        formatted_input: list[dict[str, Any]] = []
+        for item in history:
+            if not isinstance(item, dict):
+                continue
+            role = item.get("role")
+            if role not in ("user", "assistant"):
+                continue
+            content = item.get("content") or item.get("text") or ""
+            if isinstance(content, list):
+                text_parts = [b.get("text", "") for b in content if isinstance(b, dict) and b.get("text")]
+                content = " ".join(text_parts)
+            content_str = str(content).strip()
+            if content_str:
+                formatted_input.append({
+                    "role": role,
+                    "content": content_str
+                })
+        
+        # Ensure current prompt is included at the end
+        if prompt:
+            clean_prompt = prompt.strip()
+            if not formatted_input or formatted_input[-1].get("role") != "user" or formatted_input[-1].get("content") != clean_prompt:
+                formatted_input.append({"role": "user", "content": clean_prompt})
+        
+        if formatted_input:
+            # Keep up to 20 messages for rich multi-turn context
+            recent_context = formatted_input[-20:]
+            r = client().responses.create(
+                model=TEXT_MODEL,
+                instructions=instructions,
+                input=cast(Any, recent_context)
+            )
+            return r.output_text
+
+    r = client().responses.create(model=TEXT_MODEL, instructions=instructions, input=prompt)
     return r.output_text
 
 @app.get("/")
@@ -99,13 +134,16 @@ def chat(): return render_template("home.html")
 @app.post("/api/chat")
 def api_chat():
     try:
-        p=(request.json or {}).get("message","").strip()
-        if not p: return jsonify(error="Enter a message."),400
+        body = request.json or {}
+        p = body.get("message", "").strip()
+        history = body.get("history") or []
+        if not p: return jsonify(error="Enter a message."), 400
         clean_p = p.lower().strip("!.,? ")
-        if clean_p in ("hi", "hello", "hey", "hi iris", "hello iris", "hey iris", "greetings", "hi there", "hello there"):
+        # Only greet if this is the start of a conversation with no history
+        if not history and clean_p in ("hi", "hello", "hey", "hi iris", "hello iris", "hey iris", "greetings", "hi there", "hello there"):
             return jsonify(reply="Hello! Iris here, how may I assist you today? Whether you need hardware diagnostics, repair pricing in ₹ INR, or troubleshooting for your mobile, laptop, earphones, or gadget, I'm here to help!")
-        return jsonify(reply=text_response(p))
-    except Exception as e: return jsonify(error=str(e)),500
+        return jsonify(reply=text_response(p, history=history))
+    except Exception as e: return jsonify(error=str(e)), 500
 
 @app.post("/api/checkout")
 def api_checkout():
@@ -166,11 +204,12 @@ def vision(): return render_template("vision.html")
 @app.post("/api/vision")
 def api_vision():
     try:
-        f=request.files.get("image")
-        prompt=request.form.get("prompt","Describe this image in detail.").strip()
-        if not f: return jsonify(error="Upload an image."),400
-        data=base64.b64encode(f.read()).decode()
-        mime=f.mimetype or "image/jpeg"
+        f = request.files.get("image")
+        prompt = request.form.get("prompt", "Describe this image in detail.").strip()
+        history_raw = request.form.get("history")
+        if not f: return jsonify(error="Upload an image."), 400
+        data = base64.b64encode(f.read()).decode()
+        mime = f.mimetype or "image/jpeg"
         vision_instructions = """You are Iris, Master Gadget Diagnostic Technician. Inspect customer photos of broken or damaged electronics (smartphones with cracked front glass or shattered back glass, broken laptop screens or hinges, damaged earphone cushions or dead earbuds, bent charging ports).
 1. Identify the device make and model (e.g. iPhone with matte glass and triple-camera layout, MacBook Pro, Galaxy, AirPods, etc.).
 2. Detail the exact physical damage (e.g., severe impact fracture on rear glass near camera module, spiderweb glass cracks, frame scuffs).
@@ -178,17 +217,36 @@ def api_vision():
 4. Recommend the exact repair service needed (e.g., Laser Back Glass Removal & OEM Glass Replacement).
 5. State the turnaround time (e.g., 45 minutes) and provide the estimated repair price in Indian Rupees (₹ / INR, e.g. ₹2,499).
 6. When applicable, append our standard :::product { "id": "...", "name": "...", "price": ..., "currency": "INR", ... } ::: block so the customer can book repair or checkout directly!"""
-        vision_input: list[Any] = [{"role":"user","content":[
-            {"type":"input_text","text":prompt},
-            {"type":"input_image","image_url":f"data:{mime};base64,{data}"}
-        ]}]
-        r=client().responses.create(  # pyrefly: ignore[no-matching-overload]
+        
+        vision_input: list[Any] = []
+        if history_raw:
+            try:
+                past = json.loads(history_raw) if isinstance(history_raw, str) else history_raw
+                if isinstance(past, list):
+                    for msg in past[-10:]:
+                        if isinstance(msg, dict):
+                            r_role = msg.get("role")
+                            r_content = msg.get("content") or msg.get("text") or ""
+                            if r_role in ("user", "assistant") and str(r_content).strip():
+                                vision_input.append({
+                                    "role": r_role,
+                                    "content": str(r_content).strip()
+                                })
+            except Exception:
+                pass
+
+        vision_input.append({"role": "user", "content": [
+            {"type": "input_text", "text": prompt},
+            {"type": "input_image", "image_url": f"data:{mime};base64,{data}"}
+        ]})
+
+        r = client().responses.create(  # pyrefly: ignore[no-matching-overload]
             model=VISION_MODEL,
             instructions=vision_instructions,
             input=cast(Any, vision_input)
         )
         return jsonify(result=r.output_text)
-    except Exception as e: return jsonify(error=str(e)),500
+    except Exception as e: return jsonify(error=str(e)), 500
 
 @app.get("/image-generation")
 def image_generation(): return render_template("image_generation.html")
