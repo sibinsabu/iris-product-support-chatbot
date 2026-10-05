@@ -196,7 +196,7 @@ const FirebaseAuthManager = {
       return null;
     }
     try {
-      let config = {
+      const config = {
         apiKey: "AIzaSyAfC-CSnBr3Gt0BUk3RN2Yt50WdBMth7_0",
         authDomain: "iris-gadget-repair.firebaseapp.com",
         projectId: "iris-gadget-repair",
@@ -206,35 +206,28 @@ const FirebaseAuthManager = {
         measurementId: "G-TH1V9HGGPT"
       };
 
-      try {
-        const res = await fetch('/api/auth/firebase-config');
-        if (res.ok) {
-          const remoteConfig = await res.json();
-          if (remoteConfig && remoteConfig.apiKey && !remoteConfig.apiKey.includes('YOUR_')) {
-            config = remoteConfig;
-          }
-        }
-      } catch (e) {}
-
       if (!firebase.apps.length) {
         firebase.initializeApp(config);
       }
       this.auth = firebase.auth();
       this.isInitialized = true;
 
-      // Handle redirect sign-in result if user came back from Google redirect
-      this.auth.getRedirectResult().then(async (result) => {
-        if (result && result.user) {
-          const syncRes = await this.syncWithBackend(result.user);
-          if (syncRes && syncRes.user) {
-            currentAuthUser = syncRes.user;
-            renderUserAuthUI(syncRes.user);
-            showToast(`Welcome back, ${syncRes.user.name}!`, 'success');
+      // Only check redirect result if URL has an OAuth fragment (avoids cold-start delay)
+      const hasOAuthFragment = window.location.href.includes('#') ||
+                               new URLSearchParams(window.location.search).has('code') ||
+                               new URLSearchParams(window.location.search).has('state');
+      if (hasOAuthFragment) {
+        this.auth.getRedirectResult().then(async (result) => {
+          if (result && result.user) {
+            const syncRes = await this.syncWithBackend(result.user);
+            if (syncRes && syncRes.user) {
+              currentAuthUser = syncRes.user;
+              renderUserAuthUI(syncRes.user);
+              showToast(`Welcome back, ${syncRes.user.name}!`, 'success');
+            }
           }
-        }
-      }).catch(e => {
-        console.warn('Redirect sign-in check:', e);
-      });
+        }).catch(e => { console.warn('Redirect sign-in check:', e); });
+      }
 
       return this.auth;
     } catch (err) {
@@ -380,6 +373,19 @@ const FirebaseAuthManager = {
 
 let currentAuthUser = null;
 let currentModalMode = 'login';
+
+// Pre-warm Firebase in the background so it's ready when user clicks sign in
+setTimeout(() => { FirebaseAuthManager.init().catch(() => {}); }, 200);
+
+function togglePasswordVisibility(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const isHidden = input.type === 'password';
+  input.type = isHidden ? 'text' : 'password';
+  btn.innerHTML = isHidden
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+}
 
 async function checkAuthStatus() {
   try {

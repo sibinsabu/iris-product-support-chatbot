@@ -338,8 +338,8 @@ def api_firebase_session():
         photo_url = user_info.get("photoURL") or ""
         provider_id = user_info.get("providerId") or "firebase"
 
-        # Verify Firebase ID token if live admin SDK is active
-        if id_token and fb_admin_auth:
+        # Only verify Firebase ID token if we have a proper service account (avoids slow network call in dev)
+        if id_token and fb_admin_auth and FIREBASE_SERVICE_ACCOUNT and os.path.exists(FIREBASE_SERVICE_ACCOUNT or ''):
             try:
                 verified_claims = fb_admin_auth.verify_id_token(id_token, check_revoked=False)
                 if verified_claims:
