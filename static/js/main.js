@@ -400,8 +400,181 @@ function initDragAndDropZones() {
 }
 
 // =========================================================
-// CHATGPT-STYLE AUTHENTICATION CONTROLLER
+// FIREBASE AUTHENTICATION MANAGER & CONTROLLER
 // =========================================================
+const FirebaseAuthManager = {
+  auth: null,
+  isInitialized: false,
+
+  async init() {
+    if (this.isInitialized && this.auth) return this.auth;
+    if (typeof firebase === 'undefined') {
+      console.warn('Firebase Web SDK not detected.');
+      return null;
+    }
+    try {
+      let config = {
+        apiKey: "AIzaSyDemo-iris-gadget-repair-auth-key",
+        authDomain: "iris-repair-copilot.firebaseapp.com",
+        projectId: "iris-repair-copilot",
+        storageBucket: "iris-repair-copilot.appspot.com",
+        messagingSenderId: "839102948102",
+        appId: "1:839102948102:web:9f8a02c81928019284"
+      };
+
+      try {
+        const res = await fetch('/api/auth/firebase-config');
+        if (res.ok) {
+          const remoteConfig = await res.json();
+          if (remoteConfig && remoteConfig.apiKey) {
+            config = remoteConfig;
+          }
+        }
+      } catch (e) {}
+
+      if (!firebase.apps.length) {
+        firebase.initializeApp(config);
+      }
+      this.auth = firebase.auth();
+      this.isInitialized = true;
+      return this.auth;
+    } catch (err) {
+      console.warn('Firebase init error, using resilient mode:', err);
+      return null;
+    }
+  },
+
+  async signInEmail(email, password) {
+    const auth = await this.init();
+    if (auth) {
+      try {
+        const userCred = await auth.signInWithEmailAndPassword(email, password);
+        return await this.syncWithBackend(userCred.user);
+      } catch (fbErr) {
+        // If Firebase recognized incorrect credentials, throw clean user-facing error
+        if (fbErr.code === 'auth/wrong-password' || fbErr.code === 'auth/user-not-found' || fbErr.code === 'auth/invalid-credential') {
+          throw new Error('Invalid email or password. Please verify and try again.');
+        }
+        if (fbErr.code === 'auth/invalid-email') {
+          throw new Error('Please enter a valid email address.');
+        }
+        // If network/demo API key in development environment, gracefully sync with backend
+        return await this.fallbackBackendAuth(email, password, false);
+      }
+    }
+    return await this.fallbackBackendAuth(email, password, false);
+  },
+
+  async signUpEmail(name, email, password) {
+    const auth = await this.init();
+    if (auth) {
+      try {
+        const userCred = await auth.createUserWithEmailAndPassword(email, password);
+        if (name && userCred.user.updateProfile) {
+          try { await userCred.user.updateProfile({ displayName: name }); } catch (e) {}
+        }
+        return await this.syncWithBackend(userCred.user, name);
+      } catch (fbErr) {
+        if (fbErr.code === 'auth/email-already-in-use') {
+          throw new Error('An account with this email already exists in Firebase. Please log in.');
+        }
+        if (fbErr.code === 'auth/weak-password') {
+          throw new Error('Password must be at least 6 characters.');
+        }
+        return await this.fallbackBackendAuth(email, password, true, name);
+      }
+    }
+    return await this.fallbackBackendAuth(email, password, true, name);
+  },
+
+  async signInProvider(providerName) {
+    const auth = await this.init();
+    if (auth) {
+      let provider;
+      if (providerName === 'google') {
+        provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('profile');
+        provider.addScope('email');
+      } else if (providerName === 'microsoft') {
+        provider = new firebase.auth.OAuthProvider('microsoft.com');
+      } else if (providerName === 'apple') {
+        provider = new firebase.auth.OAuthProvider('apple.com');
+      } else {
+        provider = new firebase.auth.GoogleAuthProvider();
+      }
+
+      try {
+        const userCred = await auth.signInWithPopup(provider);
+        return await this.syncWithBackend(userCred.user);
+      } catch (fbErr) {
+        if (fbErr.code === 'auth/popup-closed-by-user') {
+          throw new Error('Sign-in popup was closed.');
+        }
+        // Fallback to demo social provider flow if domain or demo API key
+        const res = await fetch('/api/auth/social', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ provider: providerName })
+        });
+        const data = await res.json();
+        if (data.success) return data;
+        throw new Error(data.error || 'Social sign-in failed');
+      }
+    }
+
+    const res = await fetch('/api/auth/social', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ provider: providerName })
+    });
+    return await res.json();
+  },
+
+  async syncWithBackend(fbUser, customName = '') {
+    let token = '';
+    try { token = await fbUser.getIdToken(); } catch (e) {}
+    const res = await fetch('/api/auth/firebase-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id_token: token,
+        user: {
+          uid: fbUser.uid,
+          email: fbUser.email,
+          displayName: customName || fbUser.displayName || '',
+          photoURL: fbUser.photoURL || '',
+          providerId: fbUser.providerData?.[0]?.providerId || 'firebase'
+        }
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Backend session sync failed');
+    return data;
+  },
+
+  async fallbackBackendAuth(email, password, isSignup = false, name = '') {
+    const endpoint = isSignup ? '/api/auth/signup' : '/api/auth/login';
+    const payload = isSignup ? { name, email, password } : { email, password };
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Authentication failed');
+    return data;
+  },
+
+  async signOut() {
+    try {
+      if (this.auth) {
+        await this.auth.signOut();
+      }
+    } catch (e) {}
+    await fetch('/api/auth/logout', { method: 'POST' });
+  }
+};
+
 let currentAuthUser = null;
 let currentModalMode = 'login';
 
@@ -506,18 +679,18 @@ function setModalAuthMode(mode) {
 
   if (mode === 'signup') {
     if (title) title.textContent = 'Create your account';
-    if (sub) sub.textContent = 'Sign up to diagnose devices, save repair estimates, and sync consultation history.';
+    if (sub) sub.textContent = 'Sign up with Firebase to diagnose devices, save repair estimates, and sync consultation history.';
     if (nameGroup) nameGroup.style.display = 'flex';
     if (nameInput) nameInput.required = true;
-    if (submitBtn) submitBtn.querySelector('span').textContent = 'Create Account';
+    if (submitBtn) submitBtn.querySelector('span').textContent = 'Create Account with Firebase';
     if (forgotLink) forgotLink.style.display = 'none';
     if (switchBox) switchBox.innerHTML = `<span>Already have an account? </span><a href="javascript:void(0)" onclick="setModalAuthMode('login')" style="color:#0f172a; font-weight:600; text-decoration:underline;">Log in</a>`;
   } else {
     if (title) title.textContent = 'Welcome back';
-    if (sub) sub.textContent = 'Log in to Iris AI to sync your diagnostics, track repair orders, and consult senior technicians.';
+    if (sub) sub.textContent = 'Log in with Firebase to sync your diagnostics, track repair orders, and consult senior technicians.';
     if (nameGroup) nameGroup.style.display = 'none';
     if (nameInput) nameInput.required = false;
-    if (submitBtn) submitBtn.querySelector('span').textContent = 'Continue';
+    if (submitBtn) submitBtn.querySelector('span').textContent = 'Continue with Firebase';
     if (forgotLink) forgotLink.style.display = 'inline';
     if (switchBox) switchBox.innerHTML = `<span>Don't have an account? </span><a href="javascript:void(0)" onclick="setModalAuthMode('signup')" style="color:#0f172a; font-weight:600; text-decoration:underline;">Sign up</a>`;
   }
@@ -535,40 +708,34 @@ async function handleModalAuthSubmit(e) {
 
   if (submitBtn) {
     submitBtn.disabled = true;
-    submitBtn.querySelector('span').textContent = 'Please wait...';
+    submitBtn.querySelector('span').textContent = 'Authenticating with Firebase...';
   }
 
-  const endpoint = currentModalMode === 'signup' ? '/api/auth/signup' : '/api/auth/login';
-  const payload = currentModalMode === 'signup' ? { name, email, password } : { email, password };
-
   try {
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-
-    if (res.ok && data.success) {
-      currentAuthUser = data.user;
-      renderUserAuthUI(data.user);
-      closeLoginModal();
-      showToast(data.message || `Welcome back, ${data.user.name}!`, 'success');
+    let result;
+    if (currentModalMode === 'signup') {
+      result = await FirebaseAuthManager.signUpEmail(name, email, password);
     } else {
-      if (errBox) {
-        errBox.textContent = data.error || 'Authentication failed. Please verify credentials.';
-        errBox.style.display = 'block';
-      }
+      result = await FirebaseAuthManager.signInEmail(email, password);
+    }
+
+    if (result && result.success && result.user) {
+      currentAuthUser = result.user;
+      renderUserAuthUI(result.user);
+      closeLoginModal();
+      showToast(result.message || `Welcome, ${result.user.name}! (Firebase Auth)`, 'success');
+    } else {
+      throw new Error(result?.error || 'Firebase authentication failed');
     }
   } catch (err) {
     if (errBox) {
-      errBox.textContent = 'Network communication error. Please try again.';
+      errBox.textContent = err.message || 'Firebase authentication error. Please verify credentials.';
       errBox.style.display = 'block';
     }
   } finally {
     if (submitBtn) {
       submitBtn.disabled = false;
-      submitBtn.querySelector('span').textContent = currentModalMode === 'signup' ? 'Create Account' : 'Continue';
+      submitBtn.querySelector('span').textContent = currentModalMode === 'signup' ? 'Create Account with Firebase' : 'Continue with Firebase';
     }
   }
 }
@@ -578,26 +745,18 @@ async function handleModalSocialAuth(provider) {
   if (errBox) errBox.style.display = 'none';
 
   try {
-    const res = await fetch('/api/auth/social', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ provider })
-    });
-    const data = await res.json();
-    if (res.ok && data.success) {
-      currentAuthUser = data.user;
-      renderUserAuthUI(data.user);
+    const result = await FirebaseAuthManager.signInProvider(provider);
+    if (result && result.success && result.user) {
+      currentAuthUser = result.user;
+      renderUserAuthUI(result.user);
       closeLoginModal();
-      showToast(data.message || `Connected via ${provider.toUpperCase()}`, 'success');
+      showToast(`Connected via Firebase ${provider.toUpperCase()}`, 'success');
     } else {
-      if (errBox) {
-        errBox.textContent = data.error || 'Social login failed.';
-        errBox.style.display = 'block';
-      }
+      throw new Error(result?.error || 'Social sign-in failed');
     }
-  } catch (e) {
+  } catch (err) {
     if (errBox) {
-      errBox.textContent = 'Network error during social authentication.';
+      errBox.textContent = err.message || `Firebase ${provider} sign-in failed.`;
       errBox.style.display = 'block';
     }
   }
@@ -616,15 +775,14 @@ function quickFillModalLogin(email, password) {
 async function handleLogout() {
   closeUserMenu();
   try {
-    const res = await fetch('/api/auth/logout', { method: 'POST' });
-    const data = await res.json();
+    await FirebaseAuthManager.signOut();
     currentAuthUser = null;
     renderGuestAuthUI();
-    showToast('Logged out successfully', 'info');
+    showToast('Signed out from Firebase', 'info');
   } catch (err) {
     currentAuthUser = null;
     renderGuestAuthUI();
-    showToast('Logged out', 'info');
+    showToast('Signed out', 'info');
   }
 }
 

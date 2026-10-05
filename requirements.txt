@@ -5,3 +5,4 @@ requests>=2.32
 azure-cognitiveservices-speech>=1.40
 beautifulsoup4>=4.12
 gunicorn>=22.0.0
+firebase-admin>=7.0.0
