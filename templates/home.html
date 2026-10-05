@@ -57,14 +57,6 @@
           <!-- Dynamically populated from localStorage -->
         </div>
       </div>
-
-      <!-- Quick Diagnostic Topics -->
-      <div style="margin-top:1rem;">
-        <div class="sidebar-section-title">Common Inquiries</div>
-        <div class="sidebar-items-group" id="preset-topics-list">
-          <!-- Preset quick topics -->
-        </div>
-      </div>
     </div>
 
     <!-- Customer Profile / Store Status Footer -->
@@ -96,21 +88,48 @@
         <span>Mobiles &bull; Laptops &bull; Earphones &bull; Smart Gadgets</span>
         <a href="/crawl" style="text-decoration:none; display:inline-flex; align-items:center; gap:0.35rem; font-size:0.75rem; font-weight:700; color:var(--primary-600); background:#eef2ff; padding:0.2rem 0.65rem; border-radius:var(--radius-full); border:1px solid rgba(79,70,229,0.25);">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-          <span>Repair Datasets &amp; Crawl</span>
+          <span>Repair Datasets</span>
         </a>
       </div>
 
-      <!-- Clear Current Chat Button -->
-      <button class="btn-clear-chat-topbar" id="btn-clear-active-chat" onclick="clearCurrentChat()" title="Delete / clear current conversation" style="display:none; margin-right:0.6rem;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-        <span>Clear Chat</span>
-      </button>
+      <div class="stage-topbar-actions">
+        <!-- Live Order Status Tracker Button -->
+        <button class="topbar-action-btn" onclick="openOrderTrackerModal()" title="Track live repair order & ticket progress">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17h4V5H2v12h3m15 0h2v-3.34a2 2 0 0 0-.59-1.42L18.8 9.66A2 2 0 0 0 17.38 9H14v8h2"></path><circle cx="7" cy="17" r="2"></circle><circle cx="17" cy="17" r="2"></circle></svg>
+          <span>Track Order</span>
+        </button>
 
-      <button class="btn-open-cart" onclick="toggleCartDrawer()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-        <span>Repair Ticket</span>
-        <span class="cart-pill-count" id="topbar-cart-count">1</span>
-      </button>
+        <!-- Repair Cost Calculator Button -->
+        <button class="topbar-action-btn" onclick="openCostCalculatorModal()" title="Instant repair quote & cost calculator">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path><path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path></svg>
+          <span>Price Calculator</span>
+        </button>
+
+        <!-- Hardware Diagnostic Tests Button -->
+        <button class="topbar-action-btn" onclick="openDeviceDiagModal()" title="Interactive in-browser screen, audio, and touch tests">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+          <span>Hardware Tests</span>
+        </button>
+
+        <!-- Senior Technician Escalation Button -->
+        <button class="topbar-action-btn tech-btn" onclick="openTechnicianModal()" title="Chat with Senior Certified Technician on WhatsApp or request callback">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          <span>Senior Tech</span>
+        </button>
+
+        <!-- Clear Current Chat Button -->
+        <button class="btn-clear-chat-topbar" id="btn-clear-active-chat" onclick="clearCurrentChat()" title="Delete / clear current conversation" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          <span>Clear</span>
+        </button>
+
+        <!-- Cart / Ticket Button -->
+        <button class="btn-open-cart" onclick="toggleCartDrawer()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+          <span>Repair Ticket</span>
+          <span class="cart-pill-count" id="topbar-cart-count">1</span>
+        </button>
+      </div>
     </header>
 
     <!-- Scrollable Center Canvas -->
@@ -178,10 +197,10 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
           </button>
           
-          <!-- Voice Dictation Button -->
-          <a href="/speech" class="input-icon-btn" title="Voice audio transcription">
+          <!-- Live Voice Dictation Button (Microphone) -->
+          <button type="button" class="input-icon-btn" id="btn-voice-record" onclick="toggleVoiceDictation()" title="Voice input: Click to speak to Iris">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
-          </a>
+          </button>
         </div>
 
         <textarea id="copilot-input" placeholder="Ask Iris about iPhone back glass, laptop overheating, AirPods repair, error codes..." rows="1"></textarea>
@@ -248,6 +267,384 @@
     </div>
   </aside>
 
+  <!-- ==============================================
+       1. LIVE ORDER & TICKET TRACKER MODAL
+       ============================================== -->
+  <div class="modal-backdrop" id="order-tracker-modal">
+    <div class="modal-dialog">
+      <div class="modal-dialog-header">
+        <div class="modal-dialog-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--primary-500);"><path d="M10 17h4V5H2v12h3m15 0h2v-3.34a2 2 0 0 0-.59-1.42L18.8 9.66A2 2 0 0 0 17.38 9H14v8h2"></path><circle cx="7" cy="17" r="2"></circle><circle cx="17" cy="17" r="2"></circle></svg>
+          <span>Live Repair Order &amp; Ticket Tracker</span>
+        </div>
+        <button class="drawer-close-btn" onclick="closeOrderTrackerModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="modal-dialog-body">
+        <!-- Search Input -->
+        <div class="tracker-search-container">
+          <input type="text" id="tracker-order-input" class="tracker-search-input" placeholder="ENTER TICKET ID (E.G. FIX-8A201C)" value="FIX-8A201C">
+          <button class="tracker-search-btn" onclick="searchOrderTracking()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <span>Track</span>
+          </button>
+        </div>
+
+        <!-- Quick Demo Chips -->
+        <div class="tracker-chip-row">
+          <span>Quick demo tickets:</span>
+          <button type="button" class="tracker-chip" onclick="quickTrackOrder('FIX-8A201C')">FIX-8A201C (iPhone Glass)</button>
+          <button type="button" class="tracker-chip" onclick="quickTrackOrder('FIX-DEMO01')">FIX-DEMO01 (MacBook Battery)</button>
+          <button type="button" class="tracker-chip" onclick="quickTrackOrder('FIX-94E21A')">FIX-94E21A (AirPods Pro)</button>
+        </div>
+
+        <!-- Order Result Container -->
+        <div id="tracker-result-container">
+          <!-- Dynamically populated by JS renderOrderTracker() -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================
+       2. REPAIR COST ESTIMATOR & CALCULATOR MODAL
+       ============================================== -->
+  <div class="modal-backdrop" id="cost-calculator-modal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-dialog-header">
+        <div class="modal-dialog-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--primary-500);"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path><path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path></svg>
+          <span>Instant Repair Cost &amp; Turnaround Calculator</span>
+        </div>
+        <button class="drawer-close-btn" onclick="closeCostCalculatorModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="modal-dialog-body">
+        <!-- Step 1: Category Selector -->
+        <div>
+          <label style="font-size:0.78rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.4rem; display:block;">1. Select Device Category</label>
+          <div class="calc-nav-tabs" id="calc-category-tabs">
+            <button class="calc-tab-btn active" data-cat="smartphones" onclick="selectCalcCategory('smartphones', this)">📱 Smartphones</button>
+            <button class="calc-tab-btn" data-cat="laptops" onclick="selectCalcCategory('laptops', this)">💻 Laptops &amp; MacBooks</button>
+            <button class="calc-tab-btn" data-cat="audio" onclick="selectCalcCategory('audio', this)">🎧 Earphones &amp; Audio</button>
+            <button class="calc-tab-btn" data-cat="wearables" onclick="selectCalcCategory('wearables', this)">⌚ Smartwatches</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Model Selector -->
+        <div>
+          <label style="font-size:0.78rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.4rem; display:block;">2. Choose Device Model</label>
+          <select id="calc-model-select" class="calc-model-select" onchange="updateCalcModel(this.value)">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+        <!-- Step 3: Issue Grid -->
+        <div>
+          <label style="font-size:0.78rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.4rem; display:block;">3. Select Repair Service / Fault</label>
+          <div class="calc-issues-grid" id="calc-issues-grid">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Live Quote Box -->
+        <div class="calc-quote-box" id="calc-quote-summary">
+          <div>
+            <div style="font-size:0.8rem; color:#94a3b8; font-weight:500;" id="calc-selected-label">Estimated Repair Fee</div>
+            <div style="font-size:1.85rem; font-weight:800; font-family:var(--font-brand);" id="calc-total-display">₹2,499</div>
+            <div style="font-size:0.75rem; color:#cbd5e1; display:flex; gap:0.75rem; margin-top:0.25rem;">
+              <span id="calc-turnaround-display">⏱ 45 Mins Express</span>
+              <span>🛡 90-Day Iris Warranty</span>
+              <span>✨ OEM Certified</span>
+            </div>
+          </div>
+          <button class="btn-drawer-checkout" style="max-width:220px;" onclick="addCalcSelectionToCart()">
+            Add to Repair Ticket &rarr;
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================
+       3. IN-BROWSER HARDWARE DIAGNOSTICS MODAL
+       ============================================== -->
+  <div class="modal-backdrop" id="device-diag-modal">
+    <div class="modal-dialog">
+      <div class="modal-dialog-header">
+        <div class="modal-dialog-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--emerald-500);"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+          <span>In-Browser Hardware Diagnostic Suite</span>
+        </div>
+        <button class="drawer-close-btn" onclick="closeDeviceDiagModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="modal-dialog-body">
+        <div class="diag-tab-row">
+          <button class="diag-tab active" data-diag="screen" onclick="switchDiagTab('screen', this)">🖥 Screen &amp; Pixel Test</button>
+          <button class="diag-tab" data-diag="audio" onclick="switchDiagTab('audio', this)">🔊 Speaker &amp; Frequency</button>
+          <button class="diag-tab" data-diag="touch" onclick="switchDiagTab('touch', this)">👆 Touch Digitizer Grid</button>
+        </div>
+
+        <!-- 1. Screen Tab -->
+        <div id="diag-panel-screen" class="diag-panel">
+          <div style="background:#f8fafc; border:1px solid var(--border-light); border-radius:var(--radius-md); padding:1.25rem; text-align:center;">
+            <div style="font-weight:700; font-size:1.05rem; color:var(--text-title); margin-bottom:0.4rem;">Dead Pixel &amp; Screen Burn-In Inspection</div>
+            <p style="font-size:0.84rem; color:var(--text-muted); line-height:1.5; margin-bottom:1.25rem;">
+              Launches an interactive fullscreen canvas cycling through Pure White, Black, Red, Green, and Blue. Inspect your display closely for stuck subpixels, OLED burn-in, or backlight bleed halos.
+            </p>
+            <button class="btn-primary" onclick="startPixelTest()">
+              Launch Fullscreen Screen Test &rarr;
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Audio Tab -->
+        <div id="diag-panel-audio" class="diag-panel" style="display:none;">
+          <div class="audio-tester-box">
+            <div style="font-weight:700; font-size:1.05rem; color:var(--text-title);">Speaker &amp; Earbud Frequency Generator</div>
+            <p style="font-size:0.82rem; color:var(--text-muted);">
+              Generates pure acoustic sine tones using the Web Audio API to test left and right channel balance, crackling diaphragms, or clogged acoustic meshes.
+            </p>
+            <div class="audio-controls-row">
+              <button class="btn-audio-test" onclick="playAudioTone('left', 440)">
+                <span>◀ Left Earbud (440Hz)</span>
+              </button>
+              <button class="btn-audio-test" onclick="playAudioTone('right', 440)">
+                <span>Right Earbud (440Hz) ▶</span>
+              </button>
+              <button class="btn-audio-test" onclick="playAudioSweep()">
+                <span>Frequency Sweep (60-1200Hz)</span>
+              </button>
+              <button class="btn-audio-test" style="color:var(--rose-500); border-color:#fecaca;" onclick="stopAllAudio()">
+                <span>⏹ Stop Audio</span>
+              </button>
+            </div>
+            <div id="audio-status-indicator" style="font-size:0.75rem; color:var(--text-faint); margin-top:0.35rem;">
+              Ready. Ensure your device volume is set to a comfortable level.
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Touch Grid Tab -->
+        <div id="diag-panel-touch" class="diag-panel" style="display:none;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+              <span style="font-size:0.82rem; font-weight:700; color:var(--text-title);">Drag finger/mouse across all cells to test touch digitizer</span>
+              <button onclick="resetTouchGrid()" style="background:none; border:none; color:var(--primary-600); font-size:0.78rem; font-weight:700; cursor:pointer;">Reset Grid</button>
+            </div>
+            <div class="touch-grid-board" id="touch-grid-board">
+              <!-- 48 Cells generated dynamically -->
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:0.74rem; color:var(--text-muted); margin-top:0.4rem;">
+              <span id="touch-grid-progress">Tested: 0 / 48 cells</span>
+              <span>Any unlit cell indicates a dead digitizer line</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fullscreen Pixel Test Overlay -->
+  <div id="pixel-test-overlay" class="pixel-test-overlay" onclick="cyclePixelTestColor()">
+    <div class="pixel-test-hint">Click anywhere to cycle colors &bull; Press <kbd>ESC</kbd> or double-click to exit</div>
+  </div>
+
+  <!-- ==============================================
+       4. OFFICIAL DIAGNOSTIC & ESTIMATE SHEET MODAL
+       ============================================== -->
+  <div class="modal-backdrop" id="diagnostic-invoice-modal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-dialog-header">
+        <div class="modal-dialog-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--primary-500);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          <span>Iris Certified Diagnostic &amp; Repair Estimate Sheet</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <button class="btn-primary btn-print-action" onclick="window.print()" style="padding:0.4rem 0.85rem; font-size:0.8rem; display:inline-flex; align-items:center; gap:0.35rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            <span>Print / Save PDF</span>
+          </button>
+          <button class="drawer-close-btn" onclick="closeDiagnosticInvoiceModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-dialog-body" style="padding:1rem;">
+        <div class="invoice-sheet" id="invoice-sheet-content">
+          <!-- Header -->
+          <div class="invoice-header-row">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <img src="{{ url_for('static', filename='img/iris-logo.svg') }}" alt="Iris" style="width:26px; height:26px;">
+                <span class="invoice-lab-title">Iris Certified Hardware Lab</span>
+              </div>
+              <div style="font-size:0.78rem; color:var(--text-muted);">
+                Authorized Micro-Electronics Bench &bull; ISO-9001 Certified Repair Facility<br>
+                Support Hotline: +91 98765 43210 &bull; support@irislab.ai
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <span class="invoice-seal-badge">🛡 Official 90-Day Warranty</span>
+              <div style="font-family:var(--font-mono); font-size:0.92rem; font-weight:700; color:var(--primary-600); margin-top:0.35rem;" id="invoice-sheet-ticket-id">FIX-8A201C</div>
+              <div style="font-size:0.75rem; color:var(--text-faint);" id="invoice-sheet-date">Date: Oct 5, 2026</div>
+            </div>
+          </div>
+
+          <!-- Customer & Device Information -->
+          <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:1rem; background:#f8fafc; border:1px solid #e2e8f0; padding:1rem; border-radius:8px;">
+            <div>
+              <div style="font-size:0.72rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Customer Details</div>
+              <div style="font-weight:700; color:var(--text-title);" id="invoice-customer-name">Rahul Sharma</div>
+              <div style="font-size:0.8rem; color:var(--text-muted);" id="invoice-customer-phone">+91 98765 43210</div>
+            </div>
+            <div>
+              <div style="font-size:0.72rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Target Device &amp; Identifiers</div>
+              <div style="font-weight:700; color:var(--text-title);" id="invoice-device-name">Apple iPhone 14 Pro Max (Deep Purple)</div>
+              <div style="font-size:0.8rem; font-family:var(--font-mono); color:var(--primary-600);" id="invoice-device-imei">IMEI: 358920-04-192840-2</div>
+            </div>
+          </div>
+
+          <!-- Diagnostic Check Matrix -->
+          <div>
+            <div style="font-size:0.78rem; text-transform:uppercase; color:var(--text-muted); font-weight:700; margin-bottom:0.4rem;">Certified Diagnostic Check Matrix</div>
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:0.5rem; font-size:0.78rem;">
+              <div style="background:#f1f5f9; padding:0.5rem; border-radius:6px;"><strong>OLED Digitizer:</strong> <span style="color:#059669;">Passed Test</span></div>
+              <div style="background:#f1f5f9; padding:0.5rem; border-radius:6px;"><strong>Rear Glass Housing:</strong> <span style="color:#dc2626;">Fractured (Laser Fix)</span></div>
+              <div style="background:#f1f5f9; padding:0.5rem; border-radius:6px;"><strong>True Tone Sensors:</strong> <span style="color:#059669;">Calibrated</span></div>
+              <div style="background:#f1f5f9; padding:0.5rem; border-radius:6px;"><strong>Battery Cell Health:</strong> <span style="color:#059669;">Passed (94% Peak)</span></div>
+              <div style="background:#f1f5f9; padding:0.5rem; border-radius:6px;"><strong>Microphone &amp; Audio:</strong> <span style="color:#059669;">60-1200Hz Pass</span></div>
+              <div style="background:#f1f5f9; padding:0.5rem; border-radius:6px;"><strong>Waterproofing Seal:</strong> <span style="color:#059669;">IP68 Gasket Replaced</span></div>
+            </div>
+          </div>
+
+          <!-- Itemized Pricing Table -->
+          <div>
+            <div style="font-size:0.78rem; text-transform:uppercase; color:var(--text-muted); font-weight:700; margin-bottom:0.4rem;">Service Quotation &amp; OEM Parts</div>
+            <table class="invoice-table">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th>Category</th>
+                  <th>Warranty</th>
+                  <th style="text-align:right;">Amount (₹ INR)</th>
+                </tr>
+              </thead>
+              <tbody id="invoice-items-tbody">
+                <tr>
+                  <td><strong>iPhone Back Glass Laser Removal &amp; Replacement</strong><br><small style="color:var(--text-muted);">Precision fiber laser separation of shattered glass panel and genuine tempered back plate install.</small></td>
+                  <td>Mobile Repair</td>
+                  <td>90 Days</td>
+                  <td style="text-align:right; font-weight:700;">₹2,499.00</td>
+                </tr>
+                <tr>
+                  <td><strong>Cleanroom Diagnostic Bench &amp; IP68 Seal Verification</strong><br><small style="color:var(--text-muted);">Complete sensor sweep and automated pressure gasket chamber check.</small></td>
+                  <td>Diagnostic Service</td>
+                  <td>Included</td>
+                  <td style="text-align:right; font-weight:700;">₹299.00</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3" style="text-align:right; font-weight:600; padding:0.4rem 0.85rem;">Estimated GST (18%):</td>
+                  <td style="text-align:right; font-weight:600;" id="invoice-tax-display">₹503.64</td>
+                </tr>
+                <tr>
+                  <td colspan="3" style="text-align:right; font-weight:800; font-size:1.05rem; padding:0.4rem 0.85rem; border-top:2px solid #0f172a;">Total Quote Due:</td>
+                  <td style="text-align:right; font-weight:800; font-size:1.15rem; color:var(--primary-600); border-top:2px solid #0f172a;" id="invoice-total-display">₹3,301.64</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- Signoff Footer -->
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; border-top:1px dashed #cbd5e1; padding-top:1rem; margin-top:0.5rem; font-size:0.78rem;">
+            <div>
+              <strong>Assigned Master Technician:</strong> Arvind M. (Cert. Tech #9420)<br>
+              <strong>Turnaround Time:</strong> 45 Minutes Same-Day Walk-in or Express Mail-In<br>
+              <small style="color:var(--text-muted);">All repairs carry Iris 90-Day Guarantee. No fix, no fee policy applies.</small>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-family:'Brush Script MT', cursive; font-size:1.4rem; color:var(--primary-600);">Arvind M.</div>
+              <div style="border-top:1px solid #94a3b8; font-size:0.7rem; color:var(--text-muted); padding-top:2px;">Authorized Master Inspector Seal</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================
+       5. SENIOR TECHNICIAN & WHATSAPP ESCALATION MODAL
+       ============================================== -->
+  <div class="modal-backdrop" id="technician-modal">
+    <div class="modal-dialog">
+      <div class="modal-dialog-header">
+        <div class="modal-dialog-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--emerald-500);"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          <span>Certified Senior Technician Escalation</span>
+        </div>
+        <button class="drawer-close-btn" onclick="closeTechnicianModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="modal-dialog-body">
+        <!-- Option A: Direct WhatsApp -->
+        <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:var(--radius-lg); padding:1.25rem;">
+          <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem;">
+            <svg viewBox="0 0 24 24" fill="#25D366" style="width:22px;height:22px;"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"></path></svg>
+            <span style="font-weight:700; font-size:1.05rem; color:#14532d;">Instant WhatsApp Consultation</span>
+          </div>
+          <p style="font-size:0.84rem; color:#166534; line-height:1.45; margin-bottom:1rem;">
+            Chat directly with Master Diagnostic Technician Arvind M. on WhatsApp. Your current device and diagnosed problem will be pre-filled automatically.
+          </p>
+          <a id="btn-whatsapp-escalate" href="https://wa.me/919876543210?text=Hi%20Iris%20Lab%2C%20I%20need%20expert%20repair%20assistance%20for%20my%20device." target="_blank" class="btn-primary" style="background:#25D366; text-decoration:none; display:inline-flex; align-items:center; gap:0.4rem; padding:0.65rem 1.25rem; font-weight:700;">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px;"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"></path></svg>
+            <span>Open WhatsApp Chat &rarr;</span>
+          </a>
+        </div>
+
+        <div style="text-align:center; font-size:0.75rem; color:var(--text-faint); font-weight:600; text-transform:uppercase;">&mdash; OR REQUEST AN EXPRESS CALL &mdash;</div>
+
+        <!-- Option B: Express Callback Form -->
+        <form onsubmit="submitTechnicianCallback(event)" style="display:flex; flex-direction:column; gap:0.75rem;">
+          <div>
+            <label style="font-size:0.78rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:0.25rem;">Your Name</label>
+            <input type="text" id="callback-name" class="tracker-search-input" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; width:100%; text-transform:none;" placeholder="e.g. Rahul Sharma" required>
+          </div>
+          <div>
+            <label style="font-size:0.78rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:0.25rem;">Mobile / Phone Number</label>
+            <input type="tel" id="callback-phone" class="tracker-search-input" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; width:100%; text-transform:none;" placeholder="+91 98765 43210" required>
+          </div>
+          <div>
+            <label style="font-size:0.78rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:0.25rem;">Device &amp; Issue Summary</label>
+            <input type="text" id="callback-issue" class="tracker-search-input" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; width:100%; text-transform:none;" placeholder="e.g. iPhone 14 Pro Max rear glass shattered" value="Smartphone / Laptop Diagnostic Consultation">
+          </div>
+          <div>
+            <label style="font-size:0.78rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:0.25rem;">Preferred Callback Time</label>
+            <select id="callback-time" class="calc-model-select" style="padding:0.5rem 0.75rem;">
+              <option value="Within 15 minutes">⚡ Priority (Within 15 minutes)</option>
+              <option value="Today Afternoon">Today Afternoon (1:00 PM - 4:00 PM)</option>
+              <option value="Today Evening">Today Evening (5:00 PM - 8:00 PM)</option>
+            </select>
+          </div>
+          <button type="submit" id="btn-submit-callback" class="btn-primary" style="width:100%; margin-top:0.25rem;">
+            Request Technician Callback
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
 </div>
 {% endblock %}
 
@@ -267,19 +664,8 @@ const IRIS_LOGO_URL = "{{ url_for('static', filename='img/iris-logo.svg') }}";
 let currentSessionId = null;
 let currentMessages = [];
 
-// Default Quick Topics
-const DEFAULT_TOPICS = [
-  { id: 'iphone-back-glass', title: 'iPhone Back Glass Laser Repair', sub: 'Mobiles • Laser Glass Removal (₹2,499)', prompt: 'How do you fix a shattered iPhone back glass, how long does laser removal take, and what is the cost?' },
-  { id: 'macbook-thermal', title: 'MacBook Battery & Fans', sub: 'Laptops • Deep clean & battery (₹4,999)', prompt: 'My MacBook Pro fan is running constantly and battery drains fast. Can you provide a service quote?' },
-  { id: 'airpods-fix', title: 'AirPods Audio & Battery Fix', sub: 'Earphones • One side dead / buds (₹1,299)', prompt: 'My left AirPod has no sound and the right bud battery dies in 30 minutes. What repair is needed?' },
-  { id: 'samsung-screen', title: 'Samsung Galaxy OLED Crack', sub: 'Mobiles • Display Digitizer (₹4,999)', prompt: 'I dropped my Samsung Galaxy phone and the AMOLED screen is flickering with black spots. Can the screen be replaced today?' },
-  { id: 'laptop-keyboard', title: 'Dell XPS Keyboard Repair', sub: 'Laptops • Sticky keys & trackpad', prompt: 'Liquid was spilled on my laptop keyboard and several keys no longer register. Can you clean or replace the keyboard?' },
-  { id: 'apple-watch', title: 'Apple Watch Glass Scratch', sub: 'Wearables • OLED Polish / Glass', prompt: 'My Apple Watch screen has a deep crack from a gym workout. What is the repair process and quote?' }
-];
-
 document.addEventListener('DOMContentLoaded', () => {
   initChatHistory();
-  renderPresetTopics();
 });
 
 input.addEventListener('keydown', (e) => {
@@ -386,21 +772,6 @@ function saveSessions(sessions) {
 
 function initChatHistory() {
   renderRecentInquiries();
-}
-
-function renderPresetTopics() {
-  const container = document.getElementById('preset-topics-list');
-  if (!container) return;
-
-  container.innerHTML = DEFAULT_TOPICS.map(t => `
-    <div class="history-item" onclick="loadSavedTopic('${t.id}')">
-      <div class="history-item-left">
-        <span class="history-item-title">${escapeHtml(t.title)}</span>
-        <span class="history-item-sub">${escapeHtml(t.sub)}</span>
-      </div>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="17" x2="12" y2="22"></line><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.89A2 2 0 0 1 15 10.77V7a3 3 0 0 0-6 0v3.77a2 2 0 0 1-1.11 1.79l-1.78.89A2 2 0 0 0 5 15.24Z"></path></svg>
-    </div>
-  `).join('');
 }
 
 function renderRecentInquiries() {
@@ -530,13 +901,6 @@ function loadSession(id) {
 
   renderRecentInquiries();
   scrollArea.scrollTop = scrollArea.scrollHeight;
-}
-
-function loadSavedTopic(topic) {
-  const found = DEFAULT_TOPICS.find(t => t.id === topic);
-  if (found) {
-    selectPromptCard(found.prompt);
-  }
 }
 
 function toggleCartDrawer() {
@@ -723,6 +1087,620 @@ async function handleImageAttachment(inputEl) {
     showToast('Failed to analyze image defect', 'error');
   } finally {
     scrollArea.scrollTop = scrollArea.scrollHeight;
+  }
+}
+
+// =========================================================
+// 1. LIVE VOICE INPUT & SPEECH DICTATION (Microphone)
+// =========================================================
+let speechRecognitionInstance = null;
+let isVoiceRecording = false;
+
+function toggleVoiceDictation() {
+  const btn = document.getElementById('btn-voice-record');
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRec) {
+    showToast('Speech recognition not supported in this browser. You can use /speech page.', 'info');
+    return;
+  }
+
+  if (isVoiceRecording) {
+    stopVoiceDictation();
+    return;
+  }
+
+  try {
+    speechRecognitionInstance = new SpeechRec();
+    speechRecognitionInstance.continuous = false;
+    speechRecognitionInstance.interimResults = true;
+    speechRecognitionInstance.lang = 'en-IN';
+
+    speechRecognitionInstance.onstart = () => {
+      isVoiceRecording = true;
+      if (btn) btn.classList.add('recording');
+      input.placeholder = '🎙 Listening... Speak your gadget issue clearly...';
+      showToast('Microphone active. Speak to Iris...', 'info');
+    };
+
+    speechRecognitionInstance.onresult = (event) => {
+      let transcript = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        transcript += event.results[i][0].transcript;
+      }
+      input.value = transcript;
+    };
+
+    speechRecognitionInstance.onerror = (event) => {
+      stopVoiceDictation();
+      showToast('Voice error: ' + (event.error || 'Microphone error'), 'error');
+    };
+
+    speechRecognitionInstance.onend = () => {
+      stopVoiceDictation();
+    };
+
+    speechRecognitionInstance.start();
+  } catch (err) {
+    stopVoiceDictation();
+    showToast('Could not initialize microphone.', 'error');
+  }
+}
+
+function stopVoiceDictation() {
+  isVoiceRecording = false;
+  const btn = document.getElementById('btn-voice-record');
+  if (btn) btn.classList.remove('recording');
+  input.placeholder = 'Ask Iris about iPhone back glass, laptop overheating, AirPods repair, error codes...';
+  if (speechRecognitionInstance) {
+    try { speechRecognitionInstance.stop(); } catch (e) {}
+  }
+}
+
+// =========================================================
+// 2. LIVE ORDER STATUS TRACKER CONTROLLER
+// =========================================================
+function openOrderTrackerModal(orderId) {
+  const modal = document.getElementById('order-tracker-modal');
+  if (modal) modal.classList.add('open');
+  const targetId = orderId || document.getElementById('tracker-order-input').value.trim() || 'FIX-8A201C';
+  document.getElementById('tracker-order-input').value = targetId;
+  lookupOrder(targetId);
+}
+
+function closeOrderTrackerModal() {
+  const modal = document.getElementById('order-tracker-modal');
+  if (modal) modal.classList.remove('open');
+}
+
+function quickTrackOrder(id) {
+  document.getElementById('tracker-order-input').value = id;
+  lookupOrder(id);
+}
+
+function searchOrderTracking() {
+  const id = document.getElementById('tracker-order-input').value.trim();
+  if (!id) {
+    showToast('Please enter an order ticket ID (e.g. FIX-8A201C)', 'info');
+    return;
+  }
+  lookupOrder(id);
+}
+
+function trackCurrentReceiptOrder() {
+  const orderIdEl = document.getElementById('receipt-order-id');
+  let id = 'FIX-8A201C';
+  if (orderIdEl) {
+    const match = orderIdEl.textContent.match(/FIX-[A-Z0-9]+/i);
+    if (match) id = match[0];
+  }
+  closeReceiptModal();
+  openOrderTrackerModal(id);
+}
+
+async function lookupOrder(id) {
+  const container = document.getElementById('tracker-result-container');
+  if (!container) return;
+
+  container.innerHTML = `
+    <div style="text-align:center; padding:2rem 1rem; color:var(--text-muted);">
+      <span class="spinner" style="display:inline-block; width:20px; height:20px; border:2px solid #e2e8f0; border-top-color:var(--primary-500); border-radius:50%; animation:spin 0.75s linear infinite; margin-bottom:0.5rem;"></span>
+      <div>Connecting to Iris Cleanroom Lab Tracking System...</div>
+    </div>
+  `;
+
+  try {
+    const res = await fetch(`/api/track?order_id=${encodeURIComponent(id)}`);
+    const data = await res.json();
+
+    if (!data.success || !data.order) {
+      container.innerHTML = `
+        <div style="background:#fee2e2; border:1px solid #fecaca; border-radius:var(--radius-md); padding:1rem; color:#b91c1c; text-align:center;">
+          Ticket ID not found. Try one of our demo orders: FIX-8A201C, FIX-DEMO01, or FIX-94E21A.
+        </div>
+      `;
+      return;
+    }
+
+    const o = data.order;
+    activeTrackedOrder = o;
+
+    container.innerHTML = `
+      <div class="tracker-card-summary">
+        <div class="tracker-card-header">
+          <div>
+            <span class="tracker-ticket-badge">${escapeHtml(o.order_id)}</span>
+            <div class="tracker-device-title">${escapeHtml(o.device)}</div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">
+              IMEI/SN: ${escapeHtml(o.imei)} &bull; Customer: ${escapeHtml(o.customer_name)}
+            </div>
+          </div>
+          <div class="tracker-tech-badge">
+            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
+            <span>${escapeHtml(o.technician.split('(')[0].trim())}</span>
+          </div>
+        </div>
+
+        <div style="background:#ffffff; border-radius:var(--radius-md); padding:0.85rem; border:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+          <div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Current Bench Stage</div>
+            <div style="font-weight:700; color:var(--primary-600); font-size:0.92rem;">${escapeHtml(o.status_title)}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Turnaround Status</div>
+            <div style="font-weight:600; color:var(--emerald-600); font-size:0.85rem;">${escapeHtml(o.turnaround_estimate)}</div>
+          </div>
+        </div>
+
+        <p style="font-size:0.82rem; color:var(--text-body); line-height:1.45;">
+          ${escapeHtml(o.status_desc)}
+        </p>
+
+        <!-- 5-Step Stepper -->
+        <div class="timeline-stepper">
+          ${o.steps.map(s => `
+            <div class="timeline-step ${s.status}">
+              <div class="timeline-step-icon">
+                ${s.status === 'completed' ? '✓' : s.number}
+              </div>
+              <div class="timeline-step-content">
+                <div class="timeline-step-title">${escapeHtml(s.title)}</div>
+                <div class="timeline-step-desc">${escapeHtml(s.desc)}</div>
+                <div class="timeline-step-time">Timestamp: ${escapeHtml(s.time)}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- Action Footer -->
+        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-light); padding-top:0.85rem; margin-top:0.4rem; flex-wrap:wrap; gap:0.5rem;">
+          <div style="font-size:0.85rem; font-weight:700; color:var(--text-title);">
+            Total: ₹${Number(o.total).toLocaleString('en-IN')} &bull; <span style="color:var(--emerald-600); font-size:0.78rem;">${escapeHtml(o.warranty)}</span>
+          </div>
+          <button class="btn-primary" onclick="openDiagnosticInvoiceModal(activeTrackedOrder)" style="padding:0.45rem 0.95rem; font-size:0.8rem; display:inline-flex; align-items:center; gap:0.35rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <span>View Diagnostic Sheet</span>
+          </button>
+        </div>
+      </div>
+    `;
+  } catch (err) {
+    container.innerHTML = `<div style="color:var(--rose-500); text-align:center; padding:1rem;">Failed to fetch live order tracking.</div>`;
+  }
+}
+
+let activeTrackedOrder = null;
+
+// =========================================================
+// 3. REPAIR COST ESTIMATOR & CALCULATOR CONTROLLER
+// =========================================================
+let calculatorData = null;
+let selectedCategory = 'smartphones';
+let selectedModel = '';
+let selectedIssue = null;
+
+async function openCostCalculatorModal() {
+  const modal = document.getElementById('cost-calculator-modal');
+  if (modal) modal.classList.add('open');
+
+  if (!calculatorData) {
+    try {
+      const res = await fetch('/api/calculator');
+      calculatorData = await res.json();
+    } catch (e) {
+      showToast('Could not load calculator catalog', 'error');
+      return;
+    }
+  }
+  renderCalculator();
+}
+
+function closeCostCalculatorModal() {
+  const modal = document.getElementById('cost-calculator-modal');
+  if (modal) modal.classList.remove('open');
+}
+
+function selectCalcCategory(catId, btn) {
+  selectedCategory = catId;
+  document.querySelectorAll('#calc-category-tabs .calc-tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderCalculator();
+}
+
+function renderCalculator() {
+  if (!calculatorData || !calculatorData.categories) return;
+  const cat = calculatorData.categories.find(c => c.id === selectedCategory) || calculatorData.categories[0];
+
+  // Populate models
+  const modelSelect = document.getElementById('calc-model-select');
+  modelSelect.innerHTML = cat.models.map(m => `<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join('');
+  selectedModel = cat.models[0];
+
+  // Populate issues
+  const grid = document.getElementById('calc-issues-grid');
+  grid.innerHTML = cat.issues.map((issue, idx) => `
+    <div class="calc-issue-card ${idx === 0 ? 'selected' : ''}" data-id="${issue.id}" onclick="selectCalcIssue('${issue.id}')">
+      <div>
+        <div class="calc-issue-title">${escapeHtml(issue.name)}</div>
+        <div class="calc-issue-meta">Turnaround: ${escapeHtml(issue.turnaround)} &bull; ${escapeHtml(issue.warranty)} Guarantee</div>
+      </div>
+      <div class="calc-issue-price">₹${Number(issue.price).toLocaleString('en-IN')}</div>
+    </div>
+  `).join('');
+
+  selectedIssue = cat.issues[0];
+  updateCalcQuote();
+}
+
+function updateCalcModel(val) {
+  selectedModel = val;
+  updateCalcQuote();
+}
+
+function selectCalcIssue(issueId) {
+  const cat = calculatorData.categories.find(c => c.id === selectedCategory);
+  if (!cat) return;
+  selectedIssue = cat.issues.find(i => i.id === issueId);
+
+  document.querySelectorAll('#calc-issues-grid .calc-issue-card').forEach(c => {
+    c.classList.toggle('selected', c.getAttribute('data-id') === issueId);
+  });
+  updateCalcQuote();
+}
+
+function updateCalcQuote() {
+  if (!selectedIssue) return;
+  const labelEl = document.getElementById('calc-selected-label');
+  const priceEl = document.getElementById('calc-total-display');
+  const turnaroundEl = document.getElementById('calc-turnaround-display');
+
+  if (labelEl) labelEl.textContent = `${selectedModel} — ${selectedIssue.name}`;
+  if (priceEl) priceEl.textContent = `₹${Number(selectedIssue.price).toLocaleString('en-IN')}`;
+  if (turnaroundEl) turnaroundEl.textContent = `⏱ ${selectedIssue.turnaround}`;
+}
+
+function addCalcSelectionToCart() {
+  if (!selectedIssue) return;
+  const item = {
+    id: `${selectedCategory}-${selectedIssue.id}-${Date.now().toString(36)}`,
+    name: `${selectedModel}: ${selectedIssue.name}`,
+    price: selectedIssue.price,
+    quantity: 1,
+    category: selectedCategory === 'smartphones' ? 'Mobile Repair' : selectedCategory === 'laptops' ? 'Laptop Service' : 'Audio Repair',
+    compatibility: selectedModel,
+    turnaround: selectedIssue.turnaround
+  };
+
+  cart.push(item);
+  renderCart();
+  closeCostCalculatorModal();
+  showToast(`Added to repair ticket: ${selectedIssue.name}`, 'success');
+  toggleCartDrawer();
+}
+
+// =========================================================
+// 4. IN-BROWSER HARDWARE DIAGNOSTIC TEST SUITE
+// =========================================================
+let audioContextInstance = null;
+let currentOscillator = null;
+
+function openDeviceDiagModal() {
+  const modal = document.getElementById('device-diag-modal');
+  if (modal) modal.classList.add('open');
+  initTouchGrid();
+}
+
+function closeDeviceDiagModal() {
+  const modal = document.getElementById('device-diag-modal');
+  if (modal) modal.classList.remove('open');
+  stopAllAudio();
+}
+
+function switchDiagTab(tabName, btn) {
+  document.querySelectorAll('.diag-tab').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  document.querySelectorAll('.diag-panel').forEach(p => p.style.display = 'none');
+  const activePanel = document.getElementById(`diag-panel-${tabName}`);
+  if (activePanel) activePanel.style.display = 'block';
+
+  if (tabName === 'touch') initTouchGrid();
+}
+
+// Screen Pixel Test
+const PIXEL_COLORS = ['#ffffff', '#000000', '#ff0000', '#00ff00', '#0000ff'];
+let pixelColorIndex = 0;
+
+function startPixelTest() {
+  pixelColorIndex = 0;
+  const overlay = document.getElementById('pixel-test-overlay');
+  overlay.style.backgroundColor = PIXEL_COLORS[pixelColorIndex];
+  overlay.classList.add('active');
+
+  const onKey = (e) => {
+    if (e.key === 'Escape') {
+      stopPixelTest();
+      window.removeEventListener('keydown', onKey);
+    }
+  };
+  window.addEventListener('keydown', onKey);
+}
+
+function cyclePixelTestColor() {
+  pixelColorIndex++;
+  if (pixelColorIndex >= PIXEL_COLORS.length) {
+    stopPixelTest();
+    return;
+  }
+  const overlay = document.getElementById('pixel-test-overlay');
+  overlay.style.backgroundColor = PIXEL_COLORS[pixelColorIndex];
+}
+
+function stopPixelTest() {
+  const overlay = document.getElementById('pixel-test-overlay');
+  if (overlay) overlay.classList.remove('active');
+}
+
+// Audio Frequency Generator Test (Web Audio API)
+function initAudioCtx() {
+  if (!audioContextInstance) {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    audioContextInstance = new AudioCtx();
+  }
+  if (audioContextInstance.state === 'suspended') {
+    audioContextInstance.resume();
+  }
+}
+
+function playAudioTone(channel, freq) {
+  initAudioCtx();
+  stopAllAudio();
+
+  const osc = audioContextInstance.createOscillator();
+  const gain = audioContextInstance.createGain();
+  const panner = audioContextInstance.createStereoPanner ? audioContextInstance.createStereoPanner() : null;
+
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq, audioContextInstance.currentTime);
+
+  gain.gain.setValueAtTime(0.3, audioContextInstance.currentTime);
+
+  if (panner) {
+    panner.pan.setValueAtTime(channel === 'left' ? -1 : 1, audioContextInstance.currentTime);
+    osc.connect(panner);
+    panner.connect(gain);
+  } else {
+    osc.connect(gain);
+  }
+
+  gain.connect(audioContextInstance.destination);
+  osc.start();
+  currentOscillator = osc;
+
+  const status = document.getElementById('audio-status-indicator');
+  if (status) status.textContent = `▶ Playing ${channel.toUpperCase()} earbud tone at ${freq}Hz. Listen for crackling or dropouts.`;
+
+  setTimeout(() => {
+    stopAllAudio();
+  }, 3000);
+}
+
+function playAudioSweep() {
+  initAudioCtx();
+  stopAllAudio();
+
+  const osc = audioContextInstance.createOscillator();
+  const gain = audioContextInstance.createGain();
+
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(60, audioContextInstance.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(1200, audioContextInstance.currentTime + 3.5);
+
+  gain.gain.setValueAtTime(0.25, audioContextInstance.currentTime);
+
+  osc.connect(gain);
+  gain.connect(audioContextInstance.destination);
+  osc.start();
+  currentOscillator = osc;
+
+  const status = document.getElementById('audio-status-indicator');
+  if (status) status.textContent = '▶ Sweeping frequency from 60Hz (sub-bass) to 1200Hz (mid-highs)...';
+
+  setTimeout(() => {
+    stopAllAudio();
+  }, 4000);
+}
+
+function stopAllAudio() {
+  if (currentOscillator) {
+    try {
+      currentOscillator.stop();
+      currentOscillator.disconnect();
+    } catch (e) {}
+    currentOscillator = null;
+  }
+  const status = document.getElementById('audio-status-indicator');
+  if (status) status.textContent = 'Audio stopped. Ready.';
+}
+
+// Touchscreen Grid Tester
+function initTouchGrid() {
+  const board = document.getElementById('touch-grid-board');
+  if (!board) return;
+  board.innerHTML = '';
+
+  let hitCount = 0;
+  const totalCells = 48;
+
+  for (let i = 0; i < totalCells; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'touch-grid-cell';
+
+    const markHit = () => {
+      if (!cell.classList.contains('hit')) {
+        cell.classList.add('hit');
+        hitCount++;
+        const prog = document.getElementById('touch-grid-progress');
+        if (prog) prog.textContent = `Tested: ${hitCount} / ${totalCells} cells (${Math.round((hitCount/totalCells)*100)}%)`;
+      }
+    };
+
+    cell.addEventListener('mouseenter', markHit);
+    cell.addEventListener('pointerenter', markHit);
+    cell.addEventListener('touchstart', markHit, { passive: true });
+    cell.addEventListener('touchmove', markHit, { passive: true });
+
+    board.appendChild(cell);
+  }
+
+  const prog = document.getElementById('touch-grid-progress');
+  if (prog) prog.textContent = `Tested: 0 / ${totalCells} cells`;
+}
+
+function resetTouchGrid() {
+  initTouchGrid();
+}
+
+// =========================================================
+// 5. PRINTABLE DIAGNOSTIC SHEET & INVOICE ESTIMATE CONTROLLER
+// =========================================================
+function openDiagnosticInvoiceModal(order) {
+  const modal = document.getElementById('diagnostic-invoice-modal');
+  if (!modal) return;
+
+  const o = order || activeTrackedOrder || {
+    order_id: 'FIX-8A201C',
+    customer_name: 'Rahul Sharma',
+    phone: '+91 98765 43210',
+    device: 'Apple iPhone 14 Pro Max (Deep Purple)',
+    imei: 'IMEI-358920-04-192840-2',
+    total: 2949.00,
+    items: [
+      { name: 'iPhone Back Glass Laser Removal & Replacement', category: 'Mobile Repair', price: 2499 },
+      { name: 'Full Diagnostic Bench & Waterproofing Seal', category: 'Diagnostic Service', price: 299 }
+    ]
+  };
+
+  document.getElementById('invoice-sheet-ticket-id').textContent = o.order_id;
+  document.getElementById('invoice-customer-name').textContent = o.customer_name || 'Customer';
+  document.getElementById('invoice-customer-phone').textContent = o.phone || '+91 Verified';
+  document.getElementById('invoice-device-name').textContent = o.device;
+  document.getElementById('invoice-device-imei').textContent = o.imei ? `IMEI: ${o.imei}` : 'IMEI: Inspected';
+
+  // Render items table
+  const tbody = document.getElementById('invoice-items-tbody');
+  if (tbody) {
+    const items = o.items || [{ name: o.device, category: 'Repair Service', price: o.total }];
+    const subtotal = items.reduce((acc, i) => acc + Number(i.price || 0), 0);
+    const tax = subtotal * 0.18;
+    const grandTotal = subtotal + tax;
+
+    tbody.innerHTML = items.map(item => `
+      <tr>
+        <td><strong>${escapeHtml(item.name)}</strong></td>
+        <td>${escapeHtml(item.category || 'Repair Service')}</td>
+        <td>90 Days</td>
+        <td style="text-align:right; font-weight:700;">₹${Number(item.price).toLocaleString('en-IN')}</td>
+      </tr>
+    `).join('');
+
+    document.getElementById('invoice-tax-display').textContent = `₹${tax.toFixed(2)}`;
+    document.getElementById('invoice-total-display').textContent = `₹${grandTotal.toFixed(2)}`;
+  }
+
+  modal.classList.add('open');
+}
+
+function closeDiagnosticInvoiceModal() {
+  const modal = document.getElementById('diagnostic-invoice-modal');
+  if (modal) modal.classList.remove('open');
+}
+
+// =========================================================
+// 6. SENIOR TECHNICIAN & WHATSAPP ESCALATION CONTROLLER
+// =========================================================
+function openTechnicianModal() {
+  const modal = document.getElementById('technician-modal');
+  if (!modal) return;
+
+  // Pre-fill WhatsApp link with last message or active repair
+  const lastUserMsg = currentMessages.filter(m => m.role === 'user').pop();
+  let issueSummary = lastUserMsg ? lastUserMsg.text.slice(0, 100) : 'Gadget hardware diagnostic inquiry';
+  const waBtn = document.getElementById('btn-whatsapp-escalate');
+  if (waBtn) {
+    const waText = `Hi Iris Lab, I need senior technician consultation. Diagnostic notes: ${issueSummary}`;
+    waBtn.href = `https://wa.me/919876543210?text=${encodeURIComponent(waText)}`;
+  }
+
+  const issueInput = document.getElementById('callback-issue');
+  if (issueInput && lastUserMsg) {
+    issueInput.value = issueSummary;
+  }
+
+  modal.classList.add('open');
+}
+
+function closeTechnicianModal() {
+  const modal = document.getElementById('technician-modal');
+  if (modal) modal.classList.remove('open');
+}
+
+async function submitTechnicianCallback(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btn-submit-callback');
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Submitting Request...';
+  }
+
+  const payload = {
+    name: document.getElementById('callback-name').value.trim(),
+    phone: document.getElementById('callback-phone').value.trim(),
+    issue: document.getElementById('callback-issue').value.trim(),
+    time_slot: document.getElementById('callback-time').value
+  };
+
+  try {
+    const res = await fetch('/api/technician-callback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      showToast(data.message, 'success');
+      closeTechnicianModal();
+    } else {
+      showToast(data.error || 'Failed to submit callback request', 'error');
+    }
+  } catch (err) {
+    showToast('Network error while scheduling callback', 'error');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Request Technician Callback';
+    }
   }
 }
 </script>

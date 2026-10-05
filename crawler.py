@@ -10,13 +10,14 @@ Integrates:
 
 import re
 import requests
+from urllib.parse import quote
 from bs4 import BeautifulSoup
 from typing import Dict, List, Any, Optional
 
 # ==============================================================================
 # 1. OEM HARDWARE DIAGNOSTIC & FAULT CODE DATASET
 # ==============================================================================
-DIAGNOSTIC_CODES_DATASET = [
+DIAGNOSTIC_CODES_DATASET: List[Dict[str, Any]] = [
     # Apple Diagnostic Codes (MacBook, iMac, iPhone)
     {
         "code": "PPT004",
@@ -267,7 +268,7 @@ DIAGNOSTIC_CODES_DATASET = [
 # ==============================================================================
 # 2. CONSUMER SAFETY GADGET RECALLS & SERVICE PROGRAMS DATASET
 # ==============================================================================
-RECALLS_DATASET = [
+RECALLS_DATASET: List[Dict[str, Any]] = [
     {
         "id": "RECALL-APL-MBP15",
         "brand": "Apple",
@@ -351,7 +352,7 @@ RECALLS_DATASET = [
 # ==============================================================================
 # 3. IRIS REPAIR CATALOG & PARTS PRICING DATASET (INR ₹)
 # ==============================================================================
-IRIS_PARTS_CATALOG = [
+IRIS_PARTS_CATALOG: List[Dict[str, Any]] = [
     {
         "id": "iphone-back-glass-repair",
         "name": "iPhone Back Glass Laser Removal & Replacement",
@@ -508,7 +509,7 @@ def search_ifixit_guides(query: str, limit: int = 6) -> List[Dict[str, Any]]:
     if not clean_query:
         return []
 
-    url = f"https://www.ifixit.com/api/2.0/search/{requests.utils.quote(clean_query)}?filter=guide&limit={limit}"
+    url = f"https://www.ifixit.com/api/2.0/search/{quote(clean_query)}?filter=guide&limit={limit}"
     headers = {
         "User-Agent": "IrisRepairCrawler/1.0 (Electronics Repair Diagnostic Platform; +support@iris.local)"
     }
@@ -725,19 +726,20 @@ def search_diagnostic_codes(query: str) -> List[Dict[str, Any]]:
     results = []
 
     for item in DIAGNOSTIC_CODES_DATASET:
-        searchable = " ".join([
-            item["code"],
-            item["oem"],
-            item["category"],
-            " ".join(item["devices"]),
-            item["title"],
-            item["symptom"],
-            item["root_cause"],
-            item["action"]
-        ]).lower()
+        code_str = str(item.get("code") or "")
+        oem_str = str(item.get("oem") or "")
+        cat_str = str(item.get("category") or "")
+        dev_val = item.get("devices") or []
+        dev_str = " ".join(str(d) for d in dev_val) if isinstance(dev_val, (list, tuple)) else str(dev_val)
+        title_str = str(item.get("title") or "")
+        symptom_str = str(item.get("symptom") or "")
+        cause_str = str(item.get("root_cause") or "")
+        action_str = str(item.get("action") or "")
+
+        searchable = f"{code_str} {oem_str} {cat_str} {dev_str} {title_str} {symptom_str} {cause_str} {action_str}".lower()
 
         # Check exact code match first
-        if item["code"].lower() in q or q in item["code"].lower():
+        if code_str.lower() in q or q in code_str.lower():
             results.append((item, 100))
             continue
 
@@ -762,16 +764,16 @@ def search_recalls(query: str) -> List[Dict[str, Any]]:
     results = []
 
     for item in RECALLS_DATASET:
-        searchable = " ".join([
-            item["id"],
-            item["brand"],
-            item["category"],
-            item["device"],
-            item["title"],
-            item["agency"],
-            item["defect_summary"],
-            item["remedy"]
-        ]).lower()
+        id_str = str(item.get("id") or "")
+        brand_str = str(item.get("brand") or "")
+        cat_str = str(item.get("category") or "")
+        device_str = str(item.get("device") or "")
+        title_str = str(item.get("title") or "")
+        agency_str = str(item.get("agency") or "")
+        defect_str = str(item.get("defect_summary") or "")
+        remedy_str = str(item.get("remedy") or "")
+
+        searchable = f"{id_str} {brand_str} {cat_str} {device_str} {title_str} {agency_str} {defect_str} {remedy_str}".lower()
 
         score = sum(1 for tok in tokens if tok in searchable)
         if score > 0 or not tokens:
@@ -793,14 +795,15 @@ def search_parts_catalog(query: str) -> List[Dict[str, Any]]:
     results = []
 
     for item in IRIS_PARTS_CATALOG:
-        searchable = " ".join([
-            item["name"],
-            item["category"],
-            item["device_category"],
-            item["models"],
-            item["desc"],
-            " ".join(item.get("tools_required", []))
-        ]).lower()
+        tools_val = item.get("tools_required") or []
+        tools_str = " ".join(str(t) for t in tools_val) if isinstance(tools_val, (list, tuple)) else str(tools_val)
+        name_str = str(item.get("name") or "")
+        cat_str = str(item.get("category") or "")
+        dev_cat_str = str(item.get("device_category") or "")
+        models_str = str(item.get("models") or "")
+        desc_str = str(item.get("desc") or "")
+
+        searchable = f"{name_str} {cat_str} {dev_cat_str} {models_str} {desc_str} {tools_str}".lower()
 
         score = sum(1 for tok in tokens if tok in searchable)
         if score > 0:
@@ -827,7 +830,7 @@ def federated_crawl(
     - Optional Live Web Scraper
     - Synthesizes findings with AI.
     """
-    output = {
+    output: Dict[str, Any] = {
         "query": query,
         "mode": mode,
         "category_filter": category_filter,
@@ -862,7 +865,8 @@ def federated_crawl(
 
     search_query = query.strip()
     if not search_query and url:
-        search_query = output.get("web_crawl_result", {}).get("title", "")
+        web_res = output.get("web_crawl_result")
+        search_query = web_res.get("title", "") if isinstance(web_res, dict) else ""
 
     # If query is still empty, provide general top items
     active_q = search_query or "smartphone laptop repair"
@@ -922,33 +926,42 @@ def federated_crawl(
             # Build high-density context summary
             context_snippets = []
 
-            if output["web_crawl_result"] and output["web_crawl_result"].get("raw_snippet"):
-                context_snippets.append(f"WEBPAGE SNIPPET: {output['web_crawl_result']['raw_snippet'][:600]}")
+            web_res = output.get("web_crawl_result")
+            if isinstance(web_res, dict) and web_res.get("raw_snippet"):
+                context_snippets.append(f"WEBPAGE SNIPPET: {str(web_res.get('raw_snippet'))[:600]}")
 
-            if output["diagnostic_codes"]:
-                top_code = output["diagnostic_codes"][0]
-                context_snippets.append(
-                    f"DIAGNOSTIC CODE MATCH: {top_code['oem']} {top_code['code']} - {top_code['title']}. "
-                    f"Symptom: {top_code['symptom']}. Fix: {top_code['action']}."
-                )
+            diag_list = output.get("diagnostic_codes")
+            if isinstance(diag_list, list) and diag_list:
+                top_code = diag_list[0]
+                if isinstance(top_code, dict):
+                    context_snippets.append(
+                        f"DIAGNOSTIC CODE MATCH: {top_code.get('oem')} {top_code.get('code')} - {top_code.get('title')}. "
+                        f"Symptom: {top_code.get('symptom')}. Fix: {top_code.get('action')}."
+                    )
 
-            if output["recalls"]:
-                top_recall = output["recalls"][0]
-                context_snippets.append(
-                    f"SAFETY RECALL ALERT: {top_recall['device']} - {top_recall['title']} ({top_recall['risk_level']})."
-                )
+            recall_list = output.get("recalls")
+            if isinstance(recall_list, list) and recall_list:
+                top_recall = recall_list[0]
+                if isinstance(top_recall, dict):
+                    context_snippets.append(
+                        f"SAFETY RECALL ALERT: {top_recall.get('device')} - {top_recall.get('title')} ({top_recall.get('risk_level')})."
+                    )
 
-            if output["ifixit_guides"]:
-                top_guide = output["ifixit_guides"][0]
-                context_snippets.append(
-                    f"IFIXIT REPAIR GUIDE: {top_guide['title']} (Difficulty: {top_guide['difficulty']}, Time: {top_guide['time_required']})."
-                )
+            guides_list = output.get("ifixit_guides")
+            if isinstance(guides_list, list) and guides_list:
+                top_guide = guides_list[0]
+                if isinstance(top_guide, dict):
+                    context_snippets.append(
+                        f"IFIXIT REPAIR GUIDE: {top_guide.get('title')} (Difficulty: {top_guide.get('difficulty')}, Time: {top_guide.get('time_required')})."
+                    )
 
-            if output["parts_catalog"]:
-                top_part = output["parts_catalog"][0]
-                context_snippets.append(
-                    f"IRIS REPAIR PART: {top_part['name']} - ₹{top_part['price_inr']} (Turnaround: {top_part['turnaround']})."
-                )
+            cat_list = output.get("parts_catalog")
+            if isinstance(cat_list, list) and cat_list:
+                top_part = cat_list[0]
+                if isinstance(top_part, dict):
+                    context_snippets.append(
+                        f"IRIS REPAIR PART: {top_part.get('name')} - ₹{top_part.get('price_inr')} (Turnaround: {top_part.get('turnaround')})."
+                    )
 
             synthesis_prompt = f"""The technician searched for: "{active_q}".
 Here are the cross-referenced findings from our electronics repair datasets:
