@@ -1,7 +1,8 @@
 import os, base64, mimetypes, uuid, requests, crawler
 from flask import Flask, render_template, request, jsonify, send_file
-from dotenv import load_dotenv
-from openai import OpenAI
+from typing import Any, cast
+from dotenv import load_dotenv  # pyrefly: ignore[missing-import]
+from openai import OpenAI  # pyrefly: ignore[missing-import]
 
 load_dotenv()
 app = Flask(__name__, template_folder="templates", static_folder="static")
@@ -177,13 +178,14 @@ def api_vision():
 4. Recommend the exact repair service needed (e.g., Laser Back Glass Removal & OEM Glass Replacement).
 5. State the turnaround time (e.g., 45 minutes) and provide the estimated repair price in Indian Rupees (₹ / INR, e.g. ₹2,499).
 6. When applicable, append our standard :::product { "id": "...", "name": "...", "price": ..., "currency": "INR", ... } ::: block so the customer can book repair or checkout directly!"""
-        r=client().responses.create(
+        vision_input: list[Any] = [{"role":"user","content":[
+            {"type":"input_text","text":prompt},
+            {"type":"input_image","image_url":f"data:{mime};base64,{data}"}
+        ]}]
+        r=client().responses.create(  # pyrefly: ignore[no-matching-overload]
             model=VISION_MODEL,
             instructions=vision_instructions,
-            input=[{"role":"user","content":[
-                {"type":"input_text","text":prompt},
-                {"type":"input_image","image_url":f"data:{mime};base64,{data}"}
-            ]}]
+            input=cast(Any, vision_input)
         )
         return jsonify(result=r.output_text)
     except Exception as e: return jsonify(error=str(e)),500
@@ -199,7 +201,9 @@ def api_image_generation():
         if not IMAGE_MODEL:
             raise RuntimeError("Set IMAGE_MODEL_DEPLOYMENT to your FLUX-1.1-pro deployment name.")
         r=image_client().images.generate(model=IMAGE_MODEL,prompt=prompt,n=1,size="1024x1024")
-        item=r.data[0]
+        if not r.data:
+            raise RuntimeError("No image data returned from image generation API.")
+        item=r.data[0]  # pyrefly: ignore[unsupported-operation]
         if getattr(item,"b64_json",None):
             raw=base64.b64decode(item.b64_json)
             name=f"{uuid.uuid4().hex}.png"; path=os.path.join("uploads",name)
