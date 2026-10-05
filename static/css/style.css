@@ -381,98 +381,113 @@ button, input, textarea, select {
   background: #fee2e2;
 }
 
-/* Bottom Sidebar Action: Contact Senior Technician */
+/* Bottom Sidebar Action: Contact Senior Technician (Harmonious with Mockup) */
 .sidebar-user-footer {
   margin-top: auto;
   padding-top: 0.85rem;
   border-top: 1px solid #f1eff7;
 }
 
-.btn-contact-technician {
+.tech-footer-card {
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.65rem;
-  padding: 0.6rem 0.75rem;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  padding: 0.55rem 0.65rem;
+  background: #ffffff;
+  border: 1px solid #e8e5f0;
   border-radius: var(--radius-md);
-  color: #166534;
   cursor: pointer;
   transition: all var(--transition);
   text-align: left;
 }
 
-.btn-contact-technician:hover {
-  background: #dcfce7;
-  border-color: #86efac;
+.tech-footer-card:hover {
+  background: #faf8ff;
+  border-color: #d8b4fe;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(22, 101, 52, 0.08);
+  box-shadow: 0 4px 14px -3px rgba(124, 58, 237, 0.12);
 }
 
-.tech-icon-pulse {
+.tech-badge-avatar {
   position: relative;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: #16a34a;
-  color: #ffffff;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--primary-600);
   flex-shrink: 0;
+  border: 1px solid rgba(139, 92, 246, 0.2);
 }
 
-.tech-icon-pulse svg {
-  width: 17px;
-  height: 17px;
+.tech-badge-avatar svg {
+  width: 16px;
+  height: 16px;
 }
 
-.tech-icon-pulse .online-dot {
+.tech-status-dot {
   position: absolute;
-  top: -2px;
-  right: -2px;
+  bottom: 0px;
+  right: 0px;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #22c55e;
-  border: 2px solid #ffffff;
+  background: #10b981;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.3);
 }
 
 .tech-meta {
   display: flex;
   flex-direction: column;
   flex: 1;
-  overflow: hidden;
+  min-width: 0;
 }
 
-.tech-title {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #14532d;
+.tech-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-title);
+  line-height: 1.25;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.tech-sub {
-  font-size: 0.68rem;
-  color: #15803d;
+.tech-desc {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  line-height: 1.25;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-top: 1px;
 }
 
-.tech-arrow {
-  width: 14px;
-  height: 14px;
-  color: #16a34a;
+.tech-action-arrow {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
   flex-shrink: 0;
-  transition: transform var(--transition);
+  transition: all var(--transition);
 }
 
-.btn-contact-technician:hover .tech-arrow {
+.tech-footer-card:hover .tech-action-arrow {
+  color: var(--primary-600);
   transform: translateX(2px);
+}
+
+.tech-action-arrow svg {
+  width: 15px;
+  height: 15px;
 }
 
 /* =========================================================
